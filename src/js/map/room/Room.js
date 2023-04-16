@@ -10,10 +10,4 @@ export default class Room {
         this.walls.push(wall)
     }
 
-    addToScene(scene) {
-        for (const wallIndex in this.walls) {
-            this.walls[wallIndex].addToScene(scene)
-        }
-    }
-
 }
