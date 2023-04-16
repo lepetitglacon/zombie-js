@@ -11,7 +11,7 @@ export default class Player {
         this.body = new THREE.Mesh( this.geometry, this.material );
         this.body.position.set(2, 0, 2)
 
-        window.ZombieGame.scene.add(this.body)
+        window.ZombieGame.game.three.scene.add(this.body)
         console.log('Added ' + this.socketId + ' to world')
     }
 

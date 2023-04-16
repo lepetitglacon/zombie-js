@@ -1,8 +1,9 @@
 import * as CANNON from "cannon-es";
 import * as THREE from "three";
-import GraphicsWorld from "./map/world/GraphicsWorld";
-import Map from "./map/Map";
-import InputManager from "./input/InputManager";
+import GraphicsWorld from "./map/world/GraphicsWorld.js";
+import GameMap from "./map/GameMap.js";
+import InputManager from "./input/InputManager.js";
+import Player from "./common/Player.js";
 
 export default class Game {
 
@@ -11,13 +12,63 @@ export default class Game {
         this.velocity = new THREE.Vector3();
         this.direction = new THREE.Vector3();
 
+        this.PLAYERS = new Map()
+        this.socket = undefined
 
+        this.infoDiv = document.createElement("div")
+        this.infoDiv.id = 'info'
+        document.body.appendChild(this.infoDiv)
+    }
+
+    init() {
         this.inputManager = new InputManager()
 
         this.three = new GraphicsWorld(500, 500)
         // this.world = new PhysicsWorld()
+        this.map = new GameMap()
 
-        this.map = new Map(this.three.scene)
+        this.lastPosition = this.three.camera.position.clone()
+
+        window.addEventListener('ZombieGame-start', () => {
+            this.socket = io()
+
+            this.socket.on('pong', () => {
+                console.log('pong from server')
+            })
+
+            this.socket.on('get_players', (players) => {
+                console.log('Players allready connected ', players)
+                for (const i in players) {
+                    if (players[i].socketId !== this.socket.id) {
+                        const p = new Player(players[i].socketId)
+                        this.PLAYERS.set(players[i].socketId, p)
+                    }
+                }
+            })
+            this.socket.on('player_connect', (socketId) => {
+                console.log('[CONNECT] Player ' + socketId + ' connected')
+                const p = new Player(socketId)
+                this.PLAYERS.set(socketId, p)
+            })
+            this.socket.on('player_disconnect', (socketId) => {
+                console.log('[DISCONNECT] Player ' + socketId + ' disconnected')
+                console.log(this.PLAYERS.get(socketId))
+                window.ZombieGame.game.three.scene.remove(this.PLAYERS.get(socketId).body)
+                this.PLAYERS.delete(socketId)
+            })
+            this.socket.on('players_position', (playerList) => {
+                for (const i in playerList) {
+                    if (playerList[i].socketId !== this.socketid) {
+                        if (this.PLAYERS.has(playerList[i].socketId)) {
+                            let p = this.PLAYERS.get(playerList[i].socketId)
+                            p.body.position.set(playerList[i].position.x, 0, playerList[i].position.z)
+                        }
+                    }
+
+                }
+            })
+        })
+        
         this.animate()
     }
 
@@ -41,6 +92,15 @@ export default class Game {
         const delta = ( time - this.prevTime ) / 1000;
 
         this.three.update()
+
+        if (this.socket !== undefined) {
+            this.infoDiv.innerText = this.socket.id
+
+            if (!this.lastPosition.equals(this.three.camera.position)) {
+                this.socket.volatile.emit('position', this.three.camera.position)
+                this.lastPosition = this.three.camera.position.clone()
+            }
+        }
 
         if (this.three.controls.isLocked === true) {
 

@@ -1,6 +1,4 @@
-import * as CANNON from "cannon-es";
-import Game from "./Game";
-import InputManager from "./input/InputManager";
+import Game from "./Game.js";
 
 export default class GameEngine {
 
@@ -12,7 +10,7 @@ export default class GameEngine {
 
     constructor() {
         this.state = GameEngine.STATE.MENU
-        this.game = undefined
+        this.game = new Game()
 
         this.player = {
             speed: 80,
@@ -39,10 +37,11 @@ export default class GameEngine {
     bind() {
         const startGameButton = document.getElementById("start-game")
         startGameButton.addEventListener("click", (e) => {
-            e.preventDefault()
             if (this.game === undefined) {
                 this.game = new Game()
             }
+            this.game.init()
+            window.dispatchEvent(new Event("ZombieGame-start"))
             startGameButton.remove()
         })
 
