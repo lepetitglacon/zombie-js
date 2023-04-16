@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import * as CANNON from "cannon-es";
 
 export default class Wall {
 
@@ -17,10 +18,15 @@ export default class Wall {
         this.mesh = new THREE.Mesh( this.geometry, this.material );
         this.mesh.castShadow = true
         this.mesh.receiveShadow = true
-    }
+        window.ZombieGame.game.three.scene.add(this.mesh)
 
-    addToScene(scene) {
-        scene.add(this.mesh)
+        this.shape = new CANNON.Box(new CANNON.Vec3(10, 0, 0.5))
+        this.body = new CANNON.Body({ mass: 1 })
+        this.body.addShape(this.shape)
+        this.body.position.set(this.mesh.x, this.mesh.y, this.mesh.z)
+        window.ZombieGame.game.world.addBody(this.body)
+
+
     }
 
     randomColor() {

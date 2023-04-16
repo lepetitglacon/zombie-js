@@ -19,12 +19,6 @@ export default class Map {
         this.rooms.push(room)
     }
 
-    addToScene() {
-        for (const roomIndex in this.rooms) {
-            this.rooms[roomIndex].addToScene(this.scene)
-        }
-    }
-
     init() {
 
         const wall1 = new Wall(new THREE.Vector3(10, 3, .5))
