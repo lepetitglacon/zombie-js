@@ -53,4 +53,8 @@ export default class GraphicsWorld {
             this.renderer.setSize( window.innerWidth, window.innerHeight );
         });
     }
+
+    update() {
+
+    }
 }

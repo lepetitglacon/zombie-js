@@ -20,11 +20,11 @@ export default class Wall {
         this.mesh.receiveShadow = true
         window.ZombieGame.game.three.scene.add(this.mesh)
 
-        this.shape = new CANNON.Box(new CANNON.Vec3(10, 0, 0.5))
-        this.body = new CANNON.Body({ mass: 1 })
-        this.body.addShape(this.shape)
-        this.body.position.set(this.mesh.x, this.mesh.y, this.mesh.z)
-        window.ZombieGame.game.world.addBody(this.body)
+        // this.shape = new CANNON.Box(new CANNON.Vec3(10, 0, 0.5))
+        // this.body = new CANNON.Body({ mass: 1 })
+        // this.body.addShape(this.shape)
+        // this.body.position.set(this.mesh.x, this.mesh.y, this.mesh.z)
+        // window.ZombieGame.game.world.addBody(this.body)
 
 
     }

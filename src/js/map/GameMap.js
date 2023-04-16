@@ -1,16 +1,14 @@
-import Wall from "./wall/Wall";
+import Wall from "./wall/Wall.js";
 import * as THREE from "three";
-import Room from "./room/Room";
+import Room from "./room/Room.js";
 
-export default class Map {
+export default class GameMap {
 
-    constructor(scene) {
+    constructor() {
         this.width = 500
         this.depth = 500
 
         this.rooms = []
-
-        this.scene = scene
 
         this.init()
     }
@@ -35,14 +33,13 @@ export default class Map {
         room1.addWall(wall3)
 
         this.addRoom(room1)
-        this.addToScene()
 
         const geometry = new THREE.BoxGeometry( 1, 1, 1 );
         const material = new THREE.MeshStandardMaterial( { color: 0xFFB769 } );
         const cube = new THREE.Mesh( geometry, material );
         cube.castShadow = true
         cube.receiveShadow = true
-        this.scene.add( cube );
+        window.ZombieGame.game.three.scene.add( cube );
     }
 
 }
