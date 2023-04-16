@@ -1,4 +1,4 @@
-export default class Map {
+export default class GameMap {
 
     constructor(props) {
         this.width = 500

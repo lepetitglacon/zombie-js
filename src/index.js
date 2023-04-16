@@ -2,15 +2,28 @@ import "./assets/css/style.css"
 
 import * as THREE from 'three';
 import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
+// import * as io from "https://cdn.socket.io/4.5.4/socket.io.min.js"
 
-import InputManager from "./js/input/InputManager";
-import Map from "./js/map/Map";
-import Room from "./js/map/room/Room";
-import Wall from "./js/map/wall/Wall";
+const infoDiv = document.createElement("div")
+infoDiv.id = 'info'
+document.body.appendChild(infoDiv)
+
+const ioscript = document.createElement("script")
+ioscript.setAttribute('src', "https://cdn.socket.io/4.5.4/socket.io.min.js")
+document.head.appendChild(ioscript)
+
+import InputManager from "./js/input/InputManager.js";
+import GameMap from "./js/map/GameMap.js";
+import Room from "./js/map/room/Room.js";
+import Wall from "./js/map/wall/Wall.js";
+import Player from "./js/common/Player.js";
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color( 0xefd1b5 );
-// scene.fog = new THREE.FogExp2( 0xefd1b5, 0.0025 );
+scene.fog = new THREE.FogExp2( 0xefd1b5, 0.0025 );
+
+window.ZombieGame = {}
+window.ZombieGame.scene = scene
 
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 camera.position.z = 5;
@@ -59,7 +72,7 @@ room1.addWall(wall1)
 room1.addWall(wall2)
 room1.addWall(wall3)
 
-const map = new Map()
+const map = new GameMap()
 map.addRoom(room1)
 map.addToScene(scene)
 
@@ -94,11 +107,64 @@ document.addEventListener('click', () => controls.lock())
 controls.addEventListener( 'lock', function () {});
 controls.addEventListener( 'unlock', function () {});
 
+const PLAYERS = new Map()
+let socket = undefined
+    window.addEventListener('load', () => {
+        socket = io()
+
+        socket.on('pong', () => {
+            console.log('pong from server')
+        })
+
+        socket.on('get_players', (players) => {
+            console.log('Players allready connected ', players)
+            for (const i in players) {
+                if (players[i].socketId !== socket.id) {
+                    const p = new Player(players[i].socketId)
+                    PLAYERS.set(players[i].socketId, p)
+                }
+            }
+        })
+        socket.on('player_connect', (socketId) => {
+            console.log('[CONNECT] Player ' + socketId + ' connected')
+            const p = new Player(socketId)
+            PLAYERS.set(socketId, p)
+        })
+        socket.on('player_disconnect', (socketId) => {
+            console.log('[DISCONNECT] Player ' + socketId + ' disconnected')
+            console.log(PLAYERS.get(socketId))
+            scene.remove(PLAYERS.get(socketId).body)
+            PLAYERS.delete(socketId)
+        })
+        socket.on('players_position', (playerList) => {
+            for (const i in playerList) {
+                if (playerList[i].socketId !== socket.id) {
+                    if (PLAYERS.has(playerList[i].socketId)) {
+                        let p = PLAYERS.get(playerList[i].socketId)
+                        p.body.position.set(playerList[i].position.x, 0, playerList[i].position.z)
+                    }
+                }
+
+            }
+        })
+    })
+
+let lastPosition = camera.position.clone()
+
 function animate() {
     requestAnimationFrame( animate );
 
     const time = performance.now();
     const delta = ( time - prevTime ) / 1000;
+
+    if (socket !== undefined) {
+        infoDiv.innerText = socket.id
+
+        if (!lastPosition.equals(camera.position)) {
+            socket.volatile.emit('position', camera.position)
+            lastPosition = camera.position.clone()
+        }
+    }
 
     cube.rotation.x += 0.01;
     cube.rotation.y += 0.01;

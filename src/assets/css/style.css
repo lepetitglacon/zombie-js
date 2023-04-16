@@ -2,3 +2,10 @@
     margin: 0;
     padding: 0;
 }
+
+#info {
+    position: absolute;
+    mix-blend-mode: difference;
+    color: yellow;
+    font-size: 24px;
+}
