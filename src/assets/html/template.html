@@ -3,12 +3,81 @@
 <head>
     <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Z3D</title>
 </head>
 <body>
 
-<div>
-  <button id="start-game">Start Game</button>
+<div id="main-menu" class="container-fluid d-flex">
+    <div class="col container">
+
+        <div class="row">
+
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" placeholder="Enter room name" aria-label="Enter room name" aria-describedby="button-addon2">
+                <button class="btn btn-outline-secondary" type="button" id="start-game">Create room</button>
+            </div>
+
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                <label class="form-check-label" for="flexCheckDefault">
+                    Private
+                </label>
+            </div>
+
+        </div>
+        <div class="row">
+
+            <h2>Public games</h2>
+            <hr>
+
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Map</th>
+                    <th scope="col">Players</th>
+                    <th scope="col">State</th>
+                    <th scope="col">Ping</th>
+                </tr>
+                </thead>
+                <tbody id="public-games-tbody">
+                <tr>
+                    <td>20dzq5d05zq1d5qzd8zq</td>
+                    <td>Mark</td>
+                    <td>Otto</td>
+                    <td>@mdo</td>
+                    <td>@mdo</td>
+                    <td>@mdo</td>
+                </tr>
+                <tr>
+                    <td>20dzq5d05zq1d5qzd8zq</td>
+                    <td>Jacob</td>
+                    <td>Thornton</td>
+                    <td>@fat</td>
+                    <td>@fat</td>
+                    <td>@fat</td>
+                </tr>
+                <tr>
+                    <td>20dzq5d05zq1d5qzd8zq</td>
+                    <td colspan="2">Larry the Bird</td>
+                    <td>@twitter</td>
+                    <td>@twitter</td>
+                    <td>@twitter</td>
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+    <div class="col container">
+        <div class="row">
+            <h1 id="main-title" class="light-red">Z3D</h1>
+        </div>
+        <div class="row">
+            <img class="zombie-hand" src="src/assets/img/zombie-hand.png">
+        </div>
+    </div>
 </div>
 
 </body>

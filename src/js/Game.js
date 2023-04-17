@@ -45,7 +45,7 @@ export default class Game {
                 })
 
                 this.socket.on('get_players', (players) => {
-                    console.log('Players allready connected ', players)
+                    console.log('[SOCKET] Players allready connected ', players)
                     for (const i in players) {
                         if (players[i].socketId !== this.socket.id) {
                             const p = new Player(players[i].socketId)

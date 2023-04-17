@@ -24,7 +24,6 @@ export default class SocketHandler {
             this.position = pos
         })
         this.socket.on('direction', (dir) => {
-            console.log(dir)
             this.direction.set(dir.x, dir.y, dir.z)
         })
     }

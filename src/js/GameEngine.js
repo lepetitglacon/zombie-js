@@ -35,11 +35,13 @@ export default class GameEngine {
     }
 
     bind() {
+        const mainMenu = document.getElementById("main-menu")
         const startGameButton = document.getElementById("start-game")
         startGameButton.addEventListener("click", (e) => {
             if (this.game === undefined) {
                 this.game = new Game()
             }
+            mainMenu.remove()
             this.game.init()
             window.dispatchEvent(new Event("ZombieGame-start"))
             startGameButton.remove()
