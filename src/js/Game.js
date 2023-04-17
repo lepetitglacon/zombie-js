@@ -1,6 +1,7 @@
 import * as CANNON from "cannon-es";
 import * as THREE from "three";
 import GraphicsWorld from "./map/world/GraphicsWorld.js";
+import PhysicsWorld from "./map/world/PhysicsWorld.js";
 import GameMap from "./map/GameMap.js";
 import InputManager from "./input/InputManager.js";
 import Player from "./common/Player.js";
@@ -24,7 +25,7 @@ export default class Game {
         this.inputManager = new InputManager()
 
         this.three = new GraphicsWorld(500, 500)
-        // this.world = new PhysicsWorld()
+        this.cannon = new PhysicsWorld()
         this.map = new GameMap()
 
         this.lastPosition = this.three.camera.position.clone()
@@ -61,7 +62,7 @@ export default class Game {
                     if (playerList[i].socketId !== this.socketid) {
                         if (this.PLAYERS.has(playerList[i].socketId)) {
                             let p = this.PLAYERS.get(playerList[i].socketId)
-                            p.body.position.set(playerList[i].position.x, 0, playerList[i].position.z)
+                            p.body.position.set(playerList[i].position.x, playerList[i].position.y, playerList[i].position.z)
                         }
                     }
 
@@ -72,19 +73,6 @@ export default class Game {
         this.animate()
     }
 
-    initCannonWorld() {
-        this.world = new CANNON.World();
-        this.world.gravity.set(0, 0, -9.82); // m/s²
-
-        // Create a plane
-        var groundBody = new CANNON.Body({
-            mass: 0 // mass == 0 makes the body static
-        });
-        var groundShape = new CANNON.Plane();
-        groundBody.addShape(groundShape);
-        this.world.addBody(groundBody);
-    }
-
     animate() {
         requestAnimationFrame( () => {this.animate()} );
 
@@ -92,6 +80,14 @@ export default class Game {
         const delta = ( time - this.prevTime ) / 1000;
 
         this.three.update()
+
+        for (const [socketId, player] of this.PLAYERS) {
+            console.log(player)
+            player.mesh.position.copy(player.body.position)
+            player.mesh.position.copy(player.body.position)
+
+        }
+
 
         if (this.socket !== undefined) {
             this.infoDiv.innerText = this.socket.id
@@ -126,6 +122,8 @@ export default class Game {
             }
         }
 
+        this.cannon.world.step(delta)
+        this.cannon.debugger.update()
         this.prevTime = time;
         this.three.renderer.render( this.three.scene, this.three.camera );
     }

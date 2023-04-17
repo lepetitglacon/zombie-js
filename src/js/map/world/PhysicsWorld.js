@@ -1,19 +1,26 @@
 import * as THREE from "three";
-import {PointerLockControls} from "three/addons/controls/PointerLockControls.js";
-
+import * as CANNON from "cannon-es";
+import CannonDebugger from 'cannon-es-debugger'
 export default class GraphicsWorld {
 
     constructor(worldWidth, worldDepth) {
-        const world = new CANNON.World()
-        world.gravity.set(0, -9.82, 0)
+        this.world = new CANNON.World();
+        this.world.gravity.set(0, -9.82, 0); // m/s²
 
-        const normalMaterial = new THREE.MeshNormalMaterial()
-        const phongMaterial = new THREE.MeshPhongMaterial()
+        this.debugger = new CannonDebugger(window.ZombieGame.game.three.scene, this.world, {
+            // options...
+        })
 
-        this.bind()
-    }
+        // Create a plane
+        this.groundBody = new CANNON.Body({
+            mass: 0
+        });
+        this.groundShape = new CANNON.Plane();
+        this.groundBody.addShape(this.groundShape);
+        this.groundBody.quaternion.setFromEuler(Math.PI / 2);
+        this.groundBody.position.y = 0
 
-    bind() {
+        this.world.addBody(this.groundBody);
 
     }
 }
