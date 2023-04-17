@@ -12,6 +12,7 @@ export default class Game {
         this.prevTime = performance.now();
         this.velocity = new THREE.Vector3();
         this.direction = new THREE.Vector3();
+        this.lookDirection = new THREE.Vector3();
 
         this.PLAYERS = new Map()
         this.socket = undefined
@@ -29,45 +30,56 @@ export default class Game {
         this.map = new GameMap()
 
         this.lastPosition = this.three.camera.position.clone()
+        this.lastDirection = this.lookDirection.clone()
 
         window.addEventListener('ZombieGame-start', () => {
+
             this.socket = io()
+            this.socket.on("connect", () => {
+                console.log('[SOCKET] connected to server')
 
-            this.socket.on('pong', () => {
-                console.log('pong from server')
-            })
+                this.infoDiv.innerText = this.socket.id
 
-            this.socket.on('get_players', (players) => {
-                console.log('Players allready connected ', players)
-                for (const i in players) {
-                    if (players[i].socketId !== this.socket.id) {
-                        const p = new Player(players[i].socketId)
-                        this.PLAYERS.set(players[i].socketId, p)
-                    }
-                }
-            })
-            this.socket.on('player_connect', (socketId) => {
-                console.log('[CONNECT] Player ' + socketId + ' connected')
-                const p = new Player(socketId)
-                this.PLAYERS.set(socketId, p)
-            })
-            this.socket.on('player_disconnect', (socketId) => {
-                console.log('[DISCONNECT] Player ' + socketId + ' disconnected')
-                console.log(this.PLAYERS.get(socketId))
-                window.ZombieGame.game.three.scene.remove(this.PLAYERS.get(socketId).body)
-                this.PLAYERS.delete(socketId)
-            })
-            this.socket.on('players_position', (playerList) => {
-                for (const i in playerList) {
-                    if (playerList[i].socketId !== this.socketid) {
-                        if (this.PLAYERS.has(playerList[i].socketId)) {
-                            let p = this.PLAYERS.get(playerList[i].socketId)
-                            p.body.position.set(playerList[i].position.x, playerList[i].position.y, playerList[i].position.z)
+                this.socket.on('pong', () => {
+                    console.log('pong from server')
+                })
+
+                this.socket.on('get_players', (players) => {
+                    console.log('Players allready connected ', players)
+                    for (const i in players) {
+                        if (players[i].socketId !== this.socket.id) {
+                            const p = new Player(players[i].socketId)
+                            this.PLAYERS.set(players[i].socketId, p)
                         }
                     }
+                })
+                this.socket.on('player_connect', (socketId) => {
+                    console.log('[CONNECT] Player ' + socketId + ' connected')
+                    const p = new Player(socketId)
+                    this.PLAYERS.set(socketId, p)
+                })
+                this.socket.on('player_disconnect', (socketId) => {
+                    console.log('[DISCONNECT] Player ' + socketId + ' disconnected')
+                    console.log(this.PLAYERS.get(socketId))
+                    window.ZombieGame.game.three.scene.remove(this.PLAYERS.get(socketId).body)
+                    this.PLAYERS.delete(socketId)
+                })
+                this.socket.on('players_position', (playerList) => {
+                    for (const i in playerList) {
+                        if (playerList[i].socketId !== this.socketid) {
+                            if (this.PLAYERS.has(playerList[i].socketId)) {
+                                let p = this.PLAYERS.get(playerList[i].socketId)
+                                // p.body.position.set(playerList[i].position.x, playerList[i].position.y, playerList[i].position.z)
+                                p.mesh.position.set(playerList[i].position.x, playerList[i].position.y, playerList[i].position.z)
+                                p.mesh.rotation.setFromVector3(playerList[i].direction)
+                            }
+                        }
 
-                }
-            })
+                    }
+                })
+            });
+
+
         })
         
         this.animate()
@@ -76,25 +88,28 @@ export default class Game {
     animate() {
         requestAnimationFrame( () => {this.animate()} );
 
+        this.three.controls.getDirection(this.lookDirection)
+
+
         const time = performance.now();
         const delta = ( time - this.prevTime ) / 1000;
 
         this.three.update()
 
         for (const [socketId, player] of this.PLAYERS) {
-            console.log(player)
-            player.mesh.position.copy(player.body.position)
-            player.mesh.position.copy(player.body.position)
-
+            // player.mesh.position.copy(player.body.position)
+            // player.mesh.position.copy(player.body.position)
         }
 
-
         if (this.socket !== undefined) {
-            this.infoDiv.innerText = this.socket.id
-
             if (!this.lastPosition.equals(this.three.camera.position)) {
                 this.socket.volatile.emit('position', this.three.camera.position)
                 this.lastPosition = this.three.camera.position.clone()
+            }
+            if (!this.lastDirection.equals(this.lookDirection)) {
+                console.log('changed direction', this.lookDirection)
+                this.socket.volatile.emit('direction', this.lookDirection)
+                this.lastDirection = this.lookDirection.clone()
             }
         }
 

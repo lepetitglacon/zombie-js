@@ -18,13 +18,13 @@ export default class Player {
         this.mesh.position.set(2, 0, 2)
         window.ZombieGame.game.three.scene.add(this.mesh)
 
-        // Create a plane
-        this.body = new CANNON.Body({
-            mass: 90 // mass == 0 makes the body static
-        });
-        this.shape = new CANNON.Box(new CANNON.Vec3(config.width, config.height, config.depth));
-        this.body.addShape(this.shape);
-        window.ZombieGame.game.cannon.world.addBody(this.body)
+        // cannon init
+        // this.body = new CANNON.Body({
+        //     mass: 90 // mass == 0 makes the body static
+        // });
+        // this.shape = new CANNON.Box(new CANNON.Vec3(config.width, config.height, config.depth));
+        // this.body.addShape(this.shape);
+        // window.ZombieGame.game.cannon.world.addBody(this.body)
 
         console.log('Added ' + this.socketId + ' to world')
     }

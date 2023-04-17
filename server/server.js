@@ -83,6 +83,7 @@ function preparePlayersToEmit(socketId) {
             toSend[i] = {}
             toSend[i].socketId = socket.id
             toSend[i].position = socketHandler.position
+            toSend[i].direction = socketHandler.direction
         }
         i++
     }
