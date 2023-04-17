@@ -10,11 +10,9 @@ export default class SocketHandler {
 
         this.position = new THREE.Vector3(0, 0, 0)
         this.position.set(0, 0, 0)
+        this.direction = new THREE.Vector3(0, 0, 0)
 
         this.bind()
-    }
-
-    init() {
     }
 
     bind() {
@@ -24,6 +22,10 @@ export default class SocketHandler {
         this.socket.on('position', (pos) => {
             pos.y = 0
             this.position = pos
+        })
+        this.socket.on('direction', (dir) => {
+            console.log(dir)
+            this.direction.set(dir.x, dir.y, dir.z)
         })
     }
 }
