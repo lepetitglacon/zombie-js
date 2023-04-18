@@ -14,6 +14,10 @@ export default class Game {
         this.direction = new THREE.Vector3();
         this.lookDirection = new THREE.Vector3();
 
+        this.config = {
+            gravity: 2 // 9.8 normalement
+        }
+
         this.PLAYERS = new Map()
         this.socket = undefined
 
@@ -61,7 +65,7 @@ export default class Game {
                 this.socket.on('player_disconnect', (socketId) => {
                     console.log('[DISCONNECT] Player ' + socketId + ' disconnected')
                     console.log(this.PLAYERS.get(socketId))
-                    window.ZombieGame.game.three.scene.remove(this.PLAYERS.get(socketId).mesh)
+                    this.three.scene.remove(this.PLAYERS.get(socketId).mesh)
                     this.PLAYERS.delete(socketId)
                 })
                 this.socket.on('players_position', (playerList) => {
@@ -70,9 +74,8 @@ export default class Game {
                             if (this.PLAYERS.has(playerList[i].socketId)) {
                                 let p = this.PLAYERS.get(playerList[i].socketId)
                                 p.mesh.position.set(playerList[i].position.x, playerList[i].position.y, playerList[i].position.z)
-                                // p.mesh.lookAt(playerList[i].direction)
-
-                                p.mesh.rotateY(Math.atan2(playerList[i].direction.y, playerList[i].direction.x))
+                                let angle = Math.atan2(playerList[i].direction.z,playerList[i].direction.x)
+                                p.mesh.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -angle)
                             }
                         }
 
@@ -91,26 +94,21 @@ export default class Game {
 
         this.three.controls.getDirection(this.lookDirection)
 
-
         const time = performance.now();
         const delta = ( time - this.prevTime ) / 1000;
 
-        this.three.update()
-
         for (const [socketId, player] of this.PLAYERS) {
-            // player.mesh.position.copy(player.body.position)
-            // player.mesh.position.copy(player.body.position)
+
         }
 
         if (this.socket !== undefined) {
-            if (!this.lastPosition.equals(this.three.camera.position)) {
-                this.socket.volatile.emit('position', this.three.camera.position)
+            if (
+                !this.lastPosition.equals(this.three.camera.position) ||
+                !this.lastDirection.equals(this.lookDirection)
+            ) {
+                this.socket.volatile.emit('player_state', this.three.camera.position, this.lookDirection)
                 this.lastPosition = this.three.camera.position.clone()
-            }
-            if (!this.lastDirection.equals(this.lookDirection)) {
-                this.socket.volatile.emit('direction', this.lookDirection)
                 this.lastDirection = this.lookDirection.clone()
-                console.log(this.lookDirection)
             }
         }
 
@@ -119,7 +117,7 @@ export default class Game {
             // stop forces
             this.velocity.x -= this.velocity.x * 10 * delta;
             this.velocity.z -= this.velocity.z * 10 * delta;
-            this.velocity.y -= 9.8 * window.ZombieGame.player.mass * delta; // 100.0 = mass
+            this.velocity.y -= this.config.gravity * window.ZombieGame.player.mass * delta; // 100.0 = mass
 
             this.direction.z = Number( this.inputManager.moveForward ) - Number( this.inputManager.moveBackward );
             this.direction.x = Number( this.inputManager.moveRight ) - Number( this.inputManager.moveLeft );
