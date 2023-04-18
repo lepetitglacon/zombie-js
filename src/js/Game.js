@@ -61,7 +61,7 @@ export default class Game {
                 this.socket.on('player_disconnect', (socketId) => {
                     console.log('[DISCONNECT] Player ' + socketId + ' disconnected')
                     console.log(this.PLAYERS.get(socketId))
-                    window.ZombieGame.game.three.scene.remove(this.PLAYERS.get(socketId).body)
+                    window.ZombieGame.game.three.scene.remove(this.PLAYERS.get(socketId).mesh)
                     this.PLAYERS.delete(socketId)
                 })
                 this.socket.on('players_position', (playerList) => {
@@ -69,9 +69,10 @@ export default class Game {
                         if (playerList[i].socketId !== this.socketid) {
                             if (this.PLAYERS.has(playerList[i].socketId)) {
                                 let p = this.PLAYERS.get(playerList[i].socketId)
-                                // p.body.position.set(playerList[i].position.x, playerList[i].position.y, playerList[i].position.z)
                                 p.mesh.position.set(playerList[i].position.x, playerList[i].position.y, playerList[i].position.z)
-                                p.mesh.rotation.setFromVector3(playerList[i].direction)
+                                // p.mesh.lookAt(playerList[i].direction)
+
+                                p.mesh.rotateY(Math.atan2(playerList[i].direction.y, playerList[i].direction.x))
                             }
                         }
 
@@ -107,9 +108,9 @@ export default class Game {
                 this.lastPosition = this.three.camera.position.clone()
             }
             if (!this.lastDirection.equals(this.lookDirection)) {
-                console.log('changed direction', this.lookDirection)
                 this.socket.volatile.emit('direction', this.lookDirection)
                 this.lastDirection = this.lookDirection.clone()
+                console.log(this.lookDirection)
             }
         }
 

@@ -38,11 +38,6 @@ io.on('connection', (socket) => {
         socket.emit('get_players', preparePlayersToEmit(socket.id))
     }
 
-    socket.on('position', (pos) => {
-        PLAYERS.get(socket).position.x = pos.x
-        PLAYERS.get(socket).position.z = pos.z
-    })
-
     // disconnect
     socket.on('disconnect', () => {
         if (PLAYERS.has(socket)) {

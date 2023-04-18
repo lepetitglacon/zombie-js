@@ -28,5 +28,4 @@ export default class Player {
 
         console.log('Added ' + this.socketId + ' to world')
     }
-
 }
