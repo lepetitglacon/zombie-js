@@ -1,5 +1,6 @@
 import * as THREE from "three"
 import * as CANNON from "cannon-es"
+import {CSS2DObject, CSS2DRenderer} from 'three/addons/renderers/CSS2DRenderer.js';
 
 const config = {
     width: 1,

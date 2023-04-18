@@ -22,11 +22,15 @@ export default class SocketHandler {
         this.socket.on('position', (pos) => {
             pos.y = 0
             this.position = pos
+            console.log(Date.now()+ ' pos', pos)
         })
         this.socket.on('direction', (dir) => {
             this.direction = dir
-            console.log(this.direction)
-
+            console.log(Date.now()+ ' dir' ,dir)
+        })
+        this.socket.on('player_state', (pos, dir) => {
+            this.position = pos
+            this.direction = dir
         })
     }
 }

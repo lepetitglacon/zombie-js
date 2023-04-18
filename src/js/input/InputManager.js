@@ -36,8 +36,7 @@ export default class InputManager {
                 this.moveRight = true;
                 break;
             case 'Space':
-                if ( canJump === true ) velocity.y += 350;
-                this.canJump = false;
+                window.ZombieGame.game.velocity.y += 25;
                 break;
         }
     };
