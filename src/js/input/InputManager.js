@@ -36,7 +36,36 @@ export default class InputManager {
                 this.moveRight = true;
                 break;
             case 'Space':
-                window.ZombieGame.game.velocity.y += 25;
+                if (window.ZombieGame.chatInput !== document.activeElement) {
+                    window.ZombieGame.game.velocity.y += 25;
+                }
+                break;
+            case 'Enter':
+            case 'NumpadEnter':
+                if (window.ZombieGame.chatInput === document.activeElement) {
+                    //sending chat
+                    if (window.ZombieGame.chatInput.value !== '') {
+                        window.ZombieGame.game.socket.emit('chat', window.ZombieGame.chatInput.value)
+                        const msgLi = document.createElement('li')
+                        msgLi.innerText = '~vous : ' + window.ZombieGame.chatInput.value
+                        window.ZombieGame.chatUl.appendChild(msgLi)
+                        window.ZombieGame.chatInput.value = ''
+                        window.ZombieGame.chatInput.classList.toggle('hidden')
+                        document.activeElement.blur()
+                        window.ZombieGame.game.three.controls.lock()
+                    }
+                    // closing chat
+                    else {
+                        window.ZombieGame.chatInput.classList.toggle('hidden')
+                        document.activeElement.blur()
+                        window.ZombieGame.game.three.controls.lock()
+                    }
+                } else {
+                    // focusing chat
+                    window.ZombieGame.game.three.controls.unlock()
+                    window.ZombieGame.chatInput.classList.toggle('hidden')
+                    window.ZombieGame.chatInput.focus({preventScroll: true})
+                }
                 break;
         }
     };

@@ -33,5 +33,8 @@ export default class SocketHandler {
             this.position = pos
             this.direction = dir
         })
+        this.socket.on('chat', (msg) => {
+            this.socket.broadcast.emit('chat', msg, this.socket.id)
+        })
     }
 }

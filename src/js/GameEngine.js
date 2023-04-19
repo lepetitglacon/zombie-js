@@ -35,18 +35,27 @@ export default class GameEngine {
     }
 
     bind() {
+        this.chatDiv = document.getElementById("chat-div")
+        this.chatUl = document.getElementById("chat-ul")
+        this.chatInput = document.getElementById("chat-input")
+
         const mainMenu = document.getElementById("main-menu")
         const startGameButton = document.getElementById("start-game")
-        const crosshairDiv = document.getElementById("crosshair")
+        this.crosshairDiv = document.getElementById("crosshair")
+
+        // start game
         startGameButton.addEventListener("click", (e) => {
             if (this.game === undefined) {
                 this.game = new Game()
             }
             mainMenu.remove()
-            this.game.init()
-            crosshairDiv.classList.toggle('hidden')
-            window.dispatchEvent(new Event("ZombieGame-start"))
             startGameButton.remove()
+
+            this.crosshairDiv.classList.toggle('hidden')
+            this.chatDiv.classList.toggle('hidden')
+
+            this.game.init()
+            window.dispatchEvent(new Event("ZombieGame-start"))
         })
 
 
