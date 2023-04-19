@@ -41,6 +41,7 @@ export default class GraphicsWorld {
 
         this.raycaster = new THREE.Raycaster();
         this.pointer = new THREE.Vector2();
+        this.lastHit = new Map()
 
         this.bind()
     }
@@ -59,12 +60,29 @@ export default class GraphicsWorld {
         window.addEventListener( 'click', () => {
             const intersects = this.raycaster.intersectObjects( this.scene.children );
             for ( let i = 0; i < intersects.length; i ++ ) {
-                intersects[ i ].object.material.color.set( 0xff0000 );
+                const obj = intersects[ i ].object
+                if (obj !== this.groundMesh) {
+                    let hit = {
+                        color: obj.material.color.getHexString(),
+                        time: Date.now()
+                    }
+                    this.lastHit.set(obj, hit)
+                    obj.material.color.set( 0xff0000 );
+                }
             }
+            console.log(this.lastHit)
         });
     }
 
     update() {
+        if (this.lastHit.size > 0) {
+            for (const [obj, hit] of this.lastHit) {
+                if (Date.now() - hit.time > 60) {
+                    obj.material.color.set(parseInt(`0x${hit.color}`))
+                    this.lastHit.delete(obj)
+                }
+            }
+        }
 
     }
 }

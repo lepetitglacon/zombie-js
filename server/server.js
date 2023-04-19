@@ -5,6 +5,23 @@ import cors from 'cors'
 import path from "path"
 import { Server } from "socket.io"
 import SocketHandler from "./SocketHandler.js"
+import os from "os"
+
+console.log()
+
+const nets = os.networkInterfaces();
+const ipAddresses = new Map();
+for (const name of Object.keys(nets)) {
+    for (const net of nets[name]) {
+        const familyV4Value = typeof net.family === 'string' ? 'IPv4' : 4
+        if (net.family === familyV4Value && !net.internal) {
+            if (!ipAddresses.has(name)) {
+                ipAddresses.set(name, net.address);
+            }
+        }
+    }
+}
+console.log(ipAddresses)
 
 // conf
 const port = 3000
@@ -60,6 +77,7 @@ server.listen(port, () => {
     console.log("----------------------------")
     console.log(`Zombie server listening port ${port}`)
     console.log(`Join a game here http://localhost:${port}`)
+    console.log(`Join a game here http://${ipAddresses.values().next().value}:${port}`)
     console.log("----------------------------")
     console.log()
 
