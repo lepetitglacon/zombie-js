@@ -93,6 +93,7 @@ export default class Game {
         requestAnimationFrame( () => {this.animate()} );
 
         this.three.controls.getDirection(this.lookDirection)
+        this.three.raycaster.setFromCamera( this.three.pointer, this.three.camera );
 
         const time = performance.now();
         const delta = ( time - this.prevTime ) / 1000;
