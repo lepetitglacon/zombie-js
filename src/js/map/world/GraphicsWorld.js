@@ -39,6 +39,9 @@ export default class GraphicsWorld {
         this.groundMesh.receiveShadow = true
         this.scene.add(this.groundMesh)
 
+        this.raycaster = new THREE.Raycaster();
+        this.pointer = new THREE.Vector2();
+
         this.bind()
     }
 
@@ -51,6 +54,13 @@ export default class GraphicsWorld {
             this.camera.aspect = window.innerWidth / window.innerHeight;
             this.camera.updateProjectionMatrix();
             this.renderer.setSize( window.innerWidth, window.innerHeight );
+        });
+
+        window.addEventListener( 'click', () => {
+            const intersects = this.raycaster.intersectObjects( this.scene.children );
+            for ( let i = 0; i < intersects.length; i ++ ) {
+                intersects[ i ].object.material.color.set( 0xff0000 );
+            }
         });
     }
 
