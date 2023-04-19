@@ -5,6 +5,7 @@ import PhysicsWorld from "./map/world/PhysicsWorld.js";
 import GameMap from "./map/GameMap.js";
 import InputManager from "./input/InputManager.js";
 import Player from "./common/Player.js";
+import {Vector3} from "three";
 
 export default class Game {
 
@@ -64,8 +65,7 @@ export default class Game {
                 })
                 this.socket.on('player_disconnect', (socketId) => {
                     console.log('[DISCONNECT] Player ' + socketId + ' disconnected')
-                    console.log(this.PLAYERS.get(socketId))
-                    this.three.scene.remove(this.PLAYERS.get(socketId).mesh)
+                    this.PLAYERS.get(socketId).removeFromScene()
                     this.PLAYERS.delete(socketId)
                 })
                 this.socket.on('players_position', (playerList) => {
@@ -74,8 +74,14 @@ export default class Game {
                             if (this.PLAYERS.has(playerList[i].socketId)) {
                                 let p = this.PLAYERS.get(playerList[i].socketId)
                                 p.mesh.position.set(playerList[i].position.x, playerList[i].position.y, playerList[i].position.z)
+
                                 let angle = Math.atan2(playerList[i].direction.z,playerList[i].direction.x)
-                                p.mesh.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -angle)
+                                p.mesh.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -angle - -(Math.PI/2))
+
+                                if (p.gltf !== undefined) {
+                                    p.gltf.position.set(playerList[i].position.x, playerList[i].position.y - 1, playerList[i].position.z)
+                                    p.gltf.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -angle - -(Math.PI/2))
+                                }
                             }
                         }
 
@@ -83,6 +89,7 @@ export default class Game {
                 })
             });
 
+            console.log(this.three.controls.getObject())
 
         })
         
@@ -102,12 +109,16 @@ export default class Game {
 
         }
 
+        this.three.update()
+
         if (this.socket !== undefined) {
             if (
                 !this.lastPosition.equals(this.three.camera.position) ||
                 !this.lastDirection.equals(this.lookDirection)
             ) {
-                this.socket.volatile.emit('player_state', this.three.camera.position, this.lookDirection)
+                let pos = this.three.camera.position.clone()
+                pos.y -= .5
+                this.socket.volatile.emit('player_state', pos, this.lookDirection)
                 this.lastPosition = this.three.camera.position.clone()
                 this.lastDirection = this.lookDirection.clone()
             }
@@ -131,9 +142,9 @@ export default class Game {
             this.three.controls.moveForward( - this.velocity.z * delta );
             this.three.controls.getObject().position.y += ( this.velocity.y * delta ); // new behavior
 
-            if ( this.three.controls.getObject().position.y < 0 ) {
+            if ( this.three.controls.getObject().position.y < .5 ) {
                 this.velocity.y = 0;
-                this.three.controls.getObject().position.y = 0;
+                this.three.controls.getObject().position.y = .5;
             }
         }
 

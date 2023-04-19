@@ -1,6 +1,7 @@
 import * as THREE from "three"
 import * as CANNON from "cannon-es"
 import {CSS2DObject, CSS2DRenderer} from 'three/addons/renderers/CSS2DRenderer.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 const config = {
     width: 1,
@@ -14,19 +15,29 @@ export default class Player {
 
         // three init
         this.geometry = new THREE.BoxGeometry( config.width, config.height, config.depth );
-        this.material = new THREE.MeshStandardMaterial( { color: player.color } );
+        this.material = new THREE.MeshStandardMaterial( { color: player.color, opacity: .2, transparent: true } );
         this.mesh = new THREE.Mesh( this.geometry, this.material );
         this.mesh.position.set(2, 0, 2)
         window.ZombieGame.game.three.scene.add(this.mesh)
 
-        // cannon init
-        // this.body = new CANNON.Body({
-        //     mass: 90 // mass == 0 makes the body static
-        // });
-        // this.shape = new CANNON.Box(new CANNON.Vec3(config.width, config.height, config.depth));
-        // this.body.addShape(this.shape);
-        // window.ZombieGame.game.cannon.world.addBody(this.body)
+        this.gltf = undefined
 
-        console.log('Added ' + this.socketId + ' to world')
+        const loader = new GLTFLoader();
+
+        loader.load(
+            'src/assets/gltf/Soldier.glb',
+            ( gltf ) => {
+                this.gltf = gltf.scene
+                this.gltf.scale.set(1, 1, 1);
+                this.gltf.rotateY(Math.PI / 2);
+                this.gltf.position.copy(this.mesh.position);
+                window.ZombieGame.game.three.scene.add( this.gltf );
+            }
+        );
+    }
+
+    removeFromScene() {
+        window.ZombieGame.game.three.scene.remove(this.mesh)
+        window.ZombieGame.game.three.scene.remove(this.gltf)
     }
 }
