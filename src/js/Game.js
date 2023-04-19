@@ -49,6 +49,12 @@ export default class Game {
                     console.log('pong from server')
                 })
 
+                this.socket.on('chat', (msg, from) => {
+                    const msgLi = document.createElement('li')
+                    msgLi.innerText = from + ' : ' + msg
+                    window.ZombieGame.chatUl.appendChild(msgLi)
+                })
+
                 this.socket.on('get_players', (players) => {
                     console.log('[SOCKET] Players allready connected ', players)
                     for (const i in players) {

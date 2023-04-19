@@ -47,7 +47,13 @@ export default class GraphicsWorld {
     }
 
     bind() {
-        document.addEventListener('click', () => this.controls.lock())
+        document.addEventListener('click', () => {
+            this.controls.lock()
+            if (!window.ZombieGame.chatInput.classList.contains('hidden')) {
+                window.ZombieGame.chatInput.classList.toggle('hidden')
+                window.ZombieGame.chatInput.value = ''
+            }
+        })
         this.controls.addEventListener( 'lock', function () {});
         this.controls.addEventListener( 'unlock', function () {});
 

@@ -109,7 +109,22 @@ body {
     align-items: center;
     justify-content: center;
 }
+#crosshair > img{
+    width: 100px;
+    height: 100px;
+}
 
 .hidden {
     opacity: 0;
+}
+
+#chat-div {
+    position: absolute;
+    bottom: 0;
+    max-height: 50vh;
+    overflow-y: scroll;
+    word-wrap: anywhere;
+}
+#chat-input {
+    -webkit-appearance: none;
 }
