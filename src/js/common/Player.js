@@ -9,12 +9,12 @@ const config = {
 }
 export default class Player {
 
-    constructor(socketId) {
-        this.socketId = socketId
+    constructor(player) {
+        this.socketId = player.socketId
 
         // three init
         this.geometry = new THREE.BoxGeometry( config.width, config.height, config.depth );
-        this.material = new THREE.MeshStandardMaterial( { color: 0xFFB769 } );
+        this.material = new THREE.MeshStandardMaterial( { color: player.color } );
         this.mesh = new THREE.Mesh( this.geometry, this.material );
         this.mesh.position.set(2, 0, 2)
         window.ZombieGame.game.three.scene.add(this.mesh)

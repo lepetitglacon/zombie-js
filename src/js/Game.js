@@ -52,15 +52,15 @@ export default class Game {
                     console.log('[SOCKET] Players allready connected ', players)
                     for (const i in players) {
                         if (players[i].socketId !== this.socket.id) {
-                            const p = new Player(players[i].socketId)
+                            const p = new Player(players[i])
                             this.PLAYERS.set(players[i].socketId, p)
                         }
                     }
                 })
-                this.socket.on('player_connect', (socketId) => {
-                    console.log('[CONNECT] Player ' + socketId + ' connected')
-                    const p = new Player(socketId)
-                    this.PLAYERS.set(socketId, p)
+                this.socket.on('player_connect', (player) => {
+                    console.log('[CONNECT] Player ' + player.socketId + ' connected')
+                    const p = new Player(player)
+                    this.PLAYERS.set(player.socketId, p)
                 })
                 this.socket.on('player_disconnect', (socketId) => {
                     console.log('[DISCONNECT] Player ' + socketId + ' disconnected')

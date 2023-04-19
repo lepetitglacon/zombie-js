@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import * as CANNON from "cannon-es";
+import Utils from "../../common/Utils.js";
 
 export default class Wall {
 
@@ -10,7 +11,7 @@ export default class Wall {
         DOORZOMBIE: 3,
     }
 
-    constructor(geometry = THREE.Vector3(1, 1, 1), color = this.randomColor()) {
+    constructor(geometry = THREE.Vector3(1, 1, 1), color = Utils.randomColor()) {
         this.type = Wall.TYPES.WALL
 
         this.geometry = new THREE.BoxGeometry(geometry.x, geometry.y, geometry.z);
@@ -29,9 +30,6 @@ export default class Wall {
 
     }
 
-    randomColor() {
-        let color = "0x" + Math.floor(Math.random()*16777215).toString(16);
-        return parseInt(color)
-    }
+
 
 }

@@ -1,4 +1,5 @@
 import * as THREE from "three"
+import Utils from "../src/js/common/Utils.js";
 
 
 export default class SocketHandler {
@@ -10,7 +11,9 @@ export default class SocketHandler {
 
         this.position = new THREE.Vector3(0, 0, 0)
         this.position.set(0, 0, 0)
+
         this.direction = new THREE.Vector3(0, 0, 0)
+        this.color = Utils.randomColor()
 
         this.bind()
     }
@@ -22,11 +25,9 @@ export default class SocketHandler {
         this.socket.on('position', (pos) => {
             pos.y = 0
             this.position = pos
-            console.log(Date.now()+ ' pos', pos)
         })
         this.socket.on('direction', (dir) => {
             this.direction = dir
-            console.log(Date.now()+ ' dir' ,dir)
         })
         this.socket.on('player_state', (pos, dir) => {
             this.position = pos
