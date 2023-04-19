@@ -8,7 +8,7 @@ import SocketHandler from "./SocketHandler.js"
 
 // conf
 const port = 3000
-const tickRate = 30
+const tickRate = 60
 
 // objects
 const app = express()
@@ -16,6 +16,7 @@ const server = http.createServer(app)
 const io = new Server(server);
 
 const PLAYERS = new Map()
+const ZOMBIES = new Map()
 
 app.use(cors())
 app.use(express.static('dist'))
@@ -31,7 +32,10 @@ io.on('connection', (socket) => {
     PLAYERS.set(socket, new SocketHandler(socket))
 
     // tell other player the new connection
-    socket.broadcast.emit('player_connect', socket.id)
+    socket.broadcast.emit('player_connect', {
+        socketId: socket.id,
+        color: PLAYERS.get(socket).color
+    })
 
     // send players to socket
     if (PLAYERS.size > 1) {
@@ -67,7 +71,7 @@ server.listen(port, () => {
 })
 
 function logPlayers() {
-    console.log('Online players ' + PLAYERS.size)
+    console.log('[INFO] Online players : ' + PLAYERS.size)
 }
 
 function preparePlayersToEmit(socketId) {
@@ -79,6 +83,7 @@ function preparePlayersToEmit(socketId) {
             toSend[i].socketId = socket.id
             toSend[i].position = socketHandler.position
             toSend[i].direction = socketHandler.direction
+            toSend[i].color = socketHandler.color
         }
         i++
     }
