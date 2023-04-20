@@ -67,6 +67,12 @@ export default class InputManager {
                     window.ZombieGame.chatInput.focus({preventScroll: true})
                 }
                 break;
+
+            case 'Escape':
+
+
+
+                break;
         }
     };
 

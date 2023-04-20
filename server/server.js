@@ -3,11 +3,13 @@ import express from 'express'
 import http from 'http'
 import cors from 'cors'
 import path from "path"
-import { Server } from "socket.io"
-import SocketHandler from "./SocketHandler.js"
 import os from "os"
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import Game from "./Game.js";
 
-console.log()
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const nets = os.networkInterfaces();
 const ipAddresses = new Map();
@@ -21,56 +23,36 @@ for (const name of Object.keys(nets)) {
         }
     }
 }
-console.log(ipAddresses)
 
 // conf
 const port = 3000
-const tickRate = 60
 
 // objects
 const app = express()
 const server = http.createServer(app)
-const io = new Server(server);
-
-const PLAYERS = new Map()
-const ZOMBIES = new Map()
 
 app.use(cors())
-app.use(express.static('dist'))
+app.use(express.static('src'))
+
+const GAMES = new Map()
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '/dist/index.html'));
+    console.log('root')
+    res.sendFile(path.join(__dirname, '/../dist/home.html'));
 })
 
-io.on('connection', (socket) => {
-    console.log(`[CONNECT] ${socket.id} just connected`);
+app.get('/game/:id', (req, res) => {
+    console.log(req.params.id)
+    res.sendFile(path.join(__dirname, '/../dist/index.html'));
+})
 
-    // adding socket to players
-    PLAYERS.set(socket, new SocketHandler(socket))
-
-    // tell other player the new connection
-    socket.broadcast.emit('player_connect', {
-        socketId: socket.id,
-        color: PLAYERS.get(socket).color
-    })
-
-    // send players to socket
-    if (PLAYERS.size > 1) {
-        socket.emit('get_players', preparePlayersToEmit(socket.id))
-    }
-
-    // disconnect
-    socket.on('disconnect', () => {
-        if (PLAYERS.has(socket)) {
-            socket.broadcast.emit('player_disconnect', socket.id)
-            PLAYERS.delete(socket)
-            console.log(`[DISCONNECT] ${socket.id} disconnected`);
-            logPlayers()
-        }
-    })
-
-    logPlayers()
-});
+app.get('/create', (req, res) => {
+    console.log('create game')
+    let id = getRandomId(10)
+    let game = new Game(server)
+    GAMES.set(id, game)
+    res.redirect(`/game/${id}`)
+})
 
 server.listen(port, () => {
     console.log()
@@ -80,30 +62,20 @@ server.listen(port, () => {
     console.log(`Join a game here http://${ipAddresses.values().next().value}:${port}`)
     console.log("----------------------------")
     console.log()
-
-    setInterval(() => {
-        if (PLAYERS.size > 1) {
-            io.emit('players_position', preparePlayersToEmit())
-        }
-    }, 1/tickRate*1000)
 })
 
-function logPlayers() {
-    console.log('[INFO] Online players : ' + PLAYERS.size)
+function getRandomId(length) {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        counter += 1;
+    }
+    return result;
 }
 
-function preparePlayersToEmit(socketId) {
-    let toSend = []
-    let i = 0
-    for (const [socket, socketHandler] of PLAYERS) {
-        if (socket.id !== socketId) {
-            toSend[i] = {}
-            toSend[i].socketId = socket.id
-            toSend[i].position = socketHandler.position
-            toSend[i].direction = socketHandler.direction
-            toSend[i].color = socketHandler.color
-        }
-        i++
-    }
-    return toSend
-}
+
+
+
