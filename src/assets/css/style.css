@@ -118,10 +118,16 @@ body {
     opacity: 0;
 }
 
+.displaynone {
+    display: none!important;
+}
+
 #chat-div {
     position: absolute;
     bottom: 0;
     max-height: 50vh;
+    max-width: 30vw;
+    width: 30vw;
     overflow-y: scroll;
     word-wrap: anywhere;
 }

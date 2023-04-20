@@ -39,6 +39,10 @@ export default class GameEngine {
         this.chatUl = document.getElementById("chat-ul")
         this.chatInput = document.getElementById("chat-input")
 
+        this.optionMenu = document.getElementById("option-menu")
+        this.optionMenuBtnOptions = document.getElementById("option-menu-btn-option")
+        this.optionMenuBtnLeaveGame = document.getElementById("option-menu-btn-leave-game")
+
         const mainMenu = document.getElementById("main-menu")
         const startGameButton = document.getElementById("start-game")
         this.crosshairDiv = document.getElementById("crosshair")
@@ -48,8 +52,8 @@ export default class GameEngine {
             if (this.game === undefined) {
                 this.game = new Game()
             }
-            mainMenu.remove()
-            startGameButton.remove()
+            mainMenu.classList.toggle('displaynone')
+            startGameButton.classList.toggle('displaynone')
 
             this.crosshairDiv.classList.toggle('hidden')
             this.chatDiv.classList.toggle('hidden')

@@ -22,18 +22,17 @@ export default class Player {
 
         this.gltf = undefined
 
-        const loader = new GLTFLoader();
-
-        loader.load(
-            'src/assets/gltf/Soldier.glb',
-            ( gltf ) => {
-                this.gltf = gltf.scene
-                this.gltf.scale.set(1, 1, 1);
-                this.gltf.rotateY(Math.PI / 2);
-                this.gltf.position.copy(this.mesh.position);
-                window.ZombieGame.game.three.scene.add( this.gltf );
-            }
-        );
+        // const loader = new GLTFLoader();
+        // loader.load(
+        //     'src/assets/gltf/Soldier.glb',
+        //     ( gltf ) => {
+        //         this.gltf = gltf.scene
+        //         this.gltf.scale.set(1, 1, 1);
+        //         this.gltf.rotateY(Math.PI / 2);
+        //         this.gltf.position.copy(this.mesh.position);
+        //         window.ZombieGame.game.three.scene.add( this.gltf );
+        //     }
+        // );
     }
 
     removeFromScene() {
