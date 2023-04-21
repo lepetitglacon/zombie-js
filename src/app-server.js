@@ -6,7 +6,7 @@ import path from "path"
 import os from "os"
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import Game from "./Game.js";
+import Game from "./server/Game.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -23,6 +23,8 @@ for (const name of Object.keys(nets)) {
         }
     }
 }
+
+console.log('')
 
 // conf
 const port = 3000

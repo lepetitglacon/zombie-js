@@ -1,11 +1,9 @@
-import * as CANNON from "cannon-es";
 import * as THREE from "three";
 import GraphicsWorld from "./map/world/GraphicsWorld.js";
 import PhysicsWorld from "./map/world/PhysicsWorld.js";
 import GameMap from "./map/GameMap.js";
 import InputManager from "./input/InputManager.js";
-import Player from "./common/Player.js";
-import {Vector3} from "three";
+import Player from "../common/Player.js";
 
 export default class Game {
 

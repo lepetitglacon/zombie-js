@@ -1,5 +1,5 @@
 import * as THREE from "three"
-import Utils from "../src/js/common/Utils.js";
+import Utils from "../common/Utils.js";
 
 
 export default class SocketHandler {
