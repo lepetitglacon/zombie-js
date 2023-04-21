@@ -1,6 +1,7 @@
 import Game from "./Game.js";
+import LandingPage from "./LandingPage/LandingPage.js";
 
-export default class GameEngine {
+export default class ZombieGame {
 
     static STATE = {
         MENU: 0,
@@ -9,7 +10,7 @@ export default class GameEngine {
     }
 
     constructor() {
-        this.state = GameEngine.STATE.MENU
+        this.state = ZombieGame.STATE.MENU
         this.game = new Game()
 
         this.player = {
@@ -18,15 +19,14 @@ export default class GameEngine {
             height: 1.8
         }
 
-
         switch (this.state) {
-            case GameEngine.STATE.MENU:
+            case ZombieGame.STATE.MENU:
 
                 break;
-            case GameEngine.STATE.OPTION:
+            case ZombieGame.STATE.OPTION:
 
                 break;
-            case GameEngine.STATE.GAME:
+            case ZombieGame.STATE.GAME:
 
                 break;
         }
@@ -43,25 +43,14 @@ export default class GameEngine {
         this.optionMenuBtnOptions = document.getElementById("option-menu-btn-option")
         this.optionMenuBtnLeaveGame = document.getElementById("option-menu-btn-leave-game")
 
-        const mainMenu = document.getElementById("main-menu")
-        const startGameButton = document.getElementById("start-game")
         this.crosshairDiv = document.getElementById("crosshair")
 
-        // start game
-        startGameButton.addEventListener("click", (e) => {
-            if (this.game === undefined) {
-                this.game = new Game()
-            }
-            mainMenu.classList.toggle('displaynone')
-            startGameButton.classList.toggle('displaynone')
+        this.crosshairDiv.classList.toggle('hidden')
+        this.chatDiv.classList.toggle('hidden')
+    }
 
-            this.crosshairDiv.classList.toggle('hidden')
-            this.chatDiv.classList.toggle('hidden')
-
-            this.game.init()
-            window.dispatchEvent(new Event("ZombieGame-start"))
-        })
-
-
+    play() {
+        this.game.init()
+        window.dispatchEvent(new Event("ZombieGame-start"))
     }
 }

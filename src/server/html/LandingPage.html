@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <meta charset="UTF-8">
+    <title>Z3D</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+</head>
+<body>
+
+<!-------------------------------- LANDING PAGE ------------------------------->
+
+<div id="landing-page" class="container-fluid d-flex">
+    <div class="col ">
+        <div class="row ">
+            <div class="m-5">
+                <input type="text" name="create-game-title" id="create-game-title">
+                <button id="create-game-button">Create Room</button>
+            </div>
+        </div>
+        <div class="row align-self-end m-5">
+
+            <div class="d-flex justify-content-between">
+                <h2>Public games</h2>
+                <button id="refresh-btn">Refresh</button>
+            </div>
+            <hr class="my-3">
+
+            <table id="games-table" class="table">
+                <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Map</th>
+                    <th scope="col">Players</th>
+                    <th scope="col">Ping</th>
+                    <th scope="col">Action</th>
+                </tr>
+                </thead>
+                <tbody id="public-games-tbody">
+                <tr>
+                    <td>20dzq5d05zq1d5qzd8zq</td>
+                    <td>Mark</td>
+                    <td>Otto</td>
+                    <td>@mdo</td>
+                    <td>@mdo</td>
+                    <td>@mdo</td>
+                </tr>
+                <tr>
+                    <td>20dzq5d05zq1d5qzd8zq</td>
+                    <td>Jacob</td>
+                    <td>Thornton</td>
+                    <td>@fat</td>
+                    <td>@fat</td>
+                    <td>@fat</td>
+                </tr>
+                <tr>
+                    <td>20dzq5d05zq1d5qzd8zq</td>
+                    <td colspan="2">Larry the Bird</td>
+                    <td>@twitter</td>
+                    <td>@twitter</td>
+                    <td>@twitter</td>
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+    <div class="col">
+        <div class="row justify-content-center">
+            <h1 id="lp-title" class="red text-center">Z3D</h1>
+        </div>
+        <div class="row lp-zombie-hand-div justify-content-center">
+            <img class="lp-zombie-hand" src="img/zombie-hand.png">
+        </div>
+    </div>
+</div>
+
+<!-------------------------------- GAME ------------------------------->
+<div id="game-UI">
+
+    <div id="crosshair" class="hidden">
+        <img src="img/crosshair.png">
+    </div>
+
+    <div id="chat-div" class="hidden">
+        <ul id="chat-ul">
+            <li class="chat-msg">Press enter to write a message</li>
+        </ul>
+        <input id="chat-input" class="hidden" type="text">
+    </div>
+
+    <div id="option-menu" class="hidden">
+        <button id="option-menu-btn-option">Options</button>
+        <button id="option-menu-btn-leave-game">Leave Game</button>
+    </div>
+
+</div>
+
+
+
+<script>
+    function landingPage () {
+
+        const refreshBtn = document.getElementById('refresh-btn')
+        const gamesTable = document.getElementById('games-table')
+        const gamesTableBody = document.getElementById('public-games-tbody')
+        let lastRefresh = Date.now()
+        const resfreshRate = 1000
+
+        refreshBtn.addEventListener('click', () => {
+
+            if (lastRefresh + resfreshRate < Date.now()) {
+                refresh();
+                lastRefresh = Date.now()
+            }
+
+        })
+
+        function refresh() {
+            const options = {
+                method: 'GET',
+                headers: {}
+            }
+            fetch('/lp/refresh', options)
+                .then(response => response.json())
+                .then(body => {
+                    createTable(body)
+                });
+        }
+
+        function createTable(body) {
+            gamesTableBody.replaceChildren();
+
+            for (let i = 0; i < body.length; i++) {
+                gamesTableBody.appendChild(createRow(body[i]))
+            }
+
+        }
+
+        function createRow(gameConf) {
+            const row = document.createElement('tr')
+
+            row.appendChild(createTd(gameConf.title))
+            row.appendChild(createTd(gameConf.map))
+            row.appendChild(createTd(gameConf.players))
+            row.appendChild(createTd(gameConf.ping))
+
+            row.appendChild(createTd().appendChild(createLink('Join', '/game/'+gameConf.id)))
+
+            return row
+        }
+
+        function createTd(innerText) {
+            const td = document.createElement('td')
+            td.innerText = innerText
+            return td
+        }
+
+        function createLink(innerText, link) {
+            const a = document.createElement('a')
+            a.innerText = innerText
+            a.href = link
+            return a
+        }
+
+        refresh()
+
+    }
+    landingPage()
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+</body>
+</html>

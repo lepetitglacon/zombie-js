@@ -1,4 +1,3 @@
-// imports
 import express from 'express'
 import http from 'http'
 import cors from 'cors'
@@ -24,8 +23,6 @@ for (const name of Object.keys(nets)) {
     }
 }
 
-console.log('')
-
 // conf
 const port = 3000
 
@@ -34,17 +31,35 @@ const app = express()
 const server = http.createServer(app)
 
 app.use(cors())
-app.use(express.static('src'))
+app.use(express.static('dist/src/client/assets'));
+app.use('/game', express.static('dist'));
 
 const GAMES = new Map()
+createGame()
 
 app.get('/', (req, res) => {
-    console.log('root')
-    res.sendFile(path.join(__dirname, '/../dist/home.html'));
+    res.sendFile(path.join(__dirname, '../src/server/html/LandingPage.html'));
+})
+
+app.get('/lp/refresh', (req, res) => {
+
+    const games = []
+
+    let i = 0;
+    for (const [key, val] of GAMES) {
+        games[i] = {}
+        games[i].id = key
+        games[i].title = val.title ?? 'No title'
+        games[i].map = val.map
+        games[i].players = val.PLAYERS.size
+        games[i].ping = 25
+        i++
+    }
+
+    res.json(games);
 })
 
 app.get('/game/:id', (req, res) => {
-    console.log(req.params.id)
     res.sendFile(path.join(__dirname, '/../dist/index.html'));
 })
 
@@ -66,7 +81,14 @@ server.listen(port, () => {
     console.log()
 })
 
-function getRandomId(length) {
+function createGame() {
+    console.log('create game')
+    let id = getRandomId(10)
+    let game = new Game(server)
+    GAMES.set(id, game)
+}
+
+function getRandomId(length = 10) {
     let result = '';
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     const charactersLength = characters.length;

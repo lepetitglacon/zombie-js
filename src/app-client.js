@@ -2,6 +2,8 @@ import "./client/assets/css/style.css"
 import "./client/assets/img/zombie-hand.png"
 import "./client/assets/img/crosshair.png"
 
-import GameEngine from "./client/GameEngine.js";
+import ZombieGame from "./client/ZombieGame.js";
 
-window.ZombieGame = new GameEngine()
+window.ZombieGame = new ZombieGame()
+window.ZombieGame.play()
+
