@@ -1,21 +1,34 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const nodeExternals = require('webpack-node-externals');
+const path = require("path");
 
 module.exports = {
     mode: 'development',
+
     entry: {
-        main: './src/index.js',
+        client: './src/app-client.js',
+        // server: './src/app-server.js',
     },
+
     output: {
-        filename: 'index.js',
+        path: path.resolve(__dirname, 'dist'),
+        filename: '[name].js'
     },
 
     watchOptions: {
-        ignored: '**/node_modules',
+        ignored: '/node_modules/',
     },
+
+    // in order to ignore built-in modules like path, fs,
+    target: 'node',
+
+    // in order to ignore all modules in node_modules folder
+    externals: [nodeExternals()],
+
 
     plugins: [
         new HtmlWebpackPlugin({
-            template: "src/assets/html/template.html"
+            template: "src/server/html/template.html"
         })
     ],
 
