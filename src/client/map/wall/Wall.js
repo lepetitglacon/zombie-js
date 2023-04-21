@@ -19,6 +19,7 @@ export default class Wall {
         this.mesh = new THREE.Mesh( this.geometry, this.material );
         this.mesh.castShadow = true
         this.mesh.receiveShadow = true
+        console.log(window.ZombieGame)
         window.ZombieGame.game.three.scene.add(this.mesh)
 
         // this.shape = new CANNON.Box(new CANNON.Vec3(10, 0, 0.5))

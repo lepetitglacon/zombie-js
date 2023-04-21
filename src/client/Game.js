@@ -1,6 +1,5 @@
 import * as THREE from "three";
 import GraphicsWorld from "./map/world/GraphicsWorld.js";
-import PhysicsWorld from "./map/world/PhysicsWorld.js";
 import GameMap from "./map/GameMap.js";
 import InputManager from "./input/InputManager.js";
 import Player from "../common/Player.js";
@@ -23,14 +22,15 @@ export default class Game {
         this.infoDiv = document.createElement("div")
         this.infoDiv.id = 'info'
         document.body.appendChild(this.infoDiv)
+
+        this.inputManager = new InputManager()
+        this.three = new GraphicsWorld(500, 500)
+        this.map = new GameMap()
     }
 
     init() {
-        this.inputManager = new InputManager()
 
-        this.three = new GraphicsWorld(500, 500)
-        this.cannon = new PhysicsWorld()
-        this.map = new GameMap()
+        this.map.init()
 
         this.lastPosition = this.three.camera.position.clone()
         this.lastDirection = this.lookDirection.clone()
@@ -152,8 +152,6 @@ export default class Game {
             }
         }
 
-        this.cannon.world.step(delta)
-        this.cannon.debugger.update()
         this.prevTime = time;
         this.three.renderer.render( this.three.scene, this.three.camera );
     }

@@ -5,6 +5,7 @@ export default class Game {
 
     constructor(server) {
         const io = new Server(server);
+        this.name = ''
 
         this.PLAYERS = new Map()
         this.ZOMBIES = new Map()

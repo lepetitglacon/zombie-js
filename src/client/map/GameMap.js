@@ -10,7 +10,7 @@ export default class GameMap {
 
         this.rooms = []
 
-        this.init()
+
     }
 
     addRoom(room) {
