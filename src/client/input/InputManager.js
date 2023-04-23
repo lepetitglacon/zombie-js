@@ -47,9 +47,9 @@ export default class InputManager {
                     //sending chat
                     console.log('sending chat')
                     if (window.ZombieGame.chatInput.value !== '') {
-                        window.ZombieGame.game.socket.emit('chat', window.ZombieGame.chatInput.value)
+                        window.ZombieGame.game.serverConnector.socket.emit('chat', window.ZombieGame.chatInput.value)
                         const msgLi = document.createElement('li')
-                        msgLi.innerText = '~vous : ' + window.ZombieGame.chatInput.value
+                        msgLi.innerText = 'YOU : ' + window.ZombieGame.chatInput.value
                         window.ZombieGame.chatUl.appendChild(msgLi)
                         window.ZombieGame.chatInput.value = ''
                         window.ZombieGame.chatInput.classList.toggle('hidden')
