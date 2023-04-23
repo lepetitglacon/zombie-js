@@ -1,0 +1,65 @@
+* {
+    margin: 0!important;
+    padding: 0!important;
+}
+/************* GAME ************/
+
+#info {
+    position: absolute;
+}
+
+#crosshair {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#crosshair > img{
+    width: 100px;
+    height: 100px;
+}
+
+.d-none {
+    display: none!important;
+}
+.hidden {
+    opacity: 0;
+}
+
+#chat-div {
+    position: absolute;
+    bottom: 0;
+}
+#chat-input {
+    -webkit-appearance: none;
+}
+
+.keyboard-enter {
+    height: 25px;
+    top: 5px;
+}
+
+#option-menu {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+}
+#option-menu > button,a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px!important;
+    width: 150px;
+    height: 100px;
+    background: brown;
+    border: 1px solid antiquewhite;
+
+    color: darkorange;
+    font-size: 24px;
+}
