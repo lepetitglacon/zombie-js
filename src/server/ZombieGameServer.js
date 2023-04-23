@@ -29,17 +29,13 @@ export default class ZombieGameServer {
         this.__filename = fileURLToPath(import.meta.url);
         this.__dirname = dirname(this.__filename);
 
-
         this.port = 3000
         this.app = express()
         this.server = http.createServer(this.app)
         this.io = new Server(this.server);
 
-
-
         this.GAMES = new Map()
-        //createGame('TEST')
-
+        this.createGame('TEST')
     }
 
     init() {
@@ -47,7 +43,6 @@ export default class ZombieGameServer {
         this.app.use(express.static('dist/src/client/assets'));
         this.app.use('/game', express.static('dist'));
         this.routes = new Routes()
-
     }
 
     run() {
@@ -62,34 +57,10 @@ export default class ZombieGameServer {
             console.log()
 
             this.io.on('connection', (socket) => {
-                let query = socket.handshake.query;
-                let roomName = query.roomName;
+                let roomName = socket.handshake.query.roomName;
                 if (this.GAMES.has(roomName)) {
                     const game = this.GAMES.get(roomName)
                     game.PLAYERS.set(socket, new ClientConnector(socket, roomName))
-
-                    socket.join(roomName)
-
-                    // tell other player the new connection
-                    socket.to(roomName).emit('player_connect', {
-                        socketId: socket.id,
-                        color: game.PLAYERS.get(socket).color
-                    })
-
-                    // send players to socket
-                    if (game.PLAYERS.size > 1) {
-                        socket.emit('get_players', game.preparePlayersToEmit())
-                    }
-
-                    // disconnect
-                    socket.on('disconnect', () => {
-                        if (game.PLAYERS.has(socket)) {
-                            socket.to(roomName).emit('player_disconnect', socket.id)
-                            game.PLAYERS.delete(socket)
-                            console.log(`[DISCONNECT] ${socket.id} disconnected`);
-                        }
-                    })
-
                 }
             });
         })
