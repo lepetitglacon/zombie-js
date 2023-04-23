@@ -37,9 +37,15 @@ export default class Game {
 
         window.addEventListener('ZombieGame-start', () => {
 
-            this.socket = io()
+            const roomName = window.location.href.substring(window.location.href.lastIndexOf('/') + 1)
+            this.socket = io({
+                query: {
+                    roomName: roomName,
+                },
+            });
+
             this.socket.on("connect", () => {
-                console.log('[SOCKET] connected to server')
+                console.log('[SOCKET] connected to room : ' + roomName)
 
                 this.infoDiv.innerText = this.socket.id
 
@@ -73,6 +79,7 @@ export default class Game {
                     this.PLAYERS.delete(socketId)
                 })
                 this.socket.on('players_position', (playerList) => {
+                    console.log('p pos')
                     for (const i in playerList) {
                         if (playerList[i].socketId !== this.socketid) {
                             if (this.PLAYERS.has(playerList[i].socketId)) {
@@ -92,8 +99,6 @@ export default class Game {
                     }
                 })
             });
-
-            console.log(this.three.controls.getObject())
 
         })
         

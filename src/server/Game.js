@@ -1,54 +1,29 @@
-import SocketHandler from "./SocketHandler.js";
-import { Server } from "socket.io"
-
 export default class Game {
 
-    constructor(server) {
-        const io = new Server(server);
+    static STATUS = {
+        PAUSED: 0,
+        RUNNING: 1,
+    }
+
+    constructor(roomId, server) {
+        this.io = server
+        this.tickRate = 30
+        this.status = Game.STATUS.PAUSED
+        this.roomId = roomId
+
         this.name = ''
 
         this.PLAYERS = new Map()
         this.ZOMBIES = new Map()
-
-        this.tickRate = 60
-
-
-        io.on('connection', (socket) => {
-            console.log(`[CONNECT] ${socket.id} just connected`);
-
-            // adding socket to players
-            this.PLAYERS.set(socket, new SocketHandler(socket))
-
-            // tell other player the new connection
-            socket.broadcast.emit('player_connect', {
-                socketId: socket.id,
-                color: this.PLAYERS.get(socket).color
-            })
-
-            // send players to socket
-            if (this.PLAYERS.size > 1) {
-                socket.emit('get_players', this.preparePlayersToEmit(socket.id))
-            }
-
-            // disconnect
-            socket.on('disconnect', () => {
-                if (this.PLAYERS.has(socket)) {
-                    socket.broadcast.emit('player_disconnect', socket.id)
-                    this.PLAYERS.delete(socket)
-                    console.log(`[DISCONNECT] ${socket.id} disconnected`);
-                    this.logPlayers()
-                }
-            })
-
-            this.logPlayers()
-        });
     }
 
     run() {
+        this.status = Game.STATUS.RUNNING
         setInterval(() => {
             if (this.PLAYERS.size > 1) {
-                this.io.emit('players_position', this.preparePlayersToEmit())
+                this.io.to(this.roomId).emit('players_position', this.preparePlayersToEmit())
             }
+            console.log(this.roomId + ' running')
         }, 1/this.tickRate*1000)
     }
 

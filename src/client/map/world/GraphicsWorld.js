@@ -76,7 +76,6 @@ export default class GraphicsWorld {
                     obj.material.color.set( 0xff0000 );
                 }
             }
-            console.log(this.lastHit)
         });
     }
 
