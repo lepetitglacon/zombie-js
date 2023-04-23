@@ -7,7 +7,7 @@ export default class Game {
 
     constructor(roomId, server) {
         this.io = server
-        this.tickRate = 30
+        this.tickRate = 60
         this.status = Game.STATUS.PAUSED
         this.roomId = roomId
 
