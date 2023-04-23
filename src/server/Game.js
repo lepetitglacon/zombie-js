@@ -23,7 +23,6 @@ export default class Game {
             if (this.PLAYERS.size > 1) {
                 this.io.to(this.roomId).emit('players_position', this.preparePlayersToEmit())
             }
-            console.log(this.roomId + ' running')
         }, 1/this.tickRate*1000)
     }
 
@@ -31,17 +30,15 @@ export default class Game {
         console.log('[INFO] Online players : ' + this.PLAYERS.size)
     }
 
-    preparePlayersToEmit(socketId) {
+    preparePlayersToEmit() {
         let toSend = []
         let i = 0
         for (const [socket, socketHandler] of this.PLAYERS) {
-            if (socket.id !== socketId) {
-                toSend[i] = {}
-                toSend[i].socketId = socket.id
-                toSend[i].position = socketHandler.position
-                toSend[i].direction = socketHandler.direction
-                toSend[i].color = socketHandler.color
-            }
+            toSend[i] = {}
+            toSend[i].socketId = socket.id
+            toSend[i].position = socketHandler.position
+            toSend[i].direction = socketHandler.direction
+            toSend[i].color = socketHandler.color
             i++
         }
         return toSend
