@@ -1,5 +1,7 @@
+import "./assets/css/style.css"
+import "./assets/img/zombie-hand.png"
+import "./assets/img/crosshair.png"
 import Game from "./Game.js";
-import LandingPage from "./LandingPage/LandingPage.js";
 
 export default class ZombieGame {
 
@@ -45,8 +47,8 @@ export default class ZombieGame {
 
         this.crosshairDiv = document.getElementById("crosshair")
 
-        this.crosshairDiv.classList.toggle('hidden')
-        this.chatDiv.classList.toggle('hidden')
+        //this.crosshairDiv.classList.toggle('hidden')
+        //this.chatDiv.classList.toggle('hidden')
     }
 
     play() {

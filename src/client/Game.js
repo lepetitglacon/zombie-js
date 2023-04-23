@@ -54,14 +54,14 @@ export default class Game {
                 })
 
                 this.socket.on('chat', (msg, from) => {
-                    console.log('[CHAT] Players allready connected ', players)
+                    console.log('[CHAT] message from ', from)
                     const msgLi = document.createElement('li')
                     msgLi.innerText = from + ' : ' + msg
                     window.ZombieGame.chatUl.appendChild(msgLi)
                 })
 
                 this.socket.on('get_players', (players) => {
-                    console.log('[GET PLAYERS] Players allready connected ', players)
+                    console.log('[PLAYERS] Players allready connected ', players)
                     for (const i in players) {
                         if (players[i].socketId !== this.socket.id) {
                             const p = new Player(players[i])
@@ -70,17 +70,16 @@ export default class Game {
                     }
                 })
                 this.socket.on('player_connect', (player) => {
-                    console.log('[PLAYER CONNECT] Player ' + player.socketId + ' connected')
+                    console.log('[CONNECT] Player ' + player.socketId + ' connected')
                     const p = new Player(player)
                     this.PLAYERS.set(player.socketId, p)
                 })
                 this.socket.on('player_disconnect', (socketId) => {
-                    console.log('[PLAYER DISCONNECT] Player ' + socketId + ' disconnected')
+                    console.log('[DISCONNECT] Player ' + socketId + ' disconnected')
                     this.PLAYERS.get(socketId).removeFromScene()
                     this.PLAYERS.delete(socketId)
                 })
                 this.socket.on('players_position', (playerList) => {
-                    console.log('p pos')
                     for (const i in playerList) {
                         if (playerList[i].socketId !== this.socketid) {
                             if (this.PLAYERS.has(playerList[i].socketId)) {
