@@ -30,6 +30,10 @@ export default class Player {
                 this.gltf.scale.set(.9, .9, .9);
                 this.gltf.rotateY(Math.PI / 2);
                 this.gltf.position.copy(this.mesh.position);
+                for (let i in this.gltf.children[0].children) {
+                    this.gltf.children[0].children[i].material.color.set(player.color)
+                    this.gltf.children[0].children[i].material.opacity = 1
+                }
                 window.ZombieGame.game.three.scene.add( this.gltf );
             }
         );
