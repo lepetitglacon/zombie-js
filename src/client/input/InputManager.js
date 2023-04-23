@@ -56,7 +56,7 @@ export default class InputManager {
                         window.ZombieGame.chatInput.value = ''
                         window.ZombieGame.chatInput.classList.toggle('hidden')
                         document.activeElement.blur()
-                        this.isChatOpen = true
+                        this.isChatOpen = false
                         window.ZombieGame.game.three.controls.lock()
                     }
                     // closing chat
@@ -64,7 +64,7 @@ export default class InputManager {
                         console.log('closing chat')
                         window.ZombieGame.chatInput.classList.toggle('hidden')
                         document.activeElement.blur()
-                        this.isChatOpen = true
+                        this.isChatOpen = false
                         window.ZombieGame.game.three.controls.lock()
                     }
                 } else {
