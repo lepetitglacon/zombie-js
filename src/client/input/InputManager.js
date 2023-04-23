@@ -19,6 +19,7 @@ export default class InputManager {
     }
 
     onKeyDown = ( event ) => {
+        console.log(event.code)
         switch ( event.code ) {
             case 'ArrowUp':
             case 'KeyW':
@@ -72,9 +73,10 @@ export default class InputManager {
                 }
                 break;
 
-            case 'Escape':
-
-
+            case 'Tab':
+                event.preventDefault()
+                window.ZombieGame.game.three.controls.unlock()
+                window.ZombieGame.optionMenu.classList.toggle('d-none')
 
                 break;
         }
