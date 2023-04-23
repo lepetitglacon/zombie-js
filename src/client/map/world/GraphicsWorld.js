@@ -53,6 +53,9 @@ export default class GraphicsWorld {
                 window.ZombieGame.chatInput.classList.toggle('hidden')
                 window.ZombieGame.chatInput.value = ''
             }
+            if (!window.ZombieGame.optionMenu.classList.contains('d-none')) {
+                !window.ZombieGame.optionMenu.classList.toggle('d-none')
+            }
         })
         this.controls.addEventListener( 'lock', function () {});
         this.controls.addEventListener( 'unlock', function () {});

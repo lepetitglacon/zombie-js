@@ -39,6 +39,7 @@ export default class InputManager {
             case 'Space':
                 if (window.ZombieGame.chatInput !== document.activeElement && this.canJump) {
                     window.ZombieGame.game.velocity.y += 25;
+                    this.canJump = false
                 }
                 break;
             case 'Enter':
