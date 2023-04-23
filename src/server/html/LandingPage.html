@@ -104,6 +104,10 @@
         const refreshBtn = document.getElementById('refresh-btn')
         const gamesTable = document.getElementById('games-table')
         const gamesTableBody = document.getElementById('public-games-tbody')
+
+        const createGameButton = document.getElementById('create-game-button')
+        const createGameTitle = document.getElementById('create-game-title')
+
         let lastRefresh = Date.now()
         const resfreshRate = 1000
 
@@ -112,6 +116,15 @@
             if (lastRefresh + resfreshRate < Date.now()) {
                 refresh();
                 lastRefresh = Date.now()
+            }
+
+        })
+
+        createGameButton.addEventListener('click', (e) => {
+            e.preventDefault()
+
+            if (createGameTitle.value !== '') {
+                window.location.assign('/create/'+createGameTitle.value)
             }
 
         })
@@ -140,7 +153,7 @@
         function createRow(gameConf) {
             const row = document.createElement('tr')
 
-            row.appendChild(createTd(gameConf.title))
+            row.appendChild(createTd(gameConf.name))
             row.appendChild(createTd(gameConf.map))
             row.appendChild(createTd(gameConf.players))
             row.appendChild(createTd(gameConf.ping))
