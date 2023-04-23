@@ -62,21 +62,23 @@ export default class Game {
             }
         }
 
-        // stop forces
-        this.velocity.x -= this.velocity.x * 10 * delta;
-        this.velocity.z -= this.velocity.z * 10 * delta;
-        this.velocity.y -= this.config.gravity * window.ZombieGame.player.mass * delta;
+        if (!this.inputManager.isChatOpen) {
+            // stop forces
+            this.velocity.x -= this.velocity.x * 10 * delta;
+            this.velocity.z -= this.velocity.z * 10 * delta;
+            this.velocity.y -= this.config.gravity * window.ZombieGame.player.mass * delta;
 
-        this.direction.z = Number( this.inputManager.moveForward ) - Number( this.inputManager.moveBackward );
-        this.direction.x = Number( this.inputManager.moveRight ) - Number( this.inputManager.moveLeft );
-        this.direction.normalize();
+            this.direction.z = Number( this.inputManager.moveForward ) - Number( this.inputManager.moveBackward );
+            this.direction.x = Number( this.inputManager.moveRight ) - Number( this.inputManager.moveLeft );
+            this.direction.normalize();
 
-        if ( this.inputManager.moveForward || this.inputManager.moveBackward ) this.velocity.z -= this.direction.z * window.ZombieGame.player.speed * delta;
-        if ( this.inputManager.moveLeft || this.inputManager.moveRight ) this.velocity.x -= this.direction.x * window.ZombieGame.player.speed * delta;
+            if ( this.inputManager.moveForward || this.inputManager.moveBackward ) this.velocity.z -= this.direction.z * window.ZombieGame.player.speed * delta;
+            if ( this.inputManager.moveLeft || this.inputManager.moveRight ) this.velocity.x -= this.direction.x * window.ZombieGame.player.speed * delta;
 
-        this.three.controls.moveRight( - this.velocity.x * delta );
-        this.three.controls.moveForward( - this.velocity.z * delta );
-        this.three.controls.getObject().position.y += ( this.velocity.y * delta );
+            this.three.controls.moveRight( - this.velocity.x * delta );
+            this.three.controls.moveForward( - this.velocity.z * delta );
+            this.three.controls.getObject().position.y += ( this.velocity.y * delta );
+        }
 
         if ( this.three.controls.getObject().position.y < .5 ) {
             this.inputManager.canJump = true
