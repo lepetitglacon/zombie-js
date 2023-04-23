@@ -22,7 +22,7 @@
 }
 
 .d-none {
-    display: none;
+    display: none!important;
 }
 .hidden {
     opacity: 0;
@@ -39,4 +39,27 @@
 .keyboard-enter {
     height: 25px;
     top: 5px;
+}
+
+#option-menu {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+}
+#option-menu > button,a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px!important;
+    width: 150px;
+    height: 100px;
+    background: brown;
+    border: 1px solid antiquewhite;
+
+    color: darkorange;
+    font-size: 24px;
 }

@@ -72,9 +72,10 @@ export default class InputManager {
                 }
                 break;
 
-            case 'Escape':
-
-
+            case 'Tab':
+                event.preventDefault()
+                window.ZombieGame.game.three.controls.unlock()
+                window.ZombieGame.optionMenu.classList.toggle('d-none')
 
                 break;
         }
