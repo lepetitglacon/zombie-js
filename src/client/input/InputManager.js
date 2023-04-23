@@ -8,6 +8,7 @@ export default class InputManager {
         this.moveLeft = false;
         this.moveRight = false;
         this.canJump = false;
+        this.isChatOpen = false;
         this.init()
     }
 
@@ -55,6 +56,7 @@ export default class InputManager {
                         window.ZombieGame.chatInput.value = ''
                         window.ZombieGame.chatInput.classList.toggle('hidden')
                         document.activeElement.blur()
+                        this.isChatOpen = true
                         window.ZombieGame.game.three.controls.lock()
                     }
                     // closing chat
@@ -62,6 +64,7 @@ export default class InputManager {
                         console.log('closing chat')
                         window.ZombieGame.chatInput.classList.toggle('hidden')
                         document.activeElement.blur()
+                        this.isChatOpen = true
                         window.ZombieGame.game.three.controls.lock()
                     }
                 } else {
@@ -70,6 +73,7 @@ export default class InputManager {
                     window.ZombieGame.game.three.controls.unlock()
                     window.ZombieGame.chatInput.classList.toggle('hidden')
                     window.ZombieGame.chatInput.focus({preventScroll: true})
+                    this.isChatOpen = true
                 }
                 break;
 
