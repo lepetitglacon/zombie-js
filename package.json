@@ -5,9 +5,10 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "webpack --watch",
-    "serve": "nodemon src/app-server.js"
+    "build": "webpack",
+    "serve": "nodemon src/app-server.js",
+    "run": "node src/app-server.js"
   },
   "dependencies": {
     "cannon-es": "^0.20.0",
