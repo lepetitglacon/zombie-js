@@ -35,3 +35,8 @@
 #chat-input {
     -webkit-appearance: none;
 }
+
+.keyboard-enter {
+    height: 25px;
+    top: 5px;
+}

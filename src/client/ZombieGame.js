@@ -1,6 +1,10 @@
+// assets
 import "./assets/css/style.css"
 import "./assets/img/zombie-hand.png"
 import "./assets/img/crosshair.png"
+import "./assets/img/enter.png"
+import "./assets/gltf/Soldier.glb"
+
 import Game from "./Game.js";
 
 export default class ZombieGame {
@@ -40,6 +44,8 @@ export default class ZombieGame {
         this.chatDiv = document.getElementById("chat-div")
         this.chatUl = document.getElementById("chat-ul")
         this.chatInput = document.getElementById("chat-input")
+
+        this.infoDiv = document.getElementById("info")
 
         this.optionMenu = document.getElementById("option-menu")
         this.optionMenuBtnOptions = document.getElementById("option-menu-btn-option")
