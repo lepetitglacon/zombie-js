@@ -1,8 +1,10 @@
 import * as THREE from "three";
+import * as dat from 'dat.gui';
 import GraphicsWorld from "./map/world/GraphicsWorld.js";
 import GameMap from "./map/GameMap.js";
 import InputManager from "./input/InputManager.js";
 import ServerConnector from "./server/ServerConnector.js";
+import Gui from "./gui/Gui.js";
 
 export default class Game {
 
@@ -11,6 +13,7 @@ export default class Game {
         this.velocity = new THREE.Vector3();
         this.direction = new THREE.Vector3();
         this.lookDirection = new THREE.Vector3();
+        this.gui = new Gui()
 
         this.config = {
             gravity: 2 // 9.8 normalement
@@ -26,6 +29,7 @@ export default class Game {
 
     init() {
 
+        this.three.init()
         this.map.init()
 
         this.lastPosition = this.three.camera.position.clone()
@@ -34,7 +38,7 @@ export default class Game {
         window.addEventListener('ZombieGame-start', () => {
             this.serverConnector = new ServerConnector(window.location.href.substring(window.location.href.lastIndexOf('/') + 1))
         })
-        
+
         this.animate()
     }
 
