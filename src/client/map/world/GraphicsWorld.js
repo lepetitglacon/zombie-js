@@ -28,10 +28,6 @@ export default class GraphicsWorld {
         this.directionalLight.castShadow = true; // default false
         this.scene.add( this.directionalLight );
 
-        // //Create a helper for the shadow camera (optional)
-        // const helper = new THREE.CameraHelper( light.shadow.camera );
-        // scene.add( helper );
-
         this.groundGeometry = new THREE.PlaneGeometry( worldWidth, worldDepth);
         this.groundGeometry.rotateX( - Math.PI / 2 );
         this.groundMesh = new THREE.Mesh( this.groundGeometry, new THREE.MeshStandardMaterial( {color: 0x4DC2E8 }) );
@@ -44,6 +40,13 @@ export default class GraphicsWorld {
         this.lastHit = new Map()
 
         this.bind()
+    }
+
+    init() {
+        window.ZombieGame.game.gui.addFolder('controls')
+        window.ZombieGame.game.gui.addToFolder('controls', this.camera.position, 'x', -1000, 1000)
+        window.ZombieGame.game.gui.addToFolder('controls', this.camera.position, 'y', -1000, 1000)
+        window.ZombieGame.game.gui.addToFolder('controls', this.camera.position, 'z', -1000, 1000)
     }
 
     bind() {
