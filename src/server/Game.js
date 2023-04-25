@@ -1,4 +1,5 @@
 import ZombieFactory from "../common/factory/ZombieFactory.js";
+import {Vector3} from "three";
 
 export default class Game {
 
@@ -39,19 +40,25 @@ export default class Game {
                 this.zombieSpawnRateTime = Date.now()
             }
 
-            // update Zombie movement
+            // update ClientZombie movement
             for (const [key, val] of this.ZOMBIES) {
                 val.moveToClosestPlayer()
             }
 
+            // emit players position to other players
             if (this.ZOMBIES.size > 0 && this.PLAYERS.size > 0) {
-                console.log('send zombies')
-                this.io.to(this.roomId).emit('zombies_positions', this.prepareZombiesToEmit())
+                const p = this.prepareZombiesToEmit()
+                if (p.length > 0) {
+                    this.io.to(this.roomId).emit('zombies_positions', p)
+                }
             }
 
             // emit players position to other players
             if (this.PLAYERS.size > 1) {
-                this.io.to(this.roomId).emit('players_position', this.preparePlayersToEmit())
+                const p = this.preparePlayersToEmit()
+                if (p.length > 0) {
+                    this.io.to(this.roomId).emit('players_position', p)
+                }
             }
 
         }, 1/this.tickRate*1000)
@@ -61,32 +68,54 @@ export default class Game {
         console.log('[INFO] Online players : ' + this.PLAYERS.size)
     }
 
-    preparePlayersToEmit() {
+    preparePlayersToEmit(all) {
         let toSend = []
         let i = 0
         for (const [socket, socketHandler] of this.PLAYERS) {
-            toSend[i] = {}
-            toSend[i].socketId = socket.id
-            toSend[i].position = socketHandler.position
-            toSend[i].direction = socketHandler.direction
-            toSend[i].color = socketHandler.color
-            i++
+            if (all !== undefined) {
+                this.fillPlayerInfo(toSend, socketHandler, i)
+            } else {
+                if (!socketHandler.position.equals(socketHandler.lastPosition)) {
+                    this.fillPlayerInfo(toSend, socketHandler, i)
+                }
+            }
+
         }
         return toSend
     }
 
-    prepareZombiesToEmit() {
+    fillPlayerInfo(toSend, socketHandler, i) {
+        toSend[i] = {}
+        toSend[i].socketId = socketHandler.socket.id
+        toSend[i].position = socketHandler.position
+        toSend[i].direction = socketHandler.direction
+        toSend[i].color = socketHandler.color
+        socketHandler.lastPosition.copy(socketHandler.position)
+        i++
+    }
+
+    prepareZombiesToEmit(all) {
         let toSend = []
         let i = 0
         for (const [id, zombie] of this.ZOMBIES) {
-            toSend[i] = {}
-            toSend[i].id = zombie.id
-            toSend[i].position = zombie.position
-            toSend[i].direction = zombie.direction
-            toSend[i].color = zombie.color
-            i++
+            if (all !== undefined) {
+                this.fillZombieInfo(toSend, zombie, i)
+            } else {
+                if (!zombie.position.equals(zombie.lastPosition)) {
+                    this.fillZombieInfo(toSend, zombie, i)
+                }
+            }
         }
         return toSend
     }
 
+    fillZombieInfo(toSend, zombie, i) {
+        toSend[i] = {}
+        toSend[i].id = zombie.id
+        toSend[i].position = zombie.position
+        toSend[i].direction = zombie.direction
+        toSend[i].color = zombie.color
+        zombie.lastPosition.copy(zombie.position)
+        i++
+    }
 }

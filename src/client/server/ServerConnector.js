@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import Player from "../mob/Player.js";
+import ZombieFactory from "../../common/factory/ZombieFactory.js";
 
 export default class ServerConnector {
 
@@ -41,6 +42,16 @@ export default class ServerConnector {
                 }
             })
 
+            // get zombies for the first time
+            this.socket.on('get_zombies', (zombies) => {
+                console.log('[ZOMBIES] Zombies already spawned ', zombies)
+                for (const i in zombies) {
+                    if (window.ZombieGame.game.ZOMBIES.get(zombies[i].id)) {
+                        window.ZombieGame.game.ZOMBIES.set(zombies[i].id, ZombieFactory.createClientZombie(zombies[i]))
+                    }
+                }
+            })
+
             // get a new player that just connected
             this.socket.on('player_connect', (player) => {
                 console.log('[CONNECT] Player ' + player.socketId + ' connected')
@@ -76,10 +87,9 @@ export default class ServerConnector {
             })
 
             // get players position (update game state)
-            this.socket.on('zombies_position', (zombieList) => {
+            this.socket.on('zombies_positions', (zombieList) => {
                 for (const i in zombieList) {
                     const z = zombieList[i]
-                    console.log('z')
 
                     if (window.ZombieGame.game.ZOMBIES.has(z.id)) {
                         const zombie = window.ZombieGame.game.ZOMBIES.get(z.id)
@@ -93,6 +103,8 @@ export default class ServerConnector {
                             zombie.gltf.position.set(z.position.x, z.position.y - 1, z.position.z)
                             zombie.gltf.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -angle - -(Math.PI/2))
                         }
+                    } else {
+                        window.ZombieGame.game.ZOMBIES.set(z.id, ZombieFactory.createClientZombie(z))
                     }
 
                 }
