@@ -1,5 +1,5 @@
-import Player from "../../common/Player.js";
 import * as THREE from "three";
+import Player from "../mob/Player.js";
 
 export default class ServerConnector {
 
@@ -69,6 +69,29 @@ export default class ServerConnector {
                                 p.gltf.position.set(playerList[i].position.x, playerList[i].position.y - 1, playerList[i].position.z)
                                 p.gltf.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -angle - -(Math.PI/2))
                             }
+                        }
+                    }
+
+                }
+            })
+
+            // get players position (update game state)
+            this.socket.on('zombies_position', (zombieList) => {
+                for (const i in zombieList) {
+                    const z = zombieList[i]
+                    console.log('z')
+
+                    if (window.ZombieGame.game.ZOMBIES.has(z.id)) {
+                        const zombie = window.ZombieGame.game.ZOMBIES.get(z.id)
+
+                        zombie.mesh.position.set(z.position.x, z.position.y, z.position.z)
+
+                        let angle = Math.atan2(z.direction.z, z.direction.x)
+                        zombie.mesh.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -angle - -(Math.PI/2))
+
+                        if (zombie.gltf !== undefined) {
+                            zombie.gltf.position.set(z.position.x, z.position.y - 1, z.position.z)
+                            zombie.gltf.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -angle - -(Math.PI/2))
                         }
                     }
 
