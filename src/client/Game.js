@@ -20,6 +20,7 @@ export default class Game {
         }
 
         this.PLAYERS = new Map()
+        this.ZOMBIES = new Map()
         this.socket = undefined
 
         this.inputManager = new InputManager()
