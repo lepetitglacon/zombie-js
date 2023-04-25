@@ -14,6 +14,9 @@ export default class ClientConnector {
         this.direction = new THREE.Vector3(0, 0, 0)
         this.color = Utils.randomColor()
 
+        this.lastPosition = new THREE.Vector3(0, 0, 0)
+        this.lastDirection = new THREE.Vector3(0, 0, 0)
+
         this.init()
         this.bind()
         console.log('[CONNECT] ' + this.socket.id + ' connected to room ' + this.roomId)
@@ -28,9 +31,14 @@ export default class ClientConnector {
             color: this.color
         })
 
+        // send zombies to socket
+        if (this.game.ZOMBIES.size > 0) {
+            this.socket.emit('get_zombies', this.game.prepareZombiesToEmit(1))
+        }
+
         // send players to socket
         if (this.game.PLAYERS.size > 0) {
-            this.socket.emit('get_players', this.game.preparePlayersToEmit())
+            this.socket.emit('get_players', this.game.preparePlayersToEmit(1))
         }
     }
 
@@ -39,8 +47,8 @@ export default class ClientConnector {
             this.socket.emit('pong')
         })
         this.socket.on('player_state', (pos, dir) => {
-            this.position = pos
-            this.direction = dir
+            this.position.copy(pos)
+            this.direction.copy(dir)
         })
         this.socket.on('chat', (msg) => {
             this.socket.to(this.roomId).emit('chat', msg, this.socket.id)

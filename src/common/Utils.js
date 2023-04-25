@@ -5,4 +5,9 @@ export default class Utils {
         return parseInt(color)
     }
 
+    static getRandomInt(min, max) {
+        return Math.random() * (max - min) + min;
+    }
+
+
 }
