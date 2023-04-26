@@ -33,7 +33,7 @@ export default class Game {
             const time = Date.now();
             const delta = ( time - this.prevTime ) / 1000;
 
-            if (this.zombieSpawnRateTime + this.zombieSpawnRate < Date.now()) {
+            if (this.zombieSpawnRateTime + this.zombieSpawnRate < Date.now() && this.ZOMBIES.size < 50) {
                 console.log('spawned zombie ' + ZombieFactory.id + ' for game ' + this.roomId)
                 this.ZOMBIES.set(ZombieFactory.id, ZombieFactory.createServerZombie(this.roomId))
                 this.zombieSpawnRateTime = Date.now()
