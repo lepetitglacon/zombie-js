@@ -33,21 +33,22 @@ export default class Game {
             const time = Date.now();
             const delta = ( time - this.prevTime ) / 1000;
 
-            if (this.zombieSpawnRateTime + this.zombieSpawnRate < Date.now()) {
-                console.log('spawned zombie ' + ZombieFactory.id + ' for game ' + this.roomId)
-                this.ZOMBIES.set(ZombieFactory.id, ZombieFactory.createServerZombie(this.roomId))
-                this.zombieSpawnRateTime = Date.now()
-            }
+            // spawn zombies
+            // if (this.zombieSpawnRateTime + this.zombieSpawnRate < Date.now()) {
+            //     console.log('spawned zombie ' + ZombieFactory.id + ' for game ' + this.roomId)
+            //     this.ZOMBIES.set(ZombieFactory.id, ZombieFactory.createServerZombie(this.roomId))
+            //     this.zombieSpawnRateTime = Date.now()
+            // }
 
             // update Zombie movement
-            for (const [key, val] of this.ZOMBIES) {
-                val.moveToClosestPlayer()
-            }
+            // for (const [key, val] of this.ZOMBIES) {
+            //     val.moveToClosestPlayer()
+            // }
 
-            if (this.ZOMBIES.size > 0 && this.PLAYERS.size > 0) {
-                console.log('send zombies')
-                this.io.to(this.roomId).emit('zombies_positions', this.prepareZombiesToEmit())
-            }
+            // if (this.ZOMBIES.size > 0 && this.PLAYERS.size > 0) {
+            //     console.log('send zombies')
+            //     this.io.to(this.roomId).emit('zombies_positions', this.prepareZombiesToEmit())
+            // }
 
             // emit players position to other players
             if (this.PLAYERS.size > 1) {
