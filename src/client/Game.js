@@ -48,6 +48,12 @@ export default class Game {
 
         this.three.controls.getDirection(this.lookDirection)
 
+        for (const [id, zombie] of this.ZOMBIES) {
+            if (zombie.health <= 0) {
+                zombie.removeFromScene()
+            }
+        }
+
         const time = performance.now();
         const delta = ( time - this.prevTime ) / 1000;
 

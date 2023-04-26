@@ -1,7 +1,5 @@
 import * as THREE from "three";
 import {GLTFLoader} from "three/addons/loaders/GLTFLoader.js";
-import {Vector3} from "three";
-import ZombieGame from "../ZombieGame.js";
 
 const config = {
     width: 1,
@@ -53,7 +51,6 @@ export default class ClientZombie {
         //
         // followText.style.top = `${boxPosition.y}px`;
         // followText.style.left = `${boxPosition.x}px`;
-
 
     }
 
