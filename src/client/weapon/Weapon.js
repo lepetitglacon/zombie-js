@@ -37,13 +37,14 @@ export default class Weapon {
                             this.alreadyHit.add(obj.zombieId)
                             if (ZombieGame.game.ZOMBIES.has(obj.zombieId)) {
                                 ZombieGame.game.ZOMBIES.get(obj.zombieId).health -= this.damages
+                                console.log('zombie' + obj.zombieId + " has " + ZombieGame.game.ZOMBIES.get(obj.zombieId).health + ' hp')
                             }
                         }
                     }
                 }
 
                 // reset hit array
-                this.alreadyHit.length = 0
+                this.alreadyHit.clear()
 
 
                 this.bulletsInMagazine--
