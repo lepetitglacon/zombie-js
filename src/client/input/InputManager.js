@@ -47,7 +47,7 @@ export default class InputManager {
             case 'NumpadEnter':
                 if (window.ZombieGame.chatInput === document.activeElement) {
                     //sending chat
-                    console.log('sending chat')
+                    // console.log('sending chat')
                     if (window.ZombieGame.chatInput.value !== '') {
                         window.ZombieGame.game.serverConnector.socket.emit('chat', window.ZombieGame.chatInput.value)
                         const msgLi = document.createElement('li')
@@ -61,7 +61,7 @@ export default class InputManager {
                     }
                     // closing chat
                     else {
-                        console.log('closing chat')
+                        // console.log('closing chat')
                         window.ZombieGame.chatInput.classList.toggle('hidden')
                         document.activeElement.blur()
                         this.isChatOpen = false
@@ -69,7 +69,7 @@ export default class InputManager {
                     }
                 } else {
                     // focusing chat
-                    console.log('focusing chat')
+                    // console.log('focusing chat')
                     window.ZombieGame.game.three.controls.unlock()
                     window.ZombieGame.chatInput.classList.toggle('hidden')
                     window.ZombieGame.chatInput.focus({preventScroll: true})
