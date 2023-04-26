@@ -25,7 +25,7 @@ export default class Weapon {
         // enough bullet or reload
         if (this.bulletsInMagazine > 0) {
             if (this.canShootByFireRate()) {
-                console.log("[WEAPON] fired")
+                // console.log("[WEAPON] fired")
 
                 const intersects = this.raycaster.intersectObjects( ZombieGame.game.three.scene.children );
                 for ( let i = 0; i < intersects.length; i ++ ) {
@@ -57,7 +57,7 @@ export default class Weapon {
             }
 
         } else {
-            console.log("[WEAPON] reloading")
+            // console.log("[WEAPON] reloading")
             this.reload()
         }
     }
@@ -65,7 +65,7 @@ export default class Weapon {
     reload() {
         if (this.isReloading) {
             if (this.realoadStart + this.realoadRate < Date.now()) {
-                console.log("[WEAPON] fully reloaded")
+                // console.log("[WEAPON] fully reloaded")
                 const missingBullets = Math.abs(this.bulletsInMagazine - this.magazineSize)
                 console.log(missingBullets)
                 console.log(this.bulletStorage)
@@ -81,7 +81,7 @@ export default class Weapon {
         } else {
             this.realoadStart = Date.now()
             this.isReloading = true
-            console.log("[WEAPON] started reload")
+            // console.log("[WEAPON] started reload")
         }
         this.updateUI()
     }

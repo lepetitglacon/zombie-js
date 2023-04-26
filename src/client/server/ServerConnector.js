@@ -46,7 +46,7 @@ export default class ServerConnector {
             this.socket.on('get_zombies', (zombies) => {
                 console.log('[ZOMBIES] Zombies already spawned ', zombies)
                 for (const i in zombies) {
-                    if (window.ZombieGame.game.ZOMBIES.get(zombies[i].id)) {
+                    if (!window.ZombieGame.game.ZOMBIES.get(zombies[i].id)) {
                         window.ZombieGame.game.ZOMBIES.set(zombies[i].id, ZombieFactory.createClientZombie(zombies[i]))
                     }
                 }
@@ -87,8 +87,13 @@ export default class ServerConnector {
 
             // get players position (update game state)
             this.socket.on('zombies_positions', (zombieList) => {
+                console.log(zombieList)
                 for (const i in zombieList) {
+
+                    console.log(i)
                     const z = zombieList[i]
+
+                    console.log(z)
 
                     if (window.ZombieGame.game.ZOMBIES.has(z.id)) {
                         const zombie = window.ZombieGame.game.ZOMBIES.get(z.id)

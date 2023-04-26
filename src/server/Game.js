@@ -34,7 +34,7 @@ export default class Game {
             const delta = ( time - this.prevTime ) / 1000;
 
             if (this.zombieSpawnRateTime + this.zombieSpawnRate < Date.now() && this.ZOMBIES.size < 50) {
-                console.log('spawned zombie ' + ZombieFactory.id + ' for game ' + this.roomId)
+                // console.log('spawned zombie ' + ZombieFactory.id + ' for game ' + this.roomId)
                 this.ZOMBIES.set(ZombieFactory.id, ZombieFactory.createServerZombie(this.roomId))
                 this.zombieSpawnRateTime = Date.now()
             }
@@ -73,9 +73,11 @@ export default class Game {
         for (const [socket, socketHandler] of this.PLAYERS) {
             if (all !== undefined) {
                 this.fillPlayerInfo(toSend, socketHandler, i)
+                i++
             } else {
                 if (!socketHandler.position.equals(socketHandler.lastPosition)) {
                     this.fillPlayerInfo(toSend, socketHandler, i)
+                    i++
                 }
             }
 
@@ -90,7 +92,6 @@ export default class Game {
         toSend[i].direction = socketHandler.direction
         toSend[i].color = socketHandler.color
         socketHandler.lastPosition.copy(socketHandler.position)
-        i++
     }
 
     prepareZombiesToEmit(all) {
@@ -99,12 +100,16 @@ export default class Game {
         for (const [id, zombie] of this.ZOMBIES) {
             if (all !== undefined) {
                 this.fillZombieInfo(toSend, zombie, i)
+                i++
             } else {
                 if (!zombie.position.equals(zombie.lastPosition)) {
                     this.fillZombieInfo(toSend, zombie, i)
+                    i++
                 }
             }
+
         }
+
         return toSend
     }
 
@@ -115,7 +120,6 @@ export default class Game {
         toSend[i].direction = zombie.direction
         toSend[i].color = zombie.color
         zombie.lastPosition.copy(zombie.position)
-        i++
     }
 
 }
