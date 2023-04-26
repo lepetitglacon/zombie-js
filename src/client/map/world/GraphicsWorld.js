@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import {PointerLockControls} from "three/addons/controls/PointerLockControls.js";
+import WeaponHandler from "../../weapon/WeaponHandler.js";
 
 export default class GraphicsWorld {
 
@@ -19,6 +20,8 @@ export default class GraphicsWorld {
 
         this.controls = new PointerLockControls( this.camera, this.renderer.domElement );
 
+        this.weaponHandler = new WeaponHandler();
+
         this.ambientLight = new THREE.AmbientLight( 0x666666 ); // soft white light
         this.scene.add( this.ambientLight );
 
@@ -33,6 +36,7 @@ export default class GraphicsWorld {
         this.groundMesh = new THREE.Mesh( this.groundGeometry, new THREE.MeshStandardMaterial( {color: 0x4DC2E8 }) );
         this.groundMesh.position.y = -1
         this.groundMesh.receiveShadow = true
+        this.groundMesh.name = "Ground"
         this.scene.add(this.groundMesh)
 
 
@@ -66,32 +70,10 @@ export default class GraphicsWorld {
             this.camera.updateProjectionMatrix();
             this.renderer.setSize( window.innerWidth, window.innerHeight );
         });
-
-        window.addEventListener( 'click', () => {
-            const intersects = this.raycaster.intersectObjects( this.scene.children );
-            for ( let i = 0; i < intersects.length; i ++ ) {
-                const obj = intersects[ i ].object
-                if (obj !== this.groundMesh) {
-                    let hit = {
-                        color: obj.material.color.getHexString(),
-                        time: Date.now()
-                    }
-                    this.lastHit.set(obj, hit)
-                    obj.material.color.set( 0xff0000 );
-                }
-            }
-        });
     }
 
     update() {
-        if (this.lastHit.size > 0) {
-            for (const [obj, hit] of this.lastHit) {
-                if (Date.now() - hit.time > 60) {
-                    obj.material.color.set(parseInt(`0x${hit.color}`))
-                    this.lastHit.delete(obj)
-                }
-            }
-        }
+        this.weaponHandler.update()
 
     }
 }

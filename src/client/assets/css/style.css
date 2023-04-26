@@ -1,11 +1,23 @@
 * {
-    margin: 0!important;
-    padding: 0!important;
+    margin: 0;
+    padding: 0;
 }
 /************* GAME ************/
 
 #info {
     position: absolute;
+}
+
+#current-weapon {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+
+}
+
+#current-weapon-bullet {
+    font-size: 32px;
+    margin-right: 10px;
 }
 
 #crosshair {
@@ -62,4 +74,10 @@
 
     color: darkorange;
     font-size: 24px;
+}
+
+
+/** UTILS **/
+.d-flex {
+    display: flex;
 }
