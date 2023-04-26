@@ -118,4 +118,5 @@ export default class Game {
         zombie.lastPosition.copy(zombie.position)
         i++
     }
+
 }

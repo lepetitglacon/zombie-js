@@ -35,9 +35,7 @@ export default class GraphicsWorld {
         this.groundMesh.receiveShadow = true
         this.scene.add(this.groundMesh)
 
-        this.raycaster = new THREE.Raycaster();
-        this.pointer = new THREE.Vector2();
-        this.lastHit = new Map()
+
 
         this.bind()
     }
