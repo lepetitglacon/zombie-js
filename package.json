@@ -8,7 +8,8 @@
     "watch": "webpack --watch",
     "build": "webpack",
     "serve": "nodemon src/app-server.js",
-    "run": "node src/app-server.js"
+    "run": "node src/app-server.js",
+    "deploy": "npm i && webpack && node src/app-server.js"
   },
   "dependencies": {
     "cannon-es": "^0.20.0",
