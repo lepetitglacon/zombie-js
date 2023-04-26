@@ -1,5 +1,4 @@
 import ZombieFactory from "../common/factory/ZombieFactory.js";
-import {Vector3} from "three";
 
 export default class Game {
 
