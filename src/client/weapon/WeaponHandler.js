@@ -6,7 +6,6 @@ export default class WeaponHandler {
     constructor(props) {
         this.raycaster = new THREE.Raycaster();
         this.pointer = new THREE.Vector2();
-        this.lastHit = new Map()
 
         this.weapons = []
         this.weapon = new Weapon({raycaster: this.raycaster, weaponHandler: this})
@@ -14,6 +13,8 @@ export default class WeaponHandler {
         this.UIBulletCount = document.getElementById('current-weapon-bullet')
         // this.UIBulletMax = document.getElementById('current-weapon-maxbullet')
         this.UIStoredBullet = document.getElementById('current-weapon-stored-bullet')
+
+        this.UIFpsView = document.getElementById('current-weapon-fpsview')
 
 
         this.UIBulletCount.innerText = this.weapon.bulletsInMagazine
@@ -25,21 +26,12 @@ export default class WeaponHandler {
 
     bind() {
         window.addEventListener( 'click', () => {
-            this.raycaster.setFromCamera( this.pointer, ZombieGame.game.three.camera );
+            this.raycaster.setFromCamera( this.pointer, window.ZombieGame.game.three.camera );
             this.shoot()
         });
     }
 
     update() {
-        if (this.lastHit.size > 0) {
-            for (const [obj, hit] of this.lastHit) {
-                if (Date.now() - hit.time > 60) {
-                    obj.material.color.set(parseInt(`0x${hit.color}`))
-                    this.lastHit.delete(obj)
-                }
-            }
-        }
-
         if (this.weapon.isReloading) {
             this.weapon.reload()
         }

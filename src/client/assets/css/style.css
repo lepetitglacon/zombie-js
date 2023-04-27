@@ -12,7 +12,17 @@
     position: absolute;
     right: 0;
     bottom: 0;
+}
 
+#current-weapon-fpsview {
+    position: absolute;
+    right: 100px;
+    bottom: 0;
+}
+
+#current-weapon-fpsview > img {
+    width: 35vw;
+    height: 45vh;
 }
 
 #current-weapon-bullet {

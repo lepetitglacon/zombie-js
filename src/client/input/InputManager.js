@@ -37,6 +37,11 @@ export default class InputManager {
             case 'KeyD':
                 this.moveRight = true;
                 break;
+
+            case 'KeyR':
+                window.ZombieGame.game.weaponHandler.reload()
+                break;
+
             case 'Space':
                 if (window.ZombieGame.chatInput !== document.activeElement && this.canJump) {
                     window.ZombieGame.game.velocity.y += 25;
