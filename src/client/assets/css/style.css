@@ -16,7 +16,8 @@
 }
 
 #current-weapon-bullet {
-    font-size: 32px;
+    font-size: 64px;
+    font-weight: bold;
     margin-right: 10px;
 }
 

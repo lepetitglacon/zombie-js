@@ -15,6 +15,9 @@ export default class Game {
         this.tickRate = 60
         this.prevTime = Date.now();
 
+        this.waveCount = 1
+
+        this.maxZombiesAlive = 20
         this.zombieSpawnRate = 5000
         this.zombieSpawnRateTime = performance.now();
 
@@ -33,7 +36,7 @@ export default class Game {
             const time = Date.now();
             const delta = ( time - this.prevTime ) / 1000;
 
-            if (this.zombieSpawnRateTime + this.zombieSpawnRate < Date.now() && this.ZOMBIES.size < 50) {
+            if (this.zombieSpawnRateTime + this.zombieSpawnRate < Date.now() && this.ZOMBIES.size < this.maxZombiesAlive) {
                 // console.log('spawned zombie ' + ZombieFactory.id + ' for game ' + this.roomId)
                 this.ZOMBIES.set(ZombieFactory.id, ZombieFactory.createServerZombie(this.roomId))
                 this.zombieSpawnRateTime = Date.now()

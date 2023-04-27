@@ -4,6 +4,8 @@ import "./assets/img/zombie-hand.png"
 import "./assets/img/crosshair.png"
 import "./assets/img/enter.png"
 import "./assets/gltf/Soldier.glb"
+import "./assets/sound/gunshot.wav"
+import "./assets/sound/gunreload.wav"
 
 import Game from "./Game.js";
 
