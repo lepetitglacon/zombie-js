@@ -20,8 +20,6 @@ export default class GraphicsWorld {
 
         this.controls = new PointerLockControls( this.camera, this.renderer.domElement );
 
-        this.weaponHandler = new WeaponHandler();
-
         this.ambientLight = new THREE.AmbientLight( 0x666666 ); // soft white light
         this.scene.add( this.ambientLight );
 
@@ -73,7 +71,7 @@ export default class GraphicsWorld {
     }
 
     update() {
-        this.weaponHandler.update()
+
 
     }
 }

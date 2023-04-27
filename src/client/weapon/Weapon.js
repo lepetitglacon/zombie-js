@@ -32,62 +32,58 @@ export default class Weapon {
     }
 
     shoot() {
-
-        if (this.soundGunshot.buffer == null) {
-            window.ZombieGame.game.three.camera.add( this.listener );
-            const audioLoader = new THREE.AudioLoader();
-            audioLoader.load( 'src/client/assets/sound/gunshot.wav', ( buffer ) => {
-                this.soundGunshot.setBuffer( buffer );
-                this.soundGunshot.setLoop( false );
-                this.soundGunshot.setVolume( 0.5 );
-            });
-        }
-
         // enough bullet or reload
-        if (this.bulletsInMagazine > 0) {
-            if (this.canShootByFireRate()) {
-                // console.log("[WEAPON] fired")
-                this.soundGunshot.play();
-                this.soundGunshot.onEnded();
+        if (!this.isReloading) {
+            if (this.bulletsInMagazine > 0) {
+                if (this.canShootByFireRate()) {
+                    // console.log("[WEAPON] fired")
 
-                const intersects = this.raycaster.intersectObjects( ZombieGame.game.three.scene.children );
-                for ( let i = 0; i < intersects.length; i ++ ) {
-                    const obj = intersects[ i ].object
-                    if (obj.isZombie) {
-                        if (this.alreadyHit.has(obj.zombieId)) {
-                            continue
-                        } else {
-                            this.alreadyHit.add(obj.zombieId)
-                            if (ZombieGame.game.ZOMBIES.has(obj.zombieId)) {
-                                ZombieGame.game.ZOMBIES.get(obj.zombieId).health -= this.damages
-                                // console.log('zombie' + obj.zombieId + " has " + ZombieGame.game.ZOMBIES.get(obj.zombieId).health + ' hp')
+                    window.ZombieGame.game.soundManager.play('weapon_pistol_shot')
+
+                    const intersects = this.raycaster.intersectObjects( window.ZombieGame.game.three.scene.children );
+                    for ( let i = 0; i < intersects.length; i ++ ) {
+                        const obj = intersects[ i ].object
+                        if (obj.isZombie) {
+                            if (this.alreadyHit.has(obj.zombieId)) {
+                                continue
+                            } else {
+                                this.alreadyHit.add(obj.zombieId)
+                                if (ZombieGame.game.ZOMBIES.has(obj.zombieId)) {
+                                    ZombieGame.game.ZOMBIES.get(obj.zombieId).health -= this.damages
+                                    // console.log('zombie' + obj.zombieId + " has " + ZombieGame.game.ZOMBIES.get(obj.zombieId).health + ' hp')
+                                }
                             }
                         }
                     }
+
+                    // reset hit array
+                    this.alreadyHit.clear()
+
+                    this.bulletsInMagazine--
+                    this.lastFired = Date.now()
+                    this.updateUI()
+
+
+                    if (this.bulletsInMagazine === 0) {
+                        this.reload()
+                    }
                 }
 
-                // reset hit array
-                this.alreadyHit.clear()
-
-                this.bulletsInMagazine--
-                this.lastFired = Date.now()
-                this.updateUI()
-
-
-                if (this.bulletsInMagazine === 0) {
-                    this.reload()
-                }
+            } else {
+                // console.log("[WEAPON] reloading")
+                this.reload()
             }
-
-        } else {
-            // console.log("[WEAPON] reloading")
-            this.reload()
         }
+
     }
 
     reload() {
         if (this.isReloading) {
             if (this.realoadStart + this.realoadRate < Date.now()) {
+                window.ZombieGame.game.soundManager.play('weapon_pistol_reload')
+
+                this.weaponHandler.UIFpsView.style.opacity = 1
+
                 // console.log("[WEAPON] fully reloaded")
                 const missingBullets = Math.abs(this.bulletsInMagazine - this.magazineSize)
                 if (this.bulletStorage >= missingBullets) {
@@ -102,6 +98,8 @@ export default class Weapon {
         } else {
             this.realoadStart = Date.now()
             this.isReloading = true
+
+            this.weaponHandler.UIFpsView.style.opacity = 0.5
 
             // console.log("[WEAPON] started reload")
         }

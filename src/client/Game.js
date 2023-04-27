@@ -5,10 +5,16 @@ import GameMap from "./map/GameMap.js";
 import InputManager from "./input/InputManager.js";
 import ServerConnector from "./server/ServerConnector.js";
 import Gui from "./gui/Gui.js";
+import SoundManager from "./managers/SoundManager.js";
+import WeaponHandler from "./weapon/WeaponHandler.js";
 
 export default class Game {
 
     constructor() {
+        this.three = new GraphicsWorld(500, 500)
+        this.map = new GameMap()
+
+
         this.prevTime = performance.now();
         this.velocity = new THREE.Vector3();
         this.direction = new THREE.Vector3();
@@ -24,8 +30,10 @@ export default class Game {
         this.socket = undefined
 
         this.inputManager = new InputManager()
-        this.three = new GraphicsWorld(500, 500)
-        this.map = new GameMap()
+
+        this.soundManager = new SoundManager({camera: this.three.camera})
+        this.weaponHandler = new WeaponHandler();
+
     }
 
     init() {
@@ -45,20 +53,17 @@ export default class Game {
 
     animate() {
         requestAnimationFrame( () => {this.animate()} );
-
-        this.three.controls.getDirection(this.lookDirection)
-
-        for (const [id, zombie] of this.ZOMBIES) {
-            if (zombie.health <= 0) {
-                zombie.removeFromScene()
-            }
-        }
-
         const time = performance.now();
         const delta = ( time - this.prevTime ) / 1000;
 
+        this.three.controls.getDirection(this.lookDirection)
+
         this.three.update()
 
+        // GUN
+        this.weaponHandler.update()
+
+        // SOCKET SERVER
         if (this.serverConnector !== undefined) {
             if (
                 !this.lastPosition.equals(this.three.camera.position) ||
@@ -72,6 +77,7 @@ export default class Game {
             }
         }
 
+        // PLAYER MOVEMENT
         if (!this.inputManager.isChatOpen) {
             // stop forces
             this.velocity.x -= this.velocity.x * 10 * delta;
@@ -95,6 +101,14 @@ export default class Game {
             this.velocity.y = 0;
             this.three.controls.getObject().position.y = .5;
         }
+
+        // ZOMBIES UPDATE
+        for (const [id, zombie] of this.ZOMBIES) {
+            if (zombie.health <= 0) {
+                zombie.removeFromScene()
+            }
+        }
+
 
         this.prevTime = time;
         this.three.renderer.render( this.three.scene, this.three.camera );
