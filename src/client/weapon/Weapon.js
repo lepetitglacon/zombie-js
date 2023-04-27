@@ -1,10 +1,15 @@
+import * as THREE from "three";
+
 export default class Weapon {
+
+    // assets
+    // https://www.videvo.net/search/?q=pistol&mode=sound-effects&sort=
 
     constructor(props) {
         this.raycaster = props.raycaster
         this.weaponHandler = props.weaponHandler
 
-        this.damages = 10
+        this.damages = 20
         this.fireRate = 0 // ms
         this.lastFired = Date.now() // ms
 
@@ -18,14 +23,32 @@ export default class Weapon {
         this.bulletStorage = this.maxBulletStorage
 
         this.alreadyHit = new Set()
+
+        this.listener = new THREE.AudioListener();
+        this.soundGunshot = new THREE.Audio( this.listener );
+        this.soundReload = new THREE.Audio( this.listener );
+
+
     }
 
     shoot() {
+
+        if (this.soundGunshot.buffer == null) {
+            window.ZombieGame.game.three.camera.add( this.listener );
+            const audioLoader = new THREE.AudioLoader();
+            audioLoader.load( 'src/client/assets/sound/gunshot.wav', ( buffer ) => {
+                this.soundGunshot.setBuffer( buffer );
+                this.soundGunshot.setLoop( false );
+                this.soundGunshot.setVolume( 0.5 );
+            });
+        }
 
         // enough bullet or reload
         if (this.bulletsInMagazine > 0) {
             if (this.canShootByFireRate()) {
                 // console.log("[WEAPON] fired")
+                this.soundGunshot.play();
+                this.soundGunshot.onEnded();
 
                 const intersects = this.raycaster.intersectObjects( ZombieGame.game.three.scene.children );
                 for ( let i = 0; i < intersects.length; i ++ ) {
@@ -37,7 +60,7 @@ export default class Weapon {
                             this.alreadyHit.add(obj.zombieId)
                             if (ZombieGame.game.ZOMBIES.has(obj.zombieId)) {
                                 ZombieGame.game.ZOMBIES.get(obj.zombieId).health -= this.damages
-                                console.log('zombie' + obj.zombieId + " has " + ZombieGame.game.ZOMBIES.get(obj.zombieId).health + ' hp')
+                                // console.log('zombie' + obj.zombieId + " has " + ZombieGame.game.ZOMBIES.get(obj.zombieId).health + ' hp')
                             }
                         }
                     }
@@ -46,10 +69,10 @@ export default class Weapon {
                 // reset hit array
                 this.alreadyHit.clear()
 
-
                 this.bulletsInMagazine--
                 this.lastFired = Date.now()
                 this.updateUI()
+
 
                 if (this.bulletsInMagazine === 0) {
                     this.reload()
@@ -67,8 +90,6 @@ export default class Weapon {
             if (this.realoadStart + this.realoadRate < Date.now()) {
                 // console.log("[WEAPON] fully reloaded")
                 const missingBullets = Math.abs(this.bulletsInMagazine - this.magazineSize)
-                console.log(missingBullets)
-                console.log(this.bulletStorage)
                 if (this.bulletStorage >= missingBullets) {
                     this.bulletStorage -= missingBullets
                     this.bulletsInMagazine += missingBullets
@@ -81,6 +102,7 @@ export default class Weapon {
         } else {
             this.realoadStart = Date.now()
             this.isReloading = true
+
             // console.log("[WEAPON] started reload")
         }
         this.updateUI()
