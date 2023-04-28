@@ -19,6 +19,7 @@ export default class GraphicsWorld {
         document.body.appendChild( this.renderer.domElement );
 
         this.controls = new PointerLockControls( this.camera, this.renderer.domElement );
+        this.controls.pointerSpeed = .5
 
         this.ambientLight = new THREE.AmbientLight( 0x666666 ); // soft white light
         this.scene.add( this.ambientLight );
@@ -50,18 +51,16 @@ export default class GraphicsWorld {
     }
 
     bind() {
-        document.addEventListener('click', () => {
-            this.controls.lock()
-            if (!window.ZombieGame.chatInput.classList.contains('hidden')) {
-                window.ZombieGame.chatInput.classList.toggle('hidden')
-                window.ZombieGame.chatInput.value = ''
+        this.controls.addEventListener( 'lock', (e) => {
+
+        });
+        this.controls.addEventListener( 'unlock', (e) => {
+            if (window.ZombieGame.game.inputManager.isChatOpen) {
+
+            } else {
+                window.ZombieGame.game.inputManager.openGameMenu()
             }
-            if (!window.ZombieGame.optionMenu.classList.contains('d-none')) {
-                !window.ZombieGame.optionMenu.classList.toggle('d-none')
-            }
-        })
-        this.controls.addEventListener( 'lock', function () {});
-        this.controls.addEventListener( 'unlock', function () {});
+        });
 
         window.addEventListener( 'resize', () => {
             this.camera.aspect = window.innerWidth / window.innerHeight;

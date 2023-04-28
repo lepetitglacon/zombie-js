@@ -18,7 +18,7 @@ export default class ZombieGame {
     }
 
     constructor() {
-        this.state = ZombieGame.STATE.MENU
+        this.state = ZombieGame.STATE.GAME
         this.game = new Game()
 
         this.player = {
@@ -50,13 +50,36 @@ export default class ZombieGame {
         this.infoDiv = document.getElementById("info")
 
         this.optionMenu = document.getElementById("option-menu")
+
+        // resume game btn
+        this.optionMenuBtnResume = document.getElementById("option-menu-btn-resume")
+        this.optionMenuBtnResume.addEventListener('click', () => {
+            this.state = ZombieGame.STATE.GAME
+        })
+
+        this.optionMenuOptionPanel = document.getElementById("option-panel")
+
+        // options panel
         this.optionMenuBtnOptions = document.getElementById("option-menu-btn-option")
+        this.optionMenuBtnOptions.addEventListener('click', (e) => {
+            e.preventDefault()
+            this.optionMenuOptionPanel.classList.toggle('d-none')
+        })
+
+        this.optionMenuOptionSensitivity = document.getElementById("sesitivity-input")
+        this.optionMenuOptionSensitivity.value = this.game.three.controls.pointerSpeed
+        this.optionMenuOptionSensitivity.addEventListener('input', (e) => {
+            this.game.three.controls.pointerSpeed = e.target.value
+        })
+
+        // leave game btn
         this.optionMenuBtnLeaveGame = document.getElementById("option-menu-btn-leave-game")
+
+
 
         this.crosshairDiv = document.getElementById("crosshair")
 
-        //this.crosshairDiv.classList.toggle('hidden')
-        //this.chatDiv.classList.toggle('hidden')
+
     }
 
     play() {
