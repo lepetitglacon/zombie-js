@@ -108,7 +108,8 @@ export default class ServerConnector {
             // on other player shot
             this.socket.on('player_shot', (socketId) => {
                 if (window.ZombieGame.game.PLAYERS.has(socketId)) {
-                    window.ZombieGame.game.PLAYERS.get(socketId) // . playsound
+                    window.ZombieGame.game.PLAYERS.get(socketId).sound.play()
+                    window.ZombieGame.game.PLAYERS.get(socketId).sound.onEnded()
                 }
             })
 

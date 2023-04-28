@@ -46,13 +46,16 @@ export default class ClientConnector {
         this.socket.on('ping', () => {
             this.socket.emit('pong')
         })
+
         this.socket.on('player_state', (pos, dir) => {
             this.position.copy(pos)
             this.direction.copy(dir)
         })
+
         this.socket.on('chat', (msg) => {
             this.socket.to(this.roomId).emit('chat', msg, this.socket.id)
         })
+
         // disconnect
         this.socket.on('disconnect', () => {
             if (this.game.PLAYERS.has(this.socket)) {

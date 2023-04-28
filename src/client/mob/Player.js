@@ -2,6 +2,7 @@ import * as THREE from "three"
 import * as CANNON from "cannon-es"
 import {CSS2DObject, CSS2DRenderer} from 'three/addons/renderers/CSS2DRenderer.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import SoundManager from "../managers/SoundManager.js";
 
 const config = {
     width: 1,
@@ -21,6 +22,7 @@ export default class Player {
         window.ZombieGame.game.three.scene.add(this.mesh)
 
         this.gltf = undefined
+        this.sound = undefined
 
         const loader = new GLTFLoader();
         loader.load(
@@ -34,6 +36,11 @@ export default class Player {
                     this.gltf.children[0].children[i].material.color.set(player.color)
                     this.gltf.children[0].children[i].material.opacity = 1
                 }
+
+                // add sounds
+                this.sound = window.ZombieGame.game.soundManager.getPositional('weapon_pistol_shot')
+                this.gltf.add(this.sound)
+
                 window.ZombieGame.game.three.scene.add( this.gltf );
             }
         );
