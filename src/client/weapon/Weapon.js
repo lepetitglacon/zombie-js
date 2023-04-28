@@ -56,6 +56,14 @@ export default class Weapon {
                         }
                     }
 
+                    // send to server
+                    window.ZombieGame.game.serverConnector.socket.emit('shot', {
+                        weapon: {
+                            damages: this.damages
+                        },
+                        hits: [...this.alreadyHit.keys()]
+                    })
+
                     // reset hit array
                     this.alreadyHit.clear()
 
