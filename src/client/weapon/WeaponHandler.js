@@ -25,10 +25,7 @@ export default class WeaponHandler {
     }
 
     bind() {
-        window.addEventListener( 'click', () => {
-            this.raycaster.setFromCamera( this.pointer, window.ZombieGame.game.three.camera );
-            this.shoot()
-        });
+
     }
 
     update() {

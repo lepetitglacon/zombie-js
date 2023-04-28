@@ -97,7 +97,12 @@ export default class Weapon {
             }
         } else {
             this.realoadStart = Date.now()
-            this.isReloading = true
+
+            if (this.bulletStorage <= 0) {
+                window.ZombieGame.game.soundManager.play('weapon_pistol_reload')
+            } else {
+                this.isReloading = true
+            }
 
             this.weaponHandler.UIFpsView.style.opacity = 0.5
 

@@ -14,6 +14,7 @@ export default class SoundManager {
 
         this.sounds = new Map()
         this.loadSounds()
+        this.bind()
     }
 
     loadSound(name, path) {
@@ -21,7 +22,7 @@ export default class SoundManager {
         this.loader.load( path, ( buffer ) => {
             sound.setBuffer( buffer );
             sound.setLoop( false );
-            sound.setVolume( .5 );
+            sound.setVolume( .1 );
         });
         this.sounds.set(name, sound)
     }
@@ -36,6 +37,16 @@ export default class SoundManager {
             this.sounds.get(name).play()
             this.sounds.get(name).onEnded()
         }
+    }
+
+    bind() {
+        this.soundInput = document.getElementById('sound-input')
+        this.soundInput.value = 0.1
+        this.soundInput.addEventListener('input', (e) => {
+            for (const [name, sound] of this.sounds) {
+                sound.setVolume(parseFloat(e.target.value))
+            }
+        })
     }
 
 }
