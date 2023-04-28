@@ -13,6 +13,7 @@ export default class Player {
 
     constructor(player) {
         this.socketId = player.socketId
+        this.username = player.username
 
         // three init
         this.geometry = new THREE.BoxGeometry( config.width, config.height, config.depth );

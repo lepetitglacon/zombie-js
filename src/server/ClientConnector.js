@@ -9,6 +9,8 @@ export default class ClientConnector {
         this.roomId = room
         this.game = ZombieServer.GAMES.get(this.roomId)
 
+        this.username = 'Unknown'
+
         this.position = new THREE.Vector3(0, 0, 0)
         this.position.set(0, 0, 0)
         this.direction = new THREE.Vector3(0, 0, 0)
@@ -28,6 +30,7 @@ export default class ClientConnector {
         // tell other player the new connection
         this.socket.to(this.roomId).emit('player_connect', {
             socketId: this.socket.id,
+            username: this.username,
             color: this.color
         })
 
@@ -45,6 +48,10 @@ export default class ClientConnector {
     bind() {
         this.socket.on('ping', () => {
             this.socket.emit('pong')
+        })
+
+        this.socket.on('name', (name) => {
+            this.username = name
         })
 
         this.socket.on('player_state', (pos, dir) => {

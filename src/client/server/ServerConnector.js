@@ -20,6 +20,13 @@ export default class ServerConnector {
 
             window.ZombieGame.infoDiv.innerText = this.socket.id
 
+            const textConf = localStorage.getItem("ZombieGame")
+            if (textConf !== null) {
+                const conf = JSON.parse(textConf)
+                console.log("NAME == " + conf.username)
+                this.socket.emit('name', conf.username)
+            }
+
             this.socket.on('pong', () => {
                 console.log('pong from server')
             })
@@ -28,7 +35,12 @@ export default class ServerConnector {
             this.socket.on('chat', (msg, from) => {
                 console.log('[CHAT] message from ', from)
                 const msgLi = document.createElement('li')
-                msgLi.innerText = from + ' : ' + msg
+                let username = ""
+                if (window.ZombieGame.game.PLAYERS.has(from)) {
+                    username = window.ZombieGame.game.PLAYERS.get(from).username
+                }
+                username += ` (${from})`
+                msgLi.innerText = username + ' : ' + msg
                 window.ZombieGame.chatUl.appendChild(msgLi)
             })
 

@@ -12,12 +12,21 @@
 
 <div id="landing-page" class="container-fluid d-flex">
     <div class="col ">
+
+        <div class="row ">
+            <div class="m-5">
+                <input type="text" name="create-game-title" id="set-username">
+                <button id="set-username-button">Username</button>
+            </div>
+        </div>
+
         <div class="row ">
             <div class="m-5">
                 <input type="text" name="create-game-title" id="create-game-title">
                 <button id="create-game-button">Create Room</button>
             </div>
         </div>
+
         <div class="row align-self-end m-5">
 
             <div class="d-flex justify-content-between">
@@ -89,21 +98,17 @@
         const resfreshRate = 1000
 
         refreshBtn.addEventListener('click', () => {
-
             if (lastRefresh + resfreshRate < Date.now()) {
                 refresh();
                 lastRefresh = Date.now()
             }
-
         })
 
         createGameButton.addEventListener('click', (e) => {
             e.preventDefault()
-
             if (createGameTitle.value !== '') {
                 window.location.assign('/create/'+createGameTitle.value)
             }
-
         })
 
         function refresh() {
@@ -157,6 +162,25 @@
 
     }
     landingPage()
+
+    function setUsername() {
+        const usernameButton = document.getElementById('set-username-button')
+        const username = document.getElementById('set-username')
+
+        const textConf = localStorage.getItem("ZombieGame")
+        if (textConf !== null) {
+            const conf = JSON.parse(textConf)
+            username.value = conf.username
+        }
+
+        usernameButton.addEventListener('click', () => {
+            if (username.value.length > 0) {
+                const conf = {username: username.value}
+                localStorage.setItem("ZombieGame", JSON.stringify(conf))
+            }
+        })
+    }
+    setUsername()
 </script>
 
 
