@@ -106,6 +106,7 @@ export default class Game {
         for (const [id, zombie] of this.ZOMBIES) {
             if (zombie.health <= 0) {
                 zombie.removeFromScene()
+                this.ZOMBIES.delete(id)
             }
         }
 

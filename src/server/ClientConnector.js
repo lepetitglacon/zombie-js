@@ -61,5 +61,14 @@ export default class ClientConnector {
                 console.log(`[DISCONNECT] ${this.socket.id} disconnected`);
             }
         })
+
+        this.socket.on('shot', (shot) => {
+            for (let i of shot.hits) {
+                if (this.game.ZOMBIES.has(i)) {
+                    this.game.ZOMBIES.get(i).health -= shot.weapon.damages
+                }
+            }
+            this.socket.to(this.roomId).emit('player_shot', this.socket.id)
+        })
     }
 }

@@ -16,6 +16,7 @@ export default class ServerZombie {
         this.lastDirection = new THREE.Vector3(0, 0, 0)
 
         this.speed = 5
+        this.health = 100
     }
 
     moveToClosestPlayer() {

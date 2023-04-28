@@ -104,6 +104,30 @@ export default class ServerConnector {
 
                 }
             })
+
+            // on other player shot
+            this.socket.on('player_shot', (socketId) => {
+                if (window.ZombieGame.game.PLAYERS.has(socketId)) {
+                    window.ZombieGame.game.PLAYERS.get(socketId) // . playsound
+                }
+            })
+
+            // on zombie death
+            this.socket.on('zombie_death', (zombieId) => {
+                if (window.ZombieGame.game.ZOMBIES.has(zombieId)) {
+                    window.ZombieGame.game.ZOMBIES.get(zombieId).removeFromScene()
+                    window.ZombieGame.game.ZOMBIES.delete(zombieId)
+                }
+            })
+
+
+
+
+
+
+
+
+
         });
     }
 
