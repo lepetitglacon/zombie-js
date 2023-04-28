@@ -100,6 +100,7 @@ export default class Game {
     fillPlayerInfo(toSend, socketHandler, i) {
         toSend[i] = {}
         toSend[i].socketId = socketHandler.socket.id
+        toSend[i].username = socketHandler.username
         toSend[i].position = socketHandler.position
         toSend[i].direction = socketHandler.direction
         toSend[i].color = socketHandler.color
