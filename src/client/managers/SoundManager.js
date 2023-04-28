@@ -13,8 +13,20 @@ export default class SoundManager {
         props.camera.add( this.listener );
 
         this.sounds = new Map()
+        this.positionalSounds = new Map()
         this.loadSounds()
         this.bind()
+    }
+
+    loadPositionalSound(name, path) {
+        const sound = new THREE.PositionalAudio( this.listener );
+        this.loader.load( path, ( buffer ) => {
+            sound.setBuffer( buffer );
+            sound.setRefDistance( 20 );
+            sound.setLoop( false );
+            sound.setVolume( .1 );
+        });
+        this.positionalSounds.set(name, sound)
     }
 
     loadSound(name, path) {
@@ -30,12 +42,26 @@ export default class SoundManager {
     loadSounds() {
         this.loadSound('weapon_pistol_shot', 'src/client/assets/sound/gunshot.wav')
         this.loadSound('weapon_pistol_reload', 'src/client/assets/sound/gunreload.mp3')
+
+        this.loadPositionalSound('weapon_pistol_shot', 'src/client/assets/sound/gunshot.wav')
     }
 
     play(name) {
         if (this.sounds.has(name)) {
             this.sounds.get(name).play()
             this.sounds.get(name).onEnded()
+        }
+    }
+
+    get(name) {
+        if (this.sounds.has(name)) {
+            return this.sounds.get(name)
+        }
+    }
+
+    getPositional(name) {
+        if (this.positionalSounds.has(name)) {
+            return this.positionalSounds.get(name)
         }
     }
 
