@@ -7,6 +7,10 @@
 </head>
 <body>
 
+<div id="loader-gif">
+    <img src="../img/loader2.gif">
+</div>
+
 <!-------------------------------- GAME ------------------------------->
 <div id="game-UI">
 
@@ -18,12 +22,16 @@
         <img src="../img/weapons/pistol/fpsview.png">
     </div>
 
+    <div id="wave"></div>
+
+    <div id="points">
+
+    </div>
+
     <div id="weapon-UI">
 
 
         <div id="current-weapon">
-
-
 
             <div class="d-flex">
                 <div id="current-weapon-bullet"></div>
@@ -62,16 +70,21 @@
         <button id="option-menu-btn-option">Options</button>
         <div id="option-panel" class="d-none">
 
-            <div id="option-panel-sensitivity">
+            <div id="option-panel-sound">
                 <input type="range" id="sound-input"
                        min="0" max="1" step="0.1">
                 <label for="sound-input">Volume</label>
             </div>
 
-            <div id="option-panel-sound">
+            <div id="option-panel-sensitivity">
                 <input type="range" id="sesitivity-input"
                        min="0" max="2" step="0.1">
                 <label for="sesitivity-input">Mouse sensitivity</label>
+            </div>
+
+            <div id="option-panel-acceleration">
+                <input type="checkbox" id="mouse-acceleration">
+                <label for="mouse-acceleration">Mouse acceleration</label>
             </div>
         </div>
 

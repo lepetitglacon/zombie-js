@@ -23,34 +23,7 @@ export default class ClientZombie {
 
         this.loader = new GLTFLoader();
         this.gltf = undefined
-        this.body = new Map()
         this.loadGlft()
-
-        // const canvas = document.querySelector('canvas');
-        // const followText = document.getElementById('follow-text');
-        // let boxPosition = new THREE.Vector3();
-        // let boxPositionOffset = new THREE.Vector3();
-        // const Y_AXIS = new THREE.Vector3(0, 1, 0);
-        //
-        // // MOVE TO THE RIGHT OF THE CAMERA
-        // boxPositionOffset.copy(this.gltf.mesh.position);
-        // boxPositionOffset.sub(window.ZombieGame.game.three.camera.position);
-        // boxPositionOffset.normalize();
-        // boxPositionOffset.applyAxisAngle(Y_AXIS, - Math.PI / 2);
-        // boxPositionOffset.multiplyScalar(0.5);
-        // boxPositionOffset.y = 1.5;
-        //
-        // boxPosition.setFromMatrixPosition( this.gltf.mesh.matrixWorld )
-        // boxPosition.add(boxPositionOffset);
-        // boxPosition.project(window.ZombieGame.game.three.camera);
-        //
-        // let rect = canvas.getBoundingClientRect();
-        // let widthHalf = canvas.width / 2, heightHalf = canvas.height / 2;
-        // boxPosition.x = rect.left + ( boxPosition.x * widthHalf ) + widthHalf;
-        // boxPosition.y = rect.top - ( boxPosition.y * heightHalf ) + heightHalf;
-        //
-        // followText.style.top = `${boxPosition.y}px`;
-        // followText.style.left = `${boxPosition.x}px`;
 
     }
 
@@ -66,13 +39,9 @@ export default class ClientZombie {
                 for (const bodyPart of this.gltf.children[0].children) {
                     bodyPart.isZombie = true
                     bodyPart.zombieId = this.id
-                    if (bodyPart.parent.wholeBody === undefined) {
-                        bodyPart.wholeBody = this.body
-                    }
-                    this.body.set(bodyPart.uuid, bodyPart)
                 }
 
-                this.gltf.scale.set(1, 1, 1);
+                this.gltf.scale.set(.9, .9, .9);
                 this.gltf.rotateY(Math.PI / 2);
                 this.gltf.position.copy(this.mesh.position);
                 window.ZombieGame.game.three.scene.add( this.gltf );

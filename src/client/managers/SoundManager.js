@@ -3,19 +3,31 @@ import * as THREE from "three";
 // assets
 import "../../client/assets/sound/gunshot.wav"
 import "../../client/assets/sound/gunreload.mp3"
+import "../../client/assets/sound/knife.wav"
 
 export default class SoundManager {
 
     constructor(props) {
-        this.loader = new THREE.AudioLoader();
-
         this.listener = new THREE.AudioListener();
         props.camera.add( this.listener );
+
+        this.loader = new THREE.AudioLoader();
 
         this.sounds = new Map()
         this.positionalSounds = new Map()
         this.loadSounds()
         this.bind()
+    }
+
+    loadAndGetPositionalSound(name, path) {
+        const sound = new THREE.PositionalAudio( this.listener );
+        this.loader.load( path, ( buffer ) => {
+            sound.setBuffer( buffer );
+            sound.setRefDistance( 20 );
+            sound.setLoop( false );
+            sound.setVolume( .1 );
+        });
+        return sound
     }
 
     loadPositionalSound(name, path) {
@@ -42,8 +54,9 @@ export default class SoundManager {
     loadSounds() {
         this.loadSound('weapon_pistol_shot', 'src/client/assets/sound/gunshot.wav')
         this.loadSound('weapon_pistol_reload', 'src/client/assets/sound/gunreload.mp3')
+        this.loadSound('weapon_knife_slash', 'src/client/assets/sound/knife.wav')
 
-        this.loadPositionalSound('weapon_pistol_shot', 'src/client/assets/sound/gunshot.wav')
+        // this.loadPositionalSound('weapon_pistol_shot', 'src/client/assets/sound/gunshot.wav')
     }
 
     play(name) {

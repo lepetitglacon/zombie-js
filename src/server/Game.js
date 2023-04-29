@@ -36,48 +36,46 @@ export default class Game {
             const time = Date.now();
             const delta = ( time - this.prevTime ) / 1000;
 
-            // update ClientZombie movement
-            for (const [id, zombie] of this.ZOMBIES) {
-                if (zombie.health <= 0) {
-                    console.log('zombie ' + id + ' is dead')
-                    this.io.to(this.roomId).emit('zombie_death', id)
-                    this.ZOMBIES.delete(id)
+            if (this.PLAYERS.size > 0) {
+
+                // update ClientZombie life
+                for (const [id, zombie] of this.ZOMBIES) {
+                    if (zombie.health <= 0) {
+                        console.log('zombie ' + id + ' is dead')
+                        this.io.to(this.roomId).emit('zombie_death', id)
+                        this.ZOMBIES.delete(id)
+                    }
                 }
-            }
 
-            if (this.zombieSpawnRateTime + this.zombieSpawnRate < Date.now() && this.ZOMBIES.size < this.maxZombiesAlive) {
-                console.log('spawned zombie ' + ZombieFactory.id + ' for game ' + this.roomId)
-                this.ZOMBIES.set(ZombieFactory.id, ZombieFactory.createServerZombie(this.roomId))
-                this.zombieSpawnRateTime = Date.now()
-            }
+                // spawn zombies
+                if (this.zombieSpawnRateTime + this.zombieSpawnRate < Date.now() && this.ZOMBIES.size < this.maxZombiesAlive) {
+                    console.log('spawned zombie ' + ZombieFactory.id + ' for game ' + this.roomId)
+                    this.ZOMBIES.set(ZombieFactory.id, ZombieFactory.createServerZombie(this.roomId))
+                    this.zombieSpawnRateTime = Date.now()
+                }
 
-            // update ClientZombie movement
-            for (const [key, zombie] of this.ZOMBIES) {
-
-                if (this.PLAYERS.size > 0) {
+                // update ClientZombie movement
+                for (const [key, zombie] of this.ZOMBIES) {
                     zombie.moveToClosestPlayer()
                     zombie.repulseOtherZombies()
                     zombie.movementManager.update()
                 }
-            }
 
-            // emit players position to other players
-            if (this.ZOMBIES.size > 0 && this.PLAYERS.size > 0) {
-                const p = this.prepareZombiesToEmit()
-                if (p.length > 0) {
-                    this.io.to(this.roomId).emit('zombies_positions', p)
+                // emit players position to other players
+                if (this.ZOMBIES.size > 0) {
+                    const p = this.prepareZombiesToEmit()
+                    if (p.length > 0) {
+                        this.io.to(this.roomId).emit('zombies_positions', p)
+                    }
                 }
-            }
 
-            // emit players position to other players
-            if (this.PLAYERS.size > 1) {
+                // emit players position to other players
                 const p = this.preparePlayersToEmit()
                 if (p.length > 0) {
                     this.io.to(this.roomId).emit('players_position', p)
                 }
+
             }
-
-
         }, 1/this.tickRate*1000)
     }
 

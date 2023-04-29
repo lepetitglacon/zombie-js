@@ -11,6 +11,9 @@ export default class ClientConnector {
 
         this.username = 'Unknown'
 
+        this.maxHealth = 100
+        this.health = this.maxHealth
+
         this.position = new THREE.Vector3(0, 0, 0)
         this.position.set(0, 0, 0)
         this.direction = new THREE.Vector3(0, 0, 0)
@@ -36,14 +39,10 @@ export default class ClientConnector {
         })
 
         // send zombies to socket
-        if (this.game.ZOMBIES.size > 0) {
-            this.socket.emit('get_zombies', this.game.prepareZombiesToEmit(1))
-        }
+        this.socket.emit('get_zombies', this.game.prepareZombiesToEmit(1))
 
         // send players to socket
-        if (this.game.PLAYERS.size > 0) {
-            this.socket.emit('get_players', this.game.preparePlayersToEmit(1))
-        }
+        this.socket.emit('get_players', this.game.preparePlayersToEmit(1))
     }
 
     bind() {

@@ -27,6 +27,9 @@ export default class MovementManager {
 
     update() {
         this.host.position.add(this.steering)
+        this.host.direction.copy(this.steering)
+
+        // reset
         this.steering.set(0, 0, 0)
     }
 
