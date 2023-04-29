@@ -75,6 +75,15 @@
 }
 #chat-input {
     -webkit-appearance: none;
+    background: transparent;
+    border: none;
+}
+
+#chat-input::before {
+    position: absolute;
+    background-image: url("/src/client/assets/img/enter.png");
+    height: 25px;
+    top: 0;
 }
 
 .keyboard-enter {

@@ -40,14 +40,16 @@ export default class ServerConnector {
             // chat message
             this.socket.on('chat', (msg, from) => {
                 console.log('[CHAT] message from ', from)
-                const msgLi = document.createElement('li')
-                let username = ""
-                if (window.ZombieGame.game.PLAYERS.has(from)) {
-                    username = window.ZombieGame.game.PLAYERS.get(from).username
+                this.addMessageToChat(msg, from)
+            })
+
+            // get messages for the first time
+            this.socket.on('get_chat_messages', (messages) => {
+                console.log('[CHAT] Messages already sent ', messages)
+                for (const i in messages) {
+                    const msg = messages[i]
+                    this.addMessageToChat(msg.message, msg.from)
                 }
-                username += ` (${from})`
-                msgLi.innerText = username + ' : ' + msg
-                window.ZombieGame.chatUl.appendChild(msgLi)
             })
 
             // get players for the first time
@@ -149,16 +151,19 @@ export default class ServerConnector {
             })
 
 
-
-
-
-
-
-
-
         });
     }
 
 
+    addMessageToChat(msg, from) {
+        const msgLi = document.createElement('li')
+        let username = ""
+        if (window.ZombieGame.game.PLAYERS.has(from)) {
+            username = window.ZombieGame.game.PLAYERS.get(from).username
+        }
+        username += ` (${from})`
+        msgLi.innerText = username + ' : ' + msg
+        window.ZombieGame.chatUl.appendChild(msgLi)
+    }
 
 }
