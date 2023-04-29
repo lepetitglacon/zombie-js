@@ -18,10 +18,6 @@ export default class InputManager {
         document.addEventListener( 'keydown', (e) => {
             // console.log(e)
 
-            if (e.code === 'AltLeft') {
-                console.log('alt left knife')
-            }
-
             switch ( e.code ) {
                 case 'ArrowUp':
                 case 'KeyW':
@@ -127,8 +123,6 @@ export default class InputManager {
         })
 
         document.addEventListener('click', (e) => {
-            console.log(window.ZombieGame.state)
-            console.log(window.ZombieGame.state)
             switch (window.ZombieGame.state) {
 
 
@@ -168,7 +162,6 @@ export default class InputManager {
     }
 
     openGameMenu() {
-        console.log('open options menu')
         window.ZombieGame.game.three.controls.unlock()
         window.ZombieGame.optionMenu.classList.toggle('d-none')
         window.ZombieGame.state = ZombieGame.STATE.OPTION
