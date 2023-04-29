@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import {PointerLockControls} from "three/addons/controls/PointerLockControls.js";
-import WeaponHandler from "../../weapon/WeaponHandler.js";
+import PointerLockControls from "../../input/PointerLockControls.js";
+// import {PointerLockControls} from "three/addons/controls/PointerLockControls.js";
 
 export default class GraphicsWorld {
 
@@ -19,7 +19,8 @@ export default class GraphicsWorld {
         document.body.appendChild( this.renderer.domElement );
 
         this.controls = new PointerLockControls( this.camera, this.renderer.domElement );
-        this.controls.pointerSpeed = .5
+        this.controls.pointerSpeed = .4
+        console.log(this.controls)
 
         this.ambientLight = new THREE.AmbientLight( 0x666666 ); // soft white light
         this.scene.add( this.ambientLight );

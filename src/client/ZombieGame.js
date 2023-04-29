@@ -3,6 +3,9 @@ import "./assets/css/style.css"
 import "./assets/img/zombie-hand.png"
 import "./assets/img/crosshair.png"
 import "./assets/img/enter.png"
+import "./assets/img/loader.gif"
+import "./assets/img/loader2.gif"
+
 import "./assets/img/weapons/pistol/fpsview.png"
 import "./assets/gltf/Soldier.glb"
 
@@ -43,6 +46,22 @@ export default class ZombieGame {
     }
 
     bind() {
+        this.loader = document.getElementById("loader-gif")
+
+        this.mouseAcceleration = document.getElementById("mouse-acceleration")
+        this.mouseAcceleration.addEventListener('change', (e) => {
+            console.log(e)
+            if (e.target.value === 'on') {
+                this.game.config.player.mouseAcceleration = true
+            } else {
+                this.game.config.player.mouseAcceleration = false
+            }
+            let mouse = {
+
+            }
+            localStorage.setItem('mouse', JSON.stringify())
+        })
+
         this.chatDiv = document.getElementById("chat-div")
         this.chatUl = document.getElementById("chat-ul")
         this.chatInput = document.getElementById("chat-input")

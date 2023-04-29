@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import Weapon from "./Weapon.js";
+import Knife from "./knife/Knife.js";
 
 export default class WeaponHandler {
 
@@ -9,6 +10,7 @@ export default class WeaponHandler {
 
         this.weapons = []
         this.weapon = new Weapon({raycaster: this.raycaster, weaponHandler: this})
+        this.knife = new Knife({raycaster: this.raycaster, weaponHandler: this})
 
         this.UIBulletCount = document.getElementById('current-weapon-bullet')
         // this.UIBulletMax = document.getElementById('current-weapon-maxbullet')

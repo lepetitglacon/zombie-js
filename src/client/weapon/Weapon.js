@@ -10,7 +10,7 @@ export default class Weapon {
         this.weaponHandler = props.weaponHandler
 
         this.damages = 20
-        this.fireRate = 0 // ms
+        this.fireRate = 200 // ms
         this.lastFired = Date.now() // ms
 
         this.realoadRate = 2000 // ms

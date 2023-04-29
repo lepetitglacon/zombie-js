@@ -8,6 +8,23 @@
     position: absolute;
 }
 
+#loader-gif {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 100vw;
+    height: 100vh;
+
+    z-index: 999;
+}
+
+#loader-gif > img {
+    width: 100px;
+    height: 100px;
+}
+
 #current-weapon {
     position: absolute;
     right: 0;
@@ -104,6 +121,10 @@ label {
     font-size: 25px;
 }
 
+#option-panel {
+    display: flex;
+    flex-direction: column;
+}
 
 /** UTILS **/
 .d-flex {

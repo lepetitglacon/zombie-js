@@ -15,8 +15,14 @@ export default class InputManager {
     }
 
     init() {
-        document.addEventListener( 'keydown', (event) => {
-            switch ( event.code ) {
+        document.addEventListener( 'keydown', (e) => {
+            // console.log(e)
+
+            if (e.code === 'AltLeft') {
+                console.log('alt left knife')
+            }
+
+            switch ( e.code ) {
                 case 'ArrowUp':
                 case 'KeyW':
                     this.moveForward = true;
@@ -31,6 +37,9 @@ export default class InputManager {
                     break;
                 case 'ArrowRight':
                 case 'KeyD':
+                    if (e.altKey) {
+                        e.preventDefault()
+                    }
                     this.moveRight = true;
                     break;
 
@@ -85,6 +94,13 @@ export default class InputManager {
                 case 'Escape':
                     window.ZombieGame.state = ZombieGame.STATE.GAME
                     break;
+
+                case 'AltLeft':
+                    e.preventDefault()
+                    console.log('alt knife')
+                    window.ZombieGame.game.weaponHandler.raycaster.setFromCamera( window.ZombieGame.game.weaponHandler.pointer, window.ZombieGame.game.three.camera );
+                    window.ZombieGame.game.weaponHandler.knife.shoot()
+                    break;
             }
         });
 
@@ -110,7 +126,10 @@ export default class InputManager {
         })
 
         document.addEventListener('click', (e) => {
+            console.log(window.ZombieGame.state)
+            console.log(window.ZombieGame.state)
             switch (window.ZombieGame.state) {
+
 
                 case ZombieGame.STATE.GAME:
                     if (window.ZombieGame.game.three.controls.isLocked) {
@@ -120,8 +139,6 @@ export default class InputManager {
                             window.ZombieGame.game.weaponHandler.raycaster.setFromCamera( window.ZombieGame.game.weaponHandler.pointer, window.ZombieGame.game.three.camera );
                             window.ZombieGame.game.weaponHandler.shoot()
                         }
-
-
 
                     } else {
 
@@ -139,6 +156,10 @@ export default class InputManager {
 
                 case ZombieGame.STATE.OPTION:
 
+                    if (window.ZombieGame.optionMenu.classList.contains('d-none')) {
+                        window.ZombieGame.state = ZombieGame.STATE.GAME
+                        window.ZombieGame.game.three.controls.lock()
+                    }
 
                     break;
             }

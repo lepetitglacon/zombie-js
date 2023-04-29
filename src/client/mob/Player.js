@@ -15,6 +15,10 @@ export default class Player {
         this.socketId = player.socketId
         this.username = player.username
 
+        // gameplay
+        this.maxHealth = 100
+        this.health = this.maxHealth
+
         // three init
         this.geometry = new THREE.BoxGeometry( config.width, config.height, config.depth );
         this.material = new THREE.MeshStandardMaterial( { color: player.color, opacity: 0, transparent: true } );
@@ -23,13 +27,20 @@ export default class Player {
         window.ZombieGame.game.three.scene.add(this.mesh)
 
         this.gltf = undefined
+
+        // sound
         this.sound = undefined
+
 
         const loader = new GLTFLoader();
         loader.load(
             '../gltf/Soldier.glb',
             ( gltf ) => {
                 this.gltf = gltf.scene
+
+                // remove object scene
+                this.gltf.remove(this.gltf.getObjectByName('Plane'))
+
                 this.gltf.scale.set(.9, .9, .9);
                 this.gltf.rotateY(Math.PI / 2);
                 this.gltf.position.copy(this.mesh.position);
@@ -39,8 +50,12 @@ export default class Player {
                 }
 
                 // add sounds
-                this.sound = window.ZombieGame.game.soundManager.getPositional('weapon_pistol_shot')
-                this.gltf.add(this.sound)
+                // this.sound = window.ZombieGame.game.soundManager.getPositional('weapon_pistol_shot')
+                this.sound = window.ZombieGame.game.soundManager.loadAndGetPositionalSound(
+                    'weapon_pistol_shot_' + this.socketId,
+                    'src/client/assets/sound/gunshot.wav'
+                    )
+                // this.gltf.add(this.sound)
 
                 window.ZombieGame.game.three.scene.add( this.gltf );
             }

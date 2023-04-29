@@ -15,6 +15,7 @@ export default class Game {
         this.map = new GameMap()
 
 
+        this.startTime = Date.now();
         this.prevTime = performance.now();
         this.velocity = new THREE.Vector3();
         this.direction = new THREE.Vector3();
@@ -24,6 +25,11 @@ export default class Game {
         this.config = {
             gravity: 2 // 9.8 normalement
         }
+
+        // player
+        this.player = {}
+        this.player.maxHealth = 100
+        this.player.health = this.player.maxHealth
 
         this.PLAYERS = new Map()
         this.ZOMBIES = new Map()
@@ -56,6 +62,14 @@ export default class Game {
         const time = performance.now();
         const delta = ( time - this.prevTime ) / 1000;
 
+        // loader gif
+        if (this.startTime + 2000 < Date.now()) {
+            this.canMove = true
+            if (!window.ZombieGame.loader.classList.contains('d-none')) {
+                window.ZombieGame.loader.classList.toggle('d-none')
+            }
+        }
+
         this.three.controls.getDirection(this.lookDirection)
 
         this.three.update()
@@ -78,7 +92,10 @@ export default class Game {
         }
 
         // PLAYER MOVEMENT
-        if (!this.inputManager.isChatOpen) {
+        if (
+            !this.inputManager.isChatOpen &&
+            this.canMove
+        ) {
             // stop forces
             this.velocity.x -= this.velocity.x * 10 * delta;
             this.velocity.z -= this.velocity.z * 10 * delta;

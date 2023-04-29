@@ -30,12 +30,13 @@ export default class ServerConnector {
                 console.log('pong from server')
             })
 
-            // chat message
+            // player name
             this.socket.on('player_name', (id, username) => {
                 if (window.ZombieGame.game.PLAYERS.has(id)) {
                     window.ZombieGame.game.PLAYERS.get(id).username = username
                 }
             })
+
             // chat message
             this.socket.on('chat', (msg, from) => {
                 console.log('[CHAT] message from ', from)
@@ -96,6 +97,14 @@ export default class ServerConnector {
                             if (p.gltf !== undefined) {
                                 p.gltf.position.set(playerList[i].position.x, playerList[i].position.y - 1, playerList[i].position.z)
                                 p.gltf.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -angle - -(Math.PI/2))
+                                p.sound.getOutput().positionX.setValueAtTime(
+                                    playerList[i].position.x ,
+                                    0
+                                )
+                                p.sound.getOutput().positionZ.setValueAtTime(
+                                    playerList[i].position.z ,
+                                    0
+                                )
                             }
                         }
                     }
