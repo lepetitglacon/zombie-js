@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import Player from "../mob/Player.js";
 import ZombieFactory from "../../common/factory/ZombieFactory.js";
+import {attribute} from "three/nodes";
 
 export default class ServerConnector {
 
@@ -28,6 +29,15 @@ export default class ServerConnector {
 
             this.socket.on('pong', () => {
                 console.log('pong from server')
+            })
+
+            // player points
+            this.socket.on('points', (playerPoints) => {
+                console.log('[PLAYERS] points ', playerPoints)
+                for (const i in playerPoints) {
+                    const points = playerPoints[i]
+                    this.updatePoints(points.player, points.points)
+                }
             })
 
             // player name
@@ -154,7 +164,6 @@ export default class ServerConnector {
         });
     }
 
-
     addMessageToChat(msg, from) {
         const msgLi = document.createElement('li')
         let username = ""
@@ -164,6 +173,26 @@ export default class ServerConnector {
         username += ` (${from})`
         msgLi.innerText = username + ' : ' + msg
         window.ZombieGame.chatUl.appendChild(msgLi)
+    }
+
+    updatePoints(player, points) {
+
+        let username = ""
+        if (window.ZombieGame.game.PLAYERS.has(player)) {
+            username = window.ZombieGame.game.PLAYERS.get(player).username
+        }
+        username += ` (${player})`
+        const text = username + ' : ' + points
+
+        const pointsDiv = document.getElementById('points_' + player)
+        if (pointsDiv !== null) {
+            pointsDiv.innerText = text
+        } else {
+            const msgDiv = document.createElement('div')
+            msgDiv.id = 'points_' + player
+            msgDiv.innerText = text
+            window.ZombieGame.points.appendChild(msgDiv)
+        }
     }
 
 }
