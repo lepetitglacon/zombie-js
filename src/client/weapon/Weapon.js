@@ -19,7 +19,7 @@ export default class Weapon {
 
         this.magazineSize = 15
         this.bulletsInMagazine = this.magazineSize
-        this.maxBulletStorage = 75
+        this.maxBulletStorage = 10
         this.bulletStorage = this.maxBulletStorage
 
         this.alreadyHit = new Set()
@@ -87,7 +87,10 @@ export default class Weapon {
 
     reload() {
         if (this.isReloading) {
-            if (this.realoadStart + this.realoadRate < Date.now()) {
+            if (
+                this.realoadStart + this.realoadRate < Date.now() &&
+                this.bulletStorage > 0
+            ) {
                 window.ZombieGame.game.soundManager.play('weapon_pistol_reload')
 
                 this.weaponHandler.UIFpsView.style.opacity = 1
@@ -108,11 +111,12 @@ export default class Weapon {
 
             if (this.bulletStorage <= 0) {
                 window.ZombieGame.game.soundManager.play('weapon_pistol_reload')
+
             } else {
                 this.isReloading = true
+                this.weaponHandler.UIFpsView.style.opacity = 0.5
             }
 
-            this.weaponHandler.UIFpsView.style.opacity = 0.5
 
             // console.log("[WEAPON] started reload")
         }
