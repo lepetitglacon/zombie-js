@@ -41,4 +41,13 @@ export default class ServerZombie {
         }
     }
 
+    repulseOtherZombies() {
+        for (const [id, zombie] of ZombieServer.GAMES.get(this.roomId).ZOMBIES) {
+            const distance = zombie.position.manhattanDistanceTo(this.position)
+            if (distance < .8) {
+                this.movementManager.flee(zombie.position)
+            }
+        }
+    }
+
 }
