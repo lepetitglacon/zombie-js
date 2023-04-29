@@ -32,7 +32,6 @@ export default class ClientConnector {
     init() {
         this.socket.join(this.roomId)
 
-        console.log(this.username)
         // tell other player the new connection
         this.socket.to(this.roomId).emit('player_connect', {
             socketId: this.socket.id,
