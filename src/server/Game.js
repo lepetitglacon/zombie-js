@@ -46,7 +46,6 @@ export default class Game {
                 // update ClientZombie life
                 for (const [id, zombie] of this.ZOMBIES) {
                     if (zombie.health <= 0) {
-                        console.log('zombie ' + id + ' is dead')
                         this.io.to(this.roomId).emit('zombie_death', id)
                         this.ZOMBIES.delete(id)
                     }
@@ -54,7 +53,6 @@ export default class Game {
 
                 // spawn zombies
                 if (this.zombieSpawnRateTime + this.zombieSpawnRate < Date.now() && this.ZOMBIES.size < this.maxZombiesAlive) {
-                    console.log('spawned zombie ' + ZombieFactory.id + ' for game ' + this.roomId)
                     this.ZOMBIES.set(ZombieFactory.id, ZombieFactory.createServerZombie(this.roomId))
                     this.zombieSpawnRateTime = Date.now()
                 }

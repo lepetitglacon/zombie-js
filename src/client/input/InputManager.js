@@ -94,7 +94,6 @@ export default class InputManager {
 
                 case 'AltLeft':
                     e.preventDefault()
-                    console.log('alt knife')
                     window.ZombieGame.game.weaponHandler.raycaster.setFromCamera( window.ZombieGame.game.weaponHandler.pointer, window.ZombieGame.game.three.camera );
                     window.ZombieGame.game.weaponHandler.knife.shoot()
                     break;
