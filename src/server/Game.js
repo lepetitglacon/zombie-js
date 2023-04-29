@@ -46,14 +46,17 @@ export default class Game {
             }
 
             if (this.zombieSpawnRateTime + this.zombieSpawnRate < Date.now() && this.ZOMBIES.size < this.maxZombiesAlive) {
-                // console.log('spawned zombie ' + ZombieFactory.id + ' for game ' + this.roomId)
+                console.log('spawned zombie ' + ZombieFactory.id + ' for game ' + this.roomId)
                 this.ZOMBIES.set(ZombieFactory.id, ZombieFactory.createServerZombie(this.roomId))
                 this.zombieSpawnRateTime = Date.now()
             }
 
             // update ClientZombie movement
             for (const [key, val] of this.ZOMBIES) {
-                val.moveToClosestPlayer()
+
+                if (this.PLAYERS.size > 0) {
+                    val.moveToClosestPlayer()
+                }
             }
 
             // emit players position to other players
@@ -71,6 +74,7 @@ export default class Game {
                     this.io.to(this.roomId).emit('players_position', p)
                 }
             }
+
 
         }, 1/this.tickRate*1000)
     }

@@ -23,7 +23,6 @@ export default class ServerConnector {
             const textConf = localStorage.getItem("ZombieGame")
             if (textConf !== null) {
                 const conf = JSON.parse(textConf)
-                console.log("NAME == " + conf.username)
                 this.socket.emit('name', conf.username)
             }
 
@@ -31,6 +30,12 @@ export default class ServerConnector {
                 console.log('pong from server')
             })
 
+            // chat message
+            this.socket.on('player_name', (id, username) => {
+                if (window.ZombieGame.game.PLAYERS.has(id)) {
+                    window.ZombieGame.game.PLAYERS.get(id).username = username
+                }
+            })
             // chat message
             this.socket.on('chat', (msg, from) => {
                 console.log('[CHAT] message from ', from)
