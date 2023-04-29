@@ -59,6 +59,7 @@
 #crosshair > img{
     width: 100px;
     height: 100px;
+    mix-blend-mode: hard-light;
 }
 
 .d-none {

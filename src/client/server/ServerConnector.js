@@ -124,7 +124,8 @@ export default class ServerConnector {
                             zombie.gltf.position.set(z.position.x, z.position.y - 1, z.position.z)
                             zombie.gltf.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -angle - -(Math.PI/2))
                         }
-                    } else {
+                    }
+                    else {
                         window.ZombieGame.game.ZOMBIES.set(z.id, ZombieFactory.createClientZombie(z))
                     }
 

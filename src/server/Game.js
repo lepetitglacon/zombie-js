@@ -17,6 +17,10 @@ export default class Game {
 
         this.waveCount = 1
 
+        this.waveConfig = {
+
+        }
+
         this.maxZombiesAlive = 20
         this.zombieSpawnRate = 5000
         this.zombieSpawnRateTime = performance.now();
