@@ -86,6 +86,12 @@
     top: 0;
 }
 
+#points {
+    position: absolute;
+    top: 40vh;
+    right: 10px;
+}
+
 .keyboard-enter {
     height: 25px;
     top: 5px;

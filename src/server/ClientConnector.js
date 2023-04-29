@@ -14,6 +14,8 @@ export default class ClientConnector {
         this.maxHealth = 100
         this.health = this.maxHealth
 
+        this.points = 0
+
         this.position = new THREE.Vector3(0, 0, 0)
         this.position.set(0, 0, 0)
         this.direction = new THREE.Vector3(0, 0, 0)
@@ -46,6 +48,9 @@ export default class ClientConnector {
 
         // send chat messages
         this.socket.emit('get_chat_messages', this.game.MESSAGES)
+
+        // send chat messages
+        this.socket.emit('points', this.game.preparePoints())
     }
 
     bind() {
@@ -69,7 +74,6 @@ export default class ClientConnector {
                 from: this.socket.id,
                 message: msg
             })
-            console.log(this.game.MESSAGES)
             this.socket.to(this.roomId).emit('chat', msg, this.socket.id)
         })
 
@@ -86,8 +90,10 @@ export default class ClientConnector {
             for (let i of shot.hits) {
                 if (this.game.ZOMBIES.has(i)) {
                     this.game.ZOMBIES.get(i).health -= shot.weapon.damages
+                    this.points += 10
                 }
             }
+            ZombieServer.io.to(this.roomId).emit('points', this.game.preparePoints())
             this.socket.to(this.roomId).emit('player_shot', this.socket.id)
         })
     }

@@ -100,6 +100,9 @@ export default class ZombieGame {
         this.crosshairDiv = document.getElementById("crosshair")
 
 
+        this.points = document.getElementById("points")
+
+
     }
 
     play() {
