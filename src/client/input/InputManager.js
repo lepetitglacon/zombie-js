@@ -60,7 +60,7 @@ export default class InputManager {
                             msgLi.innerText = 'YOU : ' + window.ZombieGame.chatInput.value
                             window.ZombieGame.chatUl.appendChild(msgLi)
                             window.ZombieGame.chatInput.value = ''
-                            window.ZombieGame.chatInput.classList.toggle('hidden')
+                            // window.ZombieGame.chatInput.classList.toggle('hidden')
                             document.activeElement.blur()
                             this.isChatOpen = false
                             window.ZombieGame.game.three.controls.lock()
@@ -68,7 +68,7 @@ export default class InputManager {
                         // closing chat
                         else {
                             // console.log('closing chat')
-                            window.ZombieGame.chatInput.classList.toggle('hidden')
+                            // window.ZombieGame.chatInput.classList.toggle('hidden')
                             document.activeElement.blur()
                             this.isChatOpen = false
                             window.ZombieGame.game.three.controls.lock()
@@ -77,7 +77,7 @@ export default class InputManager {
                         // focusing chat
                         // console.log('focusing chat')
                         window.ZombieGame.game.three.controls.unlock()
-                        window.ZombieGame.chatInput.classList.toggle('hidden')
+                        // window.ZombieGame.chatInput.classList.toggle('hidden')
                         window.ZombieGame.chatInput.focus({preventScroll: true})
                         this.isChatOpen = true
                     }

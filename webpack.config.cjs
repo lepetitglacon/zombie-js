@@ -27,15 +27,21 @@ module.exports = {
         rules: [
             {
                 test: /\.(css)$/,
-                use: ['style-loader', 'css-loader'],
+                use: [
+                    {
+                        loader: "style-loader",
+                        options: { injectType: "singletonStyleTag" },
+                    },
+                    'css-loader'
+                ],
             },
             {
                 test: /\.(png|jpe?g|gif|glb|gltf|tga|ogg|mp3|wav)$/i,
                 loader: 'file-loader',
                 options: {
                     name: '[path][name].[ext]',
-                },
-            },
+                }
+            }
         ],
     },
 };

@@ -43,6 +43,9 @@ export default class ClientConnector {
 
         // send players to socket
         this.socket.emit('get_players', this.game.preparePlayersToEmit(1))
+
+        // send chat messages
+        this.socket.emit('get_chat_messages', this.game.MESSAGES)
     }
 
     bind() {
@@ -61,6 +64,12 @@ export default class ClientConnector {
         })
 
         this.socket.on('chat', (msg) => {
+            this.game.MESSAGES.push({
+                date: Date.now(),
+                from: this.socket.id,
+                message: msg
+            })
+            console.log(this.game.MESSAGES)
             this.socket.to(this.roomId).emit('chat', msg, this.socket.id)
         })
 
