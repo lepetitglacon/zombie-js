@@ -88,6 +88,7 @@ export default class InputManager {
                     break;
 
                 case 'Tab':
+                    e.preventDefault()
                     this.openGameMenu()
                     break;
 
@@ -166,10 +167,8 @@ export default class InputManager {
         })
     }
 
-    openGameMenu(event) {
-        if (event) {
-            event.preventDefault()
-        }
+    openGameMenu() {
+        console.log('open options menu')
         window.ZombieGame.game.three.controls.unlock()
         window.ZombieGame.optionMenu.classList.toggle('d-none')
         window.ZombieGame.state = ZombieGame.STATE.OPTION

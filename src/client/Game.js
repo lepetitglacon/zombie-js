@@ -12,7 +12,7 @@ export default class Game {
 
     constructor() {
         this.three = new GraphicsWorld(500, 500)
-        this.map = new GameMap()
+        // this.map = new GameMap()
 
 
         this.startTime = Date.now();
@@ -45,7 +45,8 @@ export default class Game {
     init() {
 
         this.three.init()
-        this.map.init()
+        // this.map.init()
+
 
         this.lastPosition = this.three.camera.position.clone()
         this.lastDirection = this.lookDirection.clone()
@@ -120,12 +121,12 @@ export default class Game {
         }
 
         // ZOMBIES UPDATE
-        for (const [id, zombie] of this.ZOMBIES) {
-            if (zombie.health <= 0) {
-                zombie.removeFromScene()
-                this.ZOMBIES.delete(id)
-            }
-        }
+        // for (const [id, zombie] of this.ZOMBIES) {
+        //     if (zombie.health <= 0) {
+        //         zombie.removeFromScene()
+        //         this.ZOMBIES.delete(id)
+        //     }
+        // }
 
 
         this.prevTime = time;

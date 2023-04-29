@@ -10,8 +10,12 @@ export default class ServerZombie {
 
         this.movementManager = new MovementManager({host: this})
 
+        this.spawners = [
+            new THREE.Vector3(-27.8, 0, -16)
+        ]
+
         this.position = new THREE.Vector3()
-        this.position.set(Utils.getRandomInt(-15,15), 0, Utils.getRandomInt(-15,15))
+        this.position.copy(this.spawners[0])
 
         this.velocity = new THREE.Vector3()
 

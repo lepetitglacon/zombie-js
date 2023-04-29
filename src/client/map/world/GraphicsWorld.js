@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import PointerLockControls from "../../input/PointerLockControls.js";
+import {GLTFLoader} from "three/addons/loaders/GLTFLoader.js";
 // import {PointerLockControls} from "three/addons/controls/PointerLockControls.js";
 
 export default class GraphicsWorld {
@@ -31,13 +32,29 @@ export default class GraphicsWorld {
         this.directionalLight.castShadow = true; // default false
         this.scene.add( this.directionalLight );
 
-        this.groundGeometry = new THREE.PlaneGeometry( worldWidth, worldDepth);
-        this.groundGeometry.rotateX( - Math.PI / 2 );
-        this.groundMesh = new THREE.Mesh( this.groundGeometry, new THREE.MeshStandardMaterial( {color: 0x4DC2E8 }) );
-        this.groundMesh.position.y = -1
-        this.groundMesh.receiveShadow = true
-        this.groundMesh.name = "Ground"
-        this.scene.add(this.groundMesh)
+        // this.groundGeometry = new THREE.PlaneGeometry( worldWidth, worldDepth);
+        // this.groundGeometry.rotateX( - Math.PI / 2 );
+        // this.groundMesh = new THREE.Mesh( this.groundGeometry, new THREE.MeshStandardMaterial( {color: 0x4DC2E8 }) );
+        // this.groundMesh.position.y = -1
+        // this.groundMesh.receiveShadow = true
+        // this.groundMesh.name = "Ground"
+        // this.scene.add(this.groundMesh)
+
+        this.gltf = undefined
+        const loader = new GLTFLoader();
+        loader.load(
+            '../gltf/scene.glb',
+            ( gltf ) => {
+                this.gltf = gltf.scene
+
+                console.log(this.gltf)
+
+                this.gltf.scale.set(1, 1, 1);
+                this.gltf.rotateY(300 * (Math.PI/180));
+
+                this.scene.add( this.gltf );
+            }
+        )
 
 
 
