@@ -11,11 +11,12 @@ export default class ServerZombie {
         this.movementManager = new MovementManager({host: this})
 
         this.spawners = [
-            new THREE.Vector3(-27.8, 0, -16)
+            new THREE.Vector3(-27.8, 0, -16),
+            new THREE.Vector3(-4, 0, 29),
         ]
 
         this.position = new THREE.Vector3()
-        this.position.copy(this.spawners[0])
+        this.position.copy(this.spawners[Math.floor(Math.random() * this.spawners.length)])
 
         this.velocity = new THREE.Vector3()
 
@@ -30,7 +31,6 @@ export default class ServerZombie {
     }
 
     moveToClosestPlayer() {
-
         let closest = undefined
         let closestDistance = 999999999999
         for (const [id, player] of ZombieServer.GAMES.get(this.roomId).PLAYERS) {
