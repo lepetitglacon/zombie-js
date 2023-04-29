@@ -52,10 +52,12 @@ export default class Game {
             }
 
             // update ClientZombie movement
-            for (const [key, val] of this.ZOMBIES) {
+            for (const [key, zombie] of this.ZOMBIES) {
 
                 if (this.PLAYERS.size > 0) {
-                    val.moveToClosestPlayer()
+                    zombie.moveToClosestPlayer()
+                    zombie.repulseOtherZombies()
+                    zombie.movementManager.update()
                 }
             }
 
