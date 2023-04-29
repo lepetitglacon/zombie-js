@@ -19,14 +19,15 @@ export default class ClientConnector {
         this.lastPosition = new THREE.Vector3(0, 0, 0)
         this.lastDirection = new THREE.Vector3(0, 0, 0)
 
-        this.init()
         this.bind()
+        this.init()
         console.log('[CONNECT] ' + this.socket.id + ' connected to room ' + this.roomId)
     }
 
     init() {
         this.socket.join(this.roomId)
 
+        console.log(this.username)
         // tell other player the new connection
         this.socket.to(this.roomId).emit('player_connect', {
             socketId: this.socket.id,
@@ -52,6 +53,7 @@ export default class ClientConnector {
 
         this.socket.on('name', (name) => {
             this.username = name
+            this.socket.to(this.roomId).emit('player_name', this.socket.id, this.username)
         })
 
         this.socket.on('player_state', (pos, dir) => {
