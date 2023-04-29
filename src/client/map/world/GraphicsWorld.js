@@ -21,7 +21,6 @@ export default class GraphicsWorld {
 
         this.controls = new PointerLockControls( this.camera, this.renderer.domElement );
         this.controls.pointerSpeed = .4
-        console.log(this.controls)
 
         this.ambientLight = new THREE.AmbientLight( 0x666666 ); // soft white light
         this.scene.add( this.ambientLight );
@@ -46,8 +45,6 @@ export default class GraphicsWorld {
             '../gltf/scene.glb',
             ( gltf ) => {
                 this.gltf = gltf.scene
-
-                console.log(this.gltf)
 
                 this.gltf.scale.set(1, 1, 1);
                 this.gltf.rotateY(300 * (Math.PI/180));
