@@ -8,7 +8,14 @@
 </head>
 <body>
 
-<!-------------------------------- LANDING PAGE ------------------------------->
+<style>
+    .column {
+        flex-direction: column;
+    }
+    .d-flex {
+         display: flex;
+     }
+</style>
 
 <div id="landing-page" class="container-fluid d-flex">
     <div class="col ">
@@ -22,7 +29,18 @@
 
         <div class="row ">
             <div class="m-5">
-                <input type="text" name="create-game-title" id="create-game-title">
+                <div class="d-flex column">
+                    <label for="create-game-title">Name</label>
+                    <input type="text" name="create-game-title" id="create-game-title">
+                </div>
+                <div class="d-flex column">
+                    <label for="create-game-map">Map</label>
+                    <select name="create-game-map" id="create-game-map">
+                        <option value="">Chose a map</option>
+                    </select>
+                </div>
+
+
                 <button id="create-game-button">Create Room</button>
             </div>
         </div>
@@ -85,83 +103,82 @@
 </div>
 
 <script>
-    function landingPage () {
+    const refreshBtn = document.getElementById('refresh-btn')
+    const gamesTable = document.getElementById('games-table')
+    const gamesTableBody = document.getElementById('public-games-tbody')
 
-        const refreshBtn = document.getElementById('refresh-btn')
-        const gamesTable = document.getElementById('games-table')
-        const gamesTableBody = document.getElementById('public-games-tbody')
+    const createGameButton = document.getElementById('create-game-button')
+    const createGameTitle = document.getElementById('create-game-title')
 
-        const createGameButton = document.getElementById('create-game-button')
-        const createGameTitle = document.getElementById('create-game-title')
+    const httpHeadersOption = {
+        method: 'GET',
+        headers: {}
+    }
 
-        let lastRefresh = Date.now()
-        const resfreshRate = 1000
+    let lastRefresh = Date.now()
+    const resfreshRate = 1000
 
-        refreshBtn.addEventListener('click', () => {
-            if (lastRefresh + resfreshRate < Date.now()) {
-                refresh();
-                lastRefresh = Date.now()
-            }
-        })
-
-        createGameButton.addEventListener('click', (e) => {
-            e.preventDefault()
-            if (createGameTitle.value !== '') {
-                window.location.assign('/create/'+createGameTitle.value)
-            }
-        })
-
-        function refresh() {
-            const options = {
-                method: 'GET',
-                headers: {}
-            }
-            fetch('/lp/refresh', options)
-                .then(response => response.json())
-                .then(body => {
-                    createTable(body)
-                });
+    refreshBtn.addEventListener('click', () => {
+        if (lastRefresh + resfreshRate < Date.now()) {
+            refresh();
+            lastRefresh = Date.now()
         }
+    })
 
-        function createTable(body) {
-            gamesTableBody.replaceChildren();
-
-            for (let i = 0; i < body.length; i++) {
-                gamesTableBody.appendChild(createRow(body[i]))
-            }
-
+    createGameButton.addEventListener('click', (e) => {
+        e.preventDefault()
+        if (
+            createGameTitle.value !== '' &&
+            mapSelect.value !== ''
+        ) {
+            window.location.assign('/create/' + createGameTitle.value + '/' + mapSelect.value)
         }
+    })
 
-        function createRow(gameConf) {
-            const row = document.createElement('tr')
+    function refresh() {
+        fetch('/lp/refresh', httpHeadersOption)
+            .then(response => response.json())
+            .then(body => {
+                createTable(body)
+            });
+    }
 
-            row.appendChild(createTd(gameConf.name))
-            row.appendChild(createTd(gameConf.map))
-            row.appendChild(createTd(gameConf.players))
-            row.appendChild(createTd(gameConf.ping))
+    function createTable(body) {
+        gamesTableBody.replaceChildren();
 
-            row.appendChild(createTd().appendChild(createLink('Join', '/game/'+gameConf.id)))
-
-            return row
+        for (let i = 0; i < body.length; i++) {
+            gamesTableBody.appendChild(createRow(body[i]))
         }
-
-        function createTd(innerText) {
-            const td = document.createElement('td')
-            td.innerText = innerText
-            return td
-        }
-
-        function createLink(innerText, link) {
-            const a = document.createElement('a')
-            a.innerText = innerText
-            a.href = link
-            return a
-        }
-
-        refresh()
 
     }
-    landingPage()
+
+    function createRow(gameConf) {
+        const row = document.createElement('tr')
+
+        row.appendChild(createTd(gameConf.name))
+        row.appendChild(createTd(gameConf.map))
+        row.appendChild(createTd(gameConf.players))
+        row.appendChild(createTd(gameConf.ping))
+
+        row.appendChild(createTd().appendChild(createLink('Join', '/game/'+gameConf.id)))
+
+        return row
+    }
+
+    function createTd(innerText) {
+        const td = document.createElement('td')
+        td.innerText = innerText
+        return td
+    }
+
+    function createLink(innerText, link) {
+        const a = document.createElement('a')
+        a.innerText = innerText
+        a.href = link
+        return a
+    }
+
+    refresh()
 
     function setUsername() {
         const usernameButton = document.getElementById('set-username-button')
@@ -181,6 +198,22 @@
         })
     }
     setUsername()
+
+    const mapSelect = document.getElementById('create-game-map')
+    function getMaps() {
+        fetch('/lp/maps', httpHeadersOption)
+            .then(response => response.json())
+            .then(body => {
+                console.log(body)
+                for (const mapFile of body) {
+                    const option = document.createElement('option')
+                    option.innerText = mapFile
+                    option.value = mapFile
+                    mapSelect.append(option)
+                }
+            });
+    }
+    getMaps()
 </script>
 
 

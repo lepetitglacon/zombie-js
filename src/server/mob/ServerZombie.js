@@ -4,19 +4,14 @@ import MovementManager from "../../common/MovementManager.js";
 
 export default class ServerZombie {
 
-    constructor(id, roomId) {
-        this.id = id
-        this.roomId = roomId
+    constructor(props) {
+        this.id = props.id
+        this.roomId = props.roomId
 
         this.movementManager = new MovementManager({host: this})
 
-        this.spawners = [
-            new THREE.Vector3(-27.8, 0, -16),
-            new THREE.Vector3(-4, 0, 29),
-        ]
-
         this.position = new THREE.Vector3()
-        this.position.copy(this.spawners[Math.floor(Math.random() * this.spawners.length)])
+        this.position.copy(props.position)
 
         this.velocity = new THREE.Vector3()
 

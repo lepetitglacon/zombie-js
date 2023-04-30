@@ -11,9 +11,17 @@ import WeaponHandler from "./weapon/WeaponHandler.js";
 export default class Game {
 
     constructor() {
-        this.three = new GraphicsWorld(500, 500)
-        // this.map = new GameMap()
 
+        // player
+        this.player = {}
+        this.player.maxHealth = 100
+        this.player.health = this.player.maxHealth
+        this.player.speed = 50
+        this.player.mass = 90
+        this.player.height = 1.8
+
+        // three
+        this.three = new GraphicsWorld(500, 500)
 
         this.startTime = Date.now();
         this.prevTime = performance.now();
@@ -26,13 +34,11 @@ export default class Game {
             gravity: 2 // 9.8 normalement
         }
 
-        // player
-        this.player = {}
-        this.player.maxHealth = 100
-        this.player.health = this.player.maxHealth
+
 
         this.PLAYERS = new Map()
         this.ZOMBIES = new Map()
+
         this.socket = undefined
 
         this.inputManager = new InputManager()
@@ -100,14 +106,14 @@ export default class Game {
             // stop forces
             this.velocity.x -= this.velocity.x * 10 * delta;
             this.velocity.z -= this.velocity.z * 10 * delta;
-            this.velocity.y -= this.config.gravity * window.ZombieGame.player.mass * delta;
+            this.velocity.y -= this.config.gravity * this.player.mass * delta;
 
             this.direction.z = Number( this.inputManager.moveForward ) - Number( this.inputManager.moveBackward );
             this.direction.x = Number( this.inputManager.moveRight ) - Number( this.inputManager.moveLeft );
             this.direction.normalize();
 
-            if ( this.inputManager.moveForward || this.inputManager.moveBackward ) this.velocity.z -= this.direction.z * window.ZombieGame.player.speed * delta;
-            if ( this.inputManager.moveLeft || this.inputManager.moveRight ) this.velocity.x -= this.direction.x * window.ZombieGame.player.speed * delta;
+            if ( this.inputManager.moveForward || this.inputManager.moveBackward ) this.velocity.z -= this.direction.z * this.player.speed * delta;
+            if ( this.inputManager.moveLeft || this.inputManager.moveRight ) this.velocity.x -= this.direction.x * this.player.speed * delta;
 
             this.three.controls.moveRight( - this.velocity.x * delta );
             this.three.controls.moveForward( - this.velocity.z * delta );
@@ -119,14 +125,6 @@ export default class Game {
             this.velocity.y = 0;
             this.three.controls.getObject().position.y = .5;
         }
-
-        // ZOMBIES UPDATE
-        // for (const [id, zombie] of this.ZOMBIES) {
-        //     if (zombie.health <= 0) {
-        //         zombie.removeFromScene()
-        //         this.ZOMBIES.delete(id)
-        //     }
-        // }
 
 
         this.prevTime = time;

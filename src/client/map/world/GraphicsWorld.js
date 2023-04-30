@@ -3,6 +3,10 @@ import PointerLockControls from "../../input/PointerLockControls.js";
 import {GLTFLoader} from "three/addons/loaders/GLTFLoader.js";
 // import {PointerLockControls} from "three/addons/controls/PointerLockControls.js";
 
+// assets
+import "../../assets/gltf/maps/scene.glb"
+import "../../assets/gltf/maps/flora_square.glb"
+
 export default class GraphicsWorld {
 
     constructor(worldWidth, worldDepth) {
@@ -31,29 +35,8 @@ export default class GraphicsWorld {
         this.directionalLight.castShadow = true; // default false
         this.scene.add( this.directionalLight );
 
-        // this.groundGeometry = new THREE.PlaneGeometry( worldWidth, worldDepth);
-        // this.groundGeometry.rotateX( - Math.PI / 2 );
-        // this.groundMesh = new THREE.Mesh( this.groundGeometry, new THREE.MeshStandardMaterial( {color: 0x4DC2E8 }) );
-        // this.groundMesh.position.y = -1
-        // this.groundMesh.receiveShadow = true
-        // this.groundMesh.name = "Ground"
-        // this.scene.add(this.groundMesh)
-
+        // 3D map from blender
         this.gltf = undefined
-        const loader = new GLTFLoader();
-        loader.load(
-            '../gltf/scene.glb',
-            ( gltf ) => {
-                this.gltf = gltf.scene
-
-                this.gltf.scale.set(1, 1, 1);
-                this.gltf.rotateY(300 * (Math.PI/180));
-
-                this.scene.add( this.gltf );
-            }
-        )
-
-
 
         this.bind()
     }
@@ -63,6 +46,42 @@ export default class GraphicsWorld {
         window.ZombieGame.game.gui.addToFolder('controls', this.camera.position, 'x', -1000, 1000)
         window.ZombieGame.game.gui.addToFolder('controls', this.camera.position, 'y', -1000, 1000)
         window.ZombieGame.game.gui.addToFolder('controls', this.camera.position, 'z', -1000, 1000)
+    }
+
+    loadMap(map) {
+        const loader = new GLTFLoader();
+        loader.load(
+            '../gltf/maps/' + map,
+            ( gltf ) => {
+                this.gltf = gltf.scene
+
+                const spawners = []
+
+                console.log('sent map')
+
+                console.log('world', this.gltf)
+
+                for (const i in this.gltf.children) {
+                    const obj = this.gltf.children[i]
+                    console.log(obj)
+                    const type = obj.userData.type ?? ''
+                    switch (type) {
+                        case 'Spawner':
+                            spawners.push(obj.position.clone())
+                            console.log('object attr : ' + type)
+                            break;
+                        default:
+                            console.log('object attr : ' + type)
+                            break;
+                    }
+                }
+
+                window.ZombieGame.game.serverConnector.socket.emit('register_spawner', spawners)
+
+                // this.gltf.scale.set(1, 1, 1);
+                this.scene.add( this.gltf );
+            }
+        )
     }
 
     bind() {
