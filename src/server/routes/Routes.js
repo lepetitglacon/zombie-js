@@ -1,5 +1,6 @@
 import ZombieGameServer from "../ZombieGameServer.js";
 import path from "path"
+import fs from "fs"
 
 export default class Routes {
 
@@ -24,9 +25,15 @@ export default class Routes {
             res.json(games);
         })
 
+        ZombieServer.app.get('/lp/maps', (req, res) => {
+            fs.readdir(path.join(ZombieServer.__dirname, '../../src/client/assets/gltf/maps'), (err, data) => {
+                res.json(data);
+            })
+        })
+
         // create game
-        ZombieServer.app.get('/create/:name', (req, res) => {
-             res.redirect(`/game/${ZombieServer.createGame(req.params.name)}`)
+        ZombieServer.app.get('/create/:name/:map', (req, res) => {
+             res.redirect(`/game/${ZombieServer.createGame(req.params.name, req.params.map)}`)
         })
 
         // play game

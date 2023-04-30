@@ -1,4 +1,8 @@
 import ZombieFactory from "../common/factory/ZombieFactory.js";
+import {GLTFLoader} from "three/addons/loaders/GLTFLoader.js";
+import path from "path";
+import fs from "fs";
+
 
 export default class Game {
 
@@ -7,10 +11,10 @@ export default class Game {
         RUNNING: 1,
     }
 
-    constructor(roomId, server) {
-        this.io = server
+    constructor(props) {
+        this.io = props.server
         this.status = Game.STATUS.PAUSED
-        this.roomId = roomId
+        this.roomId = props.roomId
 
         this.tickRate = 60
         this.prevTime = Date.now();
@@ -26,6 +30,9 @@ export default class Game {
         this.zombieSpawnRateTime = performance.now();
 
         this.name = ''
+        this.mapName = props.map
+        this.map = undefined
+
 
         this.PLAYERS = new Map()
         this.ZOMBIES = new Map()

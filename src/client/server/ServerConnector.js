@@ -31,6 +31,11 @@ export default class ServerConnector {
                 console.log('pong from server')
             })
 
+            // receive map info
+            this.socket.on('map', (mapName) => {
+                window.ZombieGame.game.three.loadMap(mapName)
+            })
+
             // player points
             this.socket.on('points', (playerPoints) => {
                 console.log('[PLAYERS] points ', playerPoints)

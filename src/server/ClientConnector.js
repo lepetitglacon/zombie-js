@@ -1,5 +1,6 @@
 import * as THREE from "three"
 import Utils from "../common/Utils.js";
+import ZombieFactory from "../common/factory/ZombieFactory.js";
 
 
 export default class ClientConnector {
@@ -32,6 +33,18 @@ export default class ClientConnector {
     init() {
         this.socket.join(this.roomId)
 
+        // set map
+        this.socket.emit('map', this.game.mapName)
+
+        this.socket.on('register_spawner', (spawners) => {
+            if (ZombieFactory.spawners.isSet === undefined) {
+                console.log('loading spawners')
+                ZombieFactory.spawners.length = 0
+                ZombieFactory.spawners = spawners
+                ZombieFactory.spawners.isSet = true
+            }
+        })
+
         // tell other player the new connection
         this.socket.to(this.roomId).emit('player_connect', {
             socketId: this.socket.id,
@@ -56,6 +69,8 @@ export default class ClientConnector {
         this.socket.on('ping', () => {
             this.socket.emit('pong')
         })
+
+
 
         this.socket.on('name', (name) => {
             this.username = name
