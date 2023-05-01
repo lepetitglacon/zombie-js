@@ -18,7 +18,7 @@ export default class Routes {
                     games[i] = {}
                     games[i].id = key
                     games[i].name = val.name ?? 'Untitled'
-                    games[i].map = val.map ?? 'No map'
+                    games[i].map = val.mapName ?? 'No map'
                     games[i].players = val.PLAYERS.size
                     games[i].ping = 25
                     i++
