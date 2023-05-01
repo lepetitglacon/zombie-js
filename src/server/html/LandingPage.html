@@ -5,101 +5,120 @@
     <meta charset="UTF-8">
     <title>Z3D</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+    <link href='' rel='stylesheet' type='text/css'>
 </head>
 <body>
 
 <style>
+    @font-face {
+        font-family: z3d;
+        src: url("/fonts/HelpMe.ttf");
+    }
+
     .column {
         flex-direction: column;
     }
     .d-flex {
          display: flex;
      }
+    .lp-zombie-hand {
+        position: absolute;
+        bottom: 0;
+        height: 100%;
+        width: 40%;
+        z-index: -1;
+    }
+    #lp-title {
+        position: relative;
+        top: 320px;
+
+        color: #7C0404;
+        text-shadow: -2px 0 white, 0 2px white, 2px 0 white, 0 -2px white;
+        font-size:256px;
+        font-family: z3d!important;
+
+    }
 </style>
 
 <div id="landing-page" class="container-fluid d-flex">
-    <div class="col ">
+    <div class="col container">
 
-        <div class="row ">
-            <div class="m-5">
-                <input type="text" name="create-game-title" id="set-username">
-                <button id="set-username-button">Username</button>
-            </div>
-        </div>
+        <div class="row mb-5">
+            <div class="col">
 
-        <div class="row ">
-            <div class="m-5">
-                <div class="d-flex column">
-                    <label for="create-game-title">Name</label>
-                    <input type="text" name="create-game-title" id="create-game-title">
+                <h2>Set username</h2>
+
+                <label class="form-label" for="set-username">Username</label>
+                <div class="input-group mb-3">
+                    <input class="form-control" type="text" id="set-username">
                 </div>
-                <div class="d-flex column">
-                    <label for="create-game-map">Map</label>
-                    <select name="create-game-map" id="create-game-map">
+                <button class="btn btn-danger" id="set-username-button">Set username</button>
+
+            </div>
+
+            <div class="col">
+
+                <h2>Create game</h2>
+
+                <label class="form-label" for="create-game-title">Name</label>
+                <div class="input-group mb-3">
+                    <input class="form-control" type="text" name="create-game-title" id="create-game-title">
+                </div>
+
+                <label class="form-label" for="create-game-map">Map</label>
+                <div class="input-group mb-3">
+                    <select class="form-select" name="create-game-map" id="create-game-map">
                         <option value="">Chose a map</option>
                     </select>
                 </div>
 
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="create-game-private">
+                    <label class="form-check-label" for="create-game-private">
+                        Private ?
+                    </label>
+                </div>
 
-                <button id="create-game-button">Create Room</button>
+                <button class="btn btn-danger mt-2" id="create-game-button">Create Game</button>
             </div>
         </div>
 
-        <div class="row align-self-end m-5">
+        <div class="row">
 
             <div class="d-flex justify-content-between">
                 <h2>Public games</h2>
-                <button id="refresh-btn">Refresh</button>
+                <button class="btn btn-secondary m-1" id="refresh-btn">Refresh</button>
             </div>
-            <hr class="my-3">
 
-            <table id="games-table" class="table">
-                <thead>
-                <tr>
-                    <th scope="col">Name</th>
-                    <th scope="col">Map</th>
-                    <th scope="col">Players</th>
-                    <th scope="col">Ping</th>
-                    <th scope="col">Action</th>
-                </tr>
-                </thead>
-                <tbody id="public-games-tbody">
-                <tr>
-                    <td>20dzq5d05zq1d5qzd8zq</td>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
-                    <td>@mdo</td>
-                    <td>@mdo</td>
-                </tr>
-                <tr>
-                    <td>20dzq5d05zq1d5qzd8zq</td>
-                    <td>Jacob</td>
-                    <td>Thornton</td>
-                    <td>@fat</td>
-                    <td>@fat</td>
-                    <td>@fat</td>
-                </tr>
-                <tr>
-                    <td>20dzq5d05zq1d5qzd8zq</td>
-                    <td colspan="2">Larry the Bird</td>
-                    <td>@twitter</td>
-                    <td>@twitter</td>
-                    <td>@twitter</td>
-                </tr>
-                </tbody>
-            </table>
+
+            <div class="container">
+                <table id="games-table" class="table">
+                    <thead>
+                        <tr class="table-danger">
+                            <th scope="col">Name</th>
+                            <th scope="col">Map</th>
+                            <th scope="col">Players</th>
+                            <th scope="col">Ping</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="public-games-tbody">
+                    </tbody>
+                </table>
+            </div>
 
         </div>
     </div>
+
     <div class="col">
         <div class="row justify-content-center">
             <h1 id="lp-title" class="red text-center">Z3D</h1>
         </div>
         <div class="row lp-zombie-hand-div justify-content-center">
-            <img class="lp-zombie-hand" src="img/zombie-hand.png">
+            <img class="lp-zombie-hand img-fluid" src="img/zombie-hand.png">
         </div>
     </div>
+
 </div>
 
 <script>
@@ -109,6 +128,7 @@
 
     const createGameButton = document.getElementById('create-game-button')
     const createGameTitle = document.getElementById('create-game-title')
+    const createGamePrivate = document.getElementById('create-game-private')
 
     const httpHeadersOption = {
         method: 'GET',
@@ -131,7 +151,7 @@
             createGameTitle.value !== '' &&
             mapSelect.value !== ''
         ) {
-            window.location.assign('/create/' + createGameTitle.value + '/' + mapSelect.value)
+            window.location.assign('/create/' + createGameTitle.value + '/' + mapSelect.value + '/' + createGamePrivate.checked)
         }
     })
 
@@ -160,12 +180,14 @@
         row.appendChild(createTd(gameConf.players))
         row.appendChild(createTd(gameConf.ping))
 
-        row.appendChild(createTd().appendChild(createLink('Join', '/game/'+gameConf.id)))
+        const td = createTd()
+        td.appendChild(createLink('Join', '/game/'+gameConf.id))
+        row.appendChild(td)
 
         return row
     }
 
-    function createTd(innerText) {
+    function createTd(innerText = '') {
         const td = document.createElement('td')
         td.innerText = innerText
         return td

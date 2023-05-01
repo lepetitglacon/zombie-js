@@ -45,7 +45,11 @@ export default class ZombieGameServer {
         this.app.use('/game', express.static('dist'));
         this.routes = new Routes()
 
-        this.createGame('TEST', 'flora_square.glb')
+        this.createGame({
+            name:'TEST',
+            map:'flora_square.glb',
+            private: false
+        })
     }
 
     run() {
@@ -69,12 +73,17 @@ export default class ZombieGameServer {
         })
     }
 
-    createGame(name = '', map) {
+    createGame(props) {
         let id = this.getRandomId(10)
-        console.log('[GAME] created ' + id + ' on map ' + map)
-        let game = new Game({roomId: id, server: this.io, map: map})
+        let game = new Game({roomId: id, server: this.io, map: props.map})
+        game.name = props.name
+        game.private = props.private
+
+        console.log('game is private', game.private)
+
         this.GAMES.set(id, game)
-        game.name = name
+
+        console.log('[GAME] created ' + id + ' on map ' + props.map)
         game.run()
         return id
     }
