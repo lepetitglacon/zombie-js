@@ -9,6 +9,8 @@ import "./assets/img/loader2.gif"
 import "./assets/img/weapons/pistol/fpsview.png"
 import "./assets/gltf/Soldier.glb"
 
+import "./assets/fonts/HelpMe.ttf"
+
 
 
 import Game from "./Game.js";

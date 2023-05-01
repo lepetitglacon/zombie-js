@@ -14,7 +14,7 @@ export default class GraphicsWorld {
         this.scene.background = new THREE.Color( 0xefd1b5 );
         this.scene.fog = new THREE.FogExp2( 0xefd1b5, 0.0025 );
 
-        this.camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 0.1, 1000 );
+        this.camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 1000 );
         this.camera.position.z = 5;
 
         this.renderer = new THREE.WebGLRenderer();
@@ -24,7 +24,7 @@ export default class GraphicsWorld {
         document.body.appendChild( this.renderer.domElement );
 
         this.controls = new PointerLockControls( this.camera, this.renderer.domElement );
-        this.controls.pointerSpeed = .4
+        this.controls.pointerSpeed = .27
 
         this.ambientLight = new THREE.AmbientLight( 0x666666 ); // soft white light
         this.scene.add( this.ambientLight );

@@ -14,13 +14,17 @@ export default class Routes {
             const games = []
             let i = 0;
             for (const [key, val] of ZombieServer.GAMES) {
-                games[i] = {}
-                games[i].id = key
-                games[i].name = val.name ?? 'Untitled'
-                games[i].map = val.map
-                games[i].players = val.PLAYERS.size
-                games[i].ping = 25
-                i++
+                if (val.private === false) {
+                    console.log(val.name, val.private)
+
+                    games[i] = {}
+                    games[i].id = key
+                    games[i].name = val.name ?? 'Untitled'
+                    games[i].map = val.map ?? 'No map'
+                    games[i].players = val.PLAYERS.size
+                    games[i].ping = 25
+                    i++
+                }
             }
             res.json(games);
         })
@@ -32,8 +36,14 @@ export default class Routes {
         })
 
         // create game
-        ZombieServer.app.get('/create/:name/:map', (req, res) => {
-             res.redirect(`/game/${ZombieServer.createGame(req.params.name, req.params.map)}`)
+        ZombieServer.app.get('/create/:name/:map/:private', (req, res) => {
+            console.log('route', req.params.private)
+            res.redirect(`/game/${ZombieServer.createGame({
+                 name: req.params.name,
+                 map: req.params.map,
+                 private: req.params.private === 'true'
+             }
+             )}`)
         })
 
         // play game

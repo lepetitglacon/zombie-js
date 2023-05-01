@@ -14,6 +14,7 @@ export default class Game {
     constructor(props) {
         this.io = props.server
         this.status = Game.STATUS.PAUSED
+        this.private = false
         this.roomId = props.roomId
 
         this.tickRate = 60

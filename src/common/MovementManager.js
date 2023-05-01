@@ -15,14 +15,16 @@ export default class MovementManager {
         const min = v.clone().add(this.host.position.clone().negate())
         const normalized = new THREE.Vector3(min.x, min.y, min.z).normalize()
         const velocity = normalized.clone().multiplyScalar(this.host.speed)
-        this.steering.add(velocity)
+        this.steering.x += velocity.x
+        this.steering.z += velocity.z
     }
 
     flee(v) {
         const min = v.clone().add(this.host.position.clone().negate())
         const normalized = new THREE.Vector3(min.x, min.y, min.z).normalize()
         const velocity = normalized.clone().multiplyScalar(this.host.speed)
-        this.steering.add(velocity.negate())
+        this.steering.x += -velocity.x
+        this.steering.z += -velocity.z
     }
 
     update() {
