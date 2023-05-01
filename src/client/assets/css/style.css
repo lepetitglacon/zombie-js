@@ -1,7 +1,16 @@
+@font-face {
+    font-family: "z3d";
+    src: url("../fonts/HelpMe.ttf"),
+    url("http://localhost:3000/fonts/HelpMe.ttf"),
+    url("../fonts/HelpMe.ttf");
+}
+
 * {
     margin: 0;
     padding: 0;
+    font-family: z3d;
 }
+
 /************* GAME ************/
 
 #info {
@@ -72,29 +81,34 @@
 #chat-div {
     position: absolute;
     bottom: 0;
+    background-color: rgba(255, 255, 255, .5);
+    border-radius: 10px;
+    padding: 5px;
+    max-width: 300px;
+    word-break: break-word;
 }
 #chat-input {
+    position: relative;
     -webkit-appearance: none;
     background: transparent;
     border: none;
+    width: 300px;
 }
 
-#chat-input::before {
-    position: absolute;
-    background-image: url("/src/client/assets/img/enter.png");
-    height: 25px;
-    top: 0;
+#chat-ul > li{
+    margin-top: 2px;
+    font-family: Arial;
+}
+
+#chat-ul > li > span{
+    margin-top: 2px;
+    font-family: z3d;
 }
 
 #points {
     position: absolute;
     top: 40vh;
     right: 10px;
-}
-
-.keyboard-enter {
-    height: 25px;
-    top: 5px;
 }
 
 #option-menu {
@@ -120,8 +134,7 @@
     color: darkorange;
     font-size: 24px;
     text-decoration: none;
-    font-family: Impact;
-    font-weight: lighter;
+    text-align: center;
 
     transition: 0.2s;
 }

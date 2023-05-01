@@ -9,5 +9,25 @@ export default class Utils {
         return Math.random() * (max - min) + min;
     }
 
+    static addMessageToChat(msg, from) {
+        const msgLi = document.createElement('li')
+        const nameSpan = document.createElement('span')
+        let username = ""
+        if (window.ZombieGame.game.PLAYERS.has(from)) {
+            username = window.ZombieGame.game.PLAYERS.get(from).username
+        }
+        username += ` (${from})`
+        nameSpan.innerText = username
+
+        if (from === window.ZombieGame.game.serverConnector.socket.id) {
+            // nameSpan.style.color = '#' + window.ZombieGame.game.serverConnector.color.toString(16)
+        } else {
+            nameSpan.style.color = '#' + window.ZombieGame.game.PLAYERS.get(from).color.toString(16)
+
+        }
+        msgLi.innerText = ' : ' + msg
+        msgLi.prepend(nameSpan)
+        window.ZombieGame.chatUl.appendChild(msgLi)
+    }
 
 }
