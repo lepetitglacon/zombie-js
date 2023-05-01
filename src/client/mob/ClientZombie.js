@@ -35,10 +35,12 @@ export default class ClientZombie {
 
                 this.gltf.children.pop()
 
-                // console.log(this.gltf.children[0].children)
+                const material = new THREE.MeshStandardMaterial( { color: 0x339933} );
+
                 for (const bodyPart of this.gltf.children[0].children) {
                     bodyPart.isZombie = true
                     bodyPart.zombieId = this.id
+                    bodyPart.material = material
                 }
 
                 this.gltf.scale.set(.9, .9, .9);
