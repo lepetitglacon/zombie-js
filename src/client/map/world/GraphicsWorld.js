@@ -14,7 +14,7 @@ export default class GraphicsWorld {
         this.scene.background = new THREE.Color( 0xefd1b5 );
         this.scene.fog = new THREE.FogExp2( 0xefd1b5, 0.0025 );
 
-        this.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+        this.camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 0.1, 1000 );
         this.camera.position.z = 5;
 
         this.renderer = new THREE.WebGLRenderer();
@@ -57,10 +57,6 @@ export default class GraphicsWorld {
 
                 const spawners = []
 
-                console.log('sent map')
-
-                console.log('world', this.gltf)
-
                 for (const i in this.gltf.children) {
                     const obj = this.gltf.children[i]
                     console.log(obj)
@@ -68,10 +64,8 @@ export default class GraphicsWorld {
                     switch (type) {
                         case 'Spawner':
                             spawners.push(obj.position.clone())
-                            console.log('object attr : ' + type)
                             break;
                         default:
-                            console.log('object attr : ' + type)
                             break;
                     }
                 }

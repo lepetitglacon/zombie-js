@@ -5,9 +5,9 @@ import ZombieFactory from "../common/factory/ZombieFactory.js";
 
 export default class ClientConnector {
 
-    constructor(socket, room) {
-        this.socket = socket
-        this.roomId = room
+    constructor(props) {
+        this.socket = props.socket
+        this.roomId = props.room
         this.game = ZombieServer.GAMES.get(this.roomId)
 
         this.username = 'Unknown'
@@ -20,7 +20,7 @@ export default class ClientConnector {
         this.position = new THREE.Vector3(0, 0, 0)
         this.position.set(0, 0, 0)
         this.direction = new THREE.Vector3(0, 0, 0)
-        this.color = Utils.randomColor()
+        this.color = props.color
 
         this.lastPosition = new THREE.Vector3(0, 0, 0)
         this.lastDirection = new THREE.Vector3(0, 0, 0)
@@ -49,7 +49,9 @@ export default class ClientConnector {
         this.socket.to(this.roomId).emit('player_connect', {
             socketId: this.socket.id,
             username: this.username,
-            color: this.color
+            position: this.position,
+            color: this.color,
+            points: this.points
         })
 
         // send zombies to socket

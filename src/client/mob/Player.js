@@ -14,6 +14,7 @@ export default class Player {
     constructor(player) {
         this.socketId = player.socketId
         this.username = player.username
+        this.points = player.points
 
         // gameplay
         this.maxHealth = 100
@@ -23,14 +24,13 @@ export default class Player {
         this.geometry = new THREE.BoxGeometry( config.width, config.height, config.depth );
         this.material = new THREE.MeshStandardMaterial( { color: player.color, opacity: 0, transparent: true } );
         this.mesh = new THREE.Mesh( this.geometry, this.material );
-        this.mesh.position.set(2, 0, 2)
+        this.mesh.position.copy(player.position)
         window.ZombieGame.game.three.scene.add(this.mesh)
 
         this.gltf = undefined
 
         // sound
         this.sound = undefined
-
 
         const loader = new GLTFLoader();
         loader.load(
@@ -44,18 +44,21 @@ export default class Player {
                 this.gltf.scale.set(.9, .9, .9);
                 this.gltf.rotateY(Math.PI / 2);
                 this.gltf.position.copy(this.mesh.position);
-                for (let i in this.gltf.children[0].children) {
-                    this.gltf.children[0].children[i].material.color.set(player.color)
-                    this.gltf.children[0].children[i].material.opacity = 1
+
+                const material = new THREE.MeshStandardMaterial({color: player.color})
+
+                for (const bodyPart of this.gltf.children[0].children) {
+                    bodyPart.isPlayer = true
+                    bodyPart.playerId = this.socketId
+                    if (bodyPart.name === 'Head') {
+                        bodyPart.material = material
+                    }
                 }
 
-                // add sounds
-                // this.sound = window.ZombieGame.game.soundManager.getPositional('weapon_pistol_shot')
                 this.sound = window.ZombieGame.game.soundManager.loadAndGetPositionalSound(
                     'weapon_pistol_shot_' + this.socketId,
                     'src/client/assets/sound/gunshot.wav'
                     )
-                // this.gltf.add(this.sound)
 
                 window.ZombieGame.game.three.scene.add( this.gltf );
             }

@@ -9,6 +9,7 @@ import {Server} from "socket.io";
 import Routes from "./routes/Routes.js";
 import ClientConnector from "./ClientConnector.js";
 import Game from "./Game.js";
+import PlayerFactory from "../common/factory/PlayerFactory.js";
 
 const nets = os.networkInterfaces();
 const ipAddresses = new Map();
@@ -62,7 +63,7 @@ export default class ZombieGameServer {
                 let roomName = socket.handshake.query.roomName;
                 if (this.GAMES.has(roomName)) {
                     const game = this.GAMES.get(roomName)
-                    game.PLAYERS.set(socket, new ClientConnector(socket, roomName))
+                    game.PLAYERS.set(socket, PlayerFactory.createServerPlayer({socket: socket, room:roomName}))
                 }
             });
         })

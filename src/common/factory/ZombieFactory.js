@@ -8,6 +8,13 @@ export default class ZombieFactory {
         new THREE.Vector3(-27.8, 0, -16)
     ]
 
+    static playerColors = [
+        0x111111,
+        0xADD8E6,
+        0xffcccb,
+        0xffffe0,
+    ]
+
     constructor() {
 
     }
