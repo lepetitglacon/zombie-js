@@ -59,7 +59,6 @@ export default class GraphicsWorld {
 
                 for (const i in this.gltf.children) {
                     const obj = this.gltf.children[i]
-                    console.log(obj)
                     const type = obj.userData.type ?? ''
                     switch (type) {
                         case 'Spawner':

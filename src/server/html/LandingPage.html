@@ -227,7 +227,6 @@
         fetch('/lp/maps', httpHeadersOption)
             .then(response => response.json())
             .then(body => {
-                console.log(body)
                 for (const mapFile of body) {
                     const option = document.createElement('option')
                     option.innerText = mapFile
