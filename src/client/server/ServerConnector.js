@@ -2,6 +2,7 @@ import * as THREE from "three";
 import Player from "../mob/Player.js";
 import ZombieFactory from "../../common/factory/ZombieFactory.js";
 import {attribute} from "three/nodes";
+import Utils from "../../common/Utils.js";
 
 export default class ServerConnector {
 
@@ -55,7 +56,7 @@ export default class ServerConnector {
             // chat message
             this.socket.on('chat', (msg, from) => {
                 console.log('[CHAT] message from ', from)
-                this.addMessageToChat(msg, from)
+                Utils.addMessageToChat(msg, from)
             })
 
             // get messages for the first time
@@ -63,7 +64,7 @@ export default class ServerConnector {
                 console.log('[CHAT] Messages already sent ', messages)
                 for (const i in messages) {
                     const msg = messages[i]
-                    this.addMessageToChat(msg.message, msg.from)
+                    Utils.addMessageToChat(msg.message, msg.from)
                 }
             })
 
@@ -167,17 +168,6 @@ export default class ServerConnector {
 
 
         });
-    }
-
-    addMessageToChat(msg, from) {
-        const msgLi = document.createElement('li')
-        let username = ""
-        if (window.ZombieGame.game.PLAYERS.has(from)) {
-            username = window.ZombieGame.game.PLAYERS.get(from).username
-        }
-        username += ` (${from})`
-        msgLi.innerText = username + ' : ' + msg
-        window.ZombieGame.chatUl.appendChild(msgLi)
     }
 
     updatePoints(player, points) {

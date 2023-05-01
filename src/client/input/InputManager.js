@@ -1,4 +1,5 @@
 import ZombieGame from "../ZombieGame.js";
+import Utils from "../../common/Utils.js";
 
 export default class InputManager {
 
@@ -56,11 +57,14 @@ export default class InputManager {
                         // console.log('sending chat')
                         if (window.ZombieGame.chatInput.value !== '') {
                             window.ZombieGame.game.serverConnector.socket.emit('chat', window.ZombieGame.chatInput.value)
-                            const msgLi = document.createElement('li')
-                            msgLi.innerText = 'YOU : ' + window.ZombieGame.chatInput.value
-                            window.ZombieGame.chatUl.appendChild(msgLi)
+
+                            Utils.addMessageToChat(window.ZombieGame.chatInput.value, window.ZombieGame.game.serverConnector.socket.id)
+
+                            // const msgLi = document.createElement('li')
+                            // msgLi.innerText = 'YOU : ' +
+                            // window.ZombieGame.chatUl.appendChild(msgLi)
+
                             window.ZombieGame.chatInput.value = ''
-                            // window.ZombieGame.chatInput.classList.toggle('hidden')
                             document.activeElement.blur()
                             this.isChatOpen = false
                             window.ZombieGame.game.three.controls.lock()

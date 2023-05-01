@@ -15,6 +15,7 @@ export default class Player {
         this.socketId = player.socketId
         this.username = player.username
         this.points = player.points
+        this.color = player.color
 
         // gameplay
         this.maxHealth = 100
@@ -22,7 +23,7 @@ export default class Player {
 
         // three init
         this.geometry = new THREE.BoxGeometry( config.width, config.height, config.depth );
-        this.material = new THREE.MeshStandardMaterial( { color: player.color, opacity: 0, transparent: true } );
+        this.material = new THREE.MeshStandardMaterial( { color: this.color, opacity: 0, transparent: true } );
         this.mesh = new THREE.Mesh( this.geometry, this.material );
         this.mesh.position.copy(player.position)
         window.ZombieGame.game.three.scene.add(this.mesh)
@@ -45,7 +46,7 @@ export default class Player {
                 this.gltf.rotateY(Math.PI / 2);
                 this.gltf.position.copy(this.mesh.position);
 
-                const material = new THREE.MeshStandardMaterial({color: player.color})
+                const material = new THREE.MeshStandardMaterial({color: this.color})
 
                 for (const bodyPart of this.gltf.children[0].children) {
                     bodyPart.isPlayer = true
