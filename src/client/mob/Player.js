@@ -1,8 +1,6 @@
 import * as THREE from "three"
-import * as CANNON from "cannon-es"
-import {CSS2DObject, CSS2DRenderer} from 'three/addons/renderers/CSS2DRenderer.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import SoundManager from "../managers/SoundManager.js";
+import ModelManager from "../managers/ModelManager.js";
 
 const config = {
     width: 1,
@@ -28,10 +26,29 @@ export default class Player {
         this.mesh.position.copy(player.position)
         window.ZombieGame.game.three.scene.add(this.mesh)
 
-        this.gltf = undefined
+        console.log('models from player', ModelManager.models)
+
+        this.gltf = window.ZombieGame.modelManager.getModelCopy('player')
+        console.log(this.gltf)
+        this.gltf.remove(this.gltf.getObjectByName('Plane'))
+        this.gltf.scale.set(.9, .9, .9);
+        this.gltf.rotateY(Math.PI / 2);
+        this.gltf.position.copy(this.mesh.position);
+        const material = new THREE.MeshStandardMaterial({color: this.color})
+        for (const bodyPart of this.gltf.children[0].children) {
+            bodyPart.isPlayer = true
+            bodyPart.playerId = this.socketId
+            if (bodyPart.name === 'Head') {
+                bodyPart.material = material
+            }
+        }
 
         // sound
         this.sound = undefined
+        this.sound = window.ZombieGame.game.soundManager.loadAndGetPositionalSound(
+            'weapon_pistol_shot_' + this.socketId,
+            'src/client/assets/sound/gunshot.wav'
+        )
 
         const loader = new GLTFLoader();
         loader.load(
@@ -39,27 +56,7 @@ export default class Player {
             ( gltf ) => {
                 this.gltf = gltf.scene
 
-                // remove object scene
-                this.gltf.remove(this.gltf.getObjectByName('Plane'))
 
-                this.gltf.scale.set(.9, .9, .9);
-                this.gltf.rotateY(Math.PI / 2);
-                this.gltf.position.copy(this.mesh.position);
-
-                const material = new THREE.MeshStandardMaterial({color: this.color})
-
-                for (const bodyPart of this.gltf.children[0].children) {
-                    bodyPart.isPlayer = true
-                    bodyPart.playerId = this.socketId
-                    if (bodyPart.name === 'Head') {
-                        bodyPart.material = material
-                    }
-                }
-
-                this.sound = window.ZombieGame.game.soundManager.loadAndGetPositionalSound(
-                    'weapon_pistol_shot_' + this.socketId,
-                    'src/client/assets/sound/gunshot.wav'
-                    )
 
                 window.ZombieGame.game.three.scene.add( this.gltf );
             }

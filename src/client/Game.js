@@ -7,6 +7,7 @@ import ServerConnector from "./server/ServerConnector.js";
 import Gui from "./gui/Gui.js";
 import SoundManager from "./managers/SoundManager.js";
 import WeaponHandler from "./weapon/WeaponHandler.js";
+import ModelManager from "./managers/ModelManager.js";
 
 export default class Game {
 
@@ -42,8 +43,8 @@ export default class Game {
         this.socket = undefined
 
         this.inputManager = new InputManager()
-
         this.soundManager = new SoundManager({camera: this.three.camera})
+
         this.weaponHandler = new WeaponHandler();
 
     }

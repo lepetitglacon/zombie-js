@@ -14,6 +14,8 @@ import "./assets/fonts/HelpMe.ttf"
 
 
 import Game from "./Game.js";
+import ModelManager from "./managers/ModelManager.js";
+import SoundManager from "./managers/SoundManager.js";
 
 export default class ZombieGame {
 
@@ -25,6 +27,9 @@ export default class ZombieGame {
 
     constructor() {
         this.state = ZombieGame.STATE.GAME
+
+        this.modelManager = new ModelManager()
+
         this.game = new Game()
 
         this.player = {
@@ -108,7 +113,9 @@ export default class ZombieGame {
     }
 
     play() {
-        this.game.init()
-        window.dispatchEvent(new Event("ZombieGame-start"))
+        window.addEventListener('assets_loaded', () => {
+            this.game.init()
+            window.dispatchEvent(new Event("ZombieGame-start"))
+        })
     }
 }
