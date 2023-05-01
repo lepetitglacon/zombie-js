@@ -15,7 +15,6 @@ export default class PlayerFactory {
     // }
 
     static createServerPlayer(player) {
-        console.log(this.playerColors[this.playerCount])
         player.color = this.playerColors[this.playerCount++]
 
         return new ClientConnector(player)

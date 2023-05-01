@@ -53,7 +53,7 @@ export default class ZombieGame {
 
         this.mouseAcceleration = document.getElementById("mouse-acceleration")
         this.mouseAcceleration.addEventListener('change', (e) => {
-            console.log(e)
+            // console.log(e)
             if (e.target.value === 'on') {
                 this.game.config.player.mouseAcceleration = true
             } else {

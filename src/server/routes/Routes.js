@@ -15,8 +15,6 @@ export default class Routes {
             let i = 0;
             for (const [key, val] of ZombieServer.GAMES) {
                 if (val.private === false) {
-                    console.log(val.name, val.private)
-
                     games[i] = {}
                     games[i].id = key
                     games[i].name = val.name ?? 'Untitled'
@@ -37,7 +35,6 @@ export default class Routes {
 
         // create game
         ZombieServer.app.get('/create/:name/:map/:private', (req, res) => {
-            console.log('route', req.params.private)
             res.redirect(`/game/${ZombieServer.createGame({
                  name: req.params.name,
                  map: req.params.map,
