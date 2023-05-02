@@ -7,14 +7,16 @@ import "../../client/assets/sound/knife.wav"
 
 export default class SoundManager {
 
-    constructor(props) {
-        this.listener = new THREE.AudioListener();
-        props.camera.add( this.listener );
-
+    constructor() {
         this.loader = new THREE.AudioLoader();
 
         this.sounds = new Map()
         this.positionalSounds = new Map()
+    }
+
+    init() {
+        this.listener = new THREE.AudioListener();
+        window.ZombieGame.game.three.camera.add( this.listener );
         this.loadSounds()
         this.bind()
     }

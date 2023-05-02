@@ -6,10 +6,12 @@ import {GLTFLoader} from "three/addons/loaders/GLTFLoader.js";
 // assets
 import "../../assets/gltf/maps/scene.glb"
 import "../../assets/gltf/maps/flora_square.glb"
+import ModelManager from "../../managers/ModelManager.js";
+import GameEngine from "../../GameEngine.js";
 
 export default class GraphicsWorld {
 
-    constructor(worldWidth, worldDepth) {
+    constructor() {
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color( 0xefd1b5 );
         this.scene.fog = new THREE.FogExp2( 0xefd1b5, 0.0025 );
@@ -36,56 +38,56 @@ export default class GraphicsWorld {
         this.scene.add( this.directionalLight );
 
         // 3D map from blender
-        this.gltf = undefined
+        this.gltf = window.ZombieGame.modelManager.getModel('map')
+        this.scene.add(this.gltf)
+
 
         this.bind()
     }
 
     init() {
-        window.ZombieGame.game.gui.addFolder('controls')
-        window.ZombieGame.game.gui.addToFolder('controls', this.camera.position, 'x', -1000, 1000)
-        window.ZombieGame.game.gui.addToFolder('controls', this.camera.position, 'y', -1000, 1000)
-        window.ZombieGame.game.gui.addToFolder('controls', this.camera.position, 'z', -1000, 1000)
+        this.engine = window.ZombieGame
+        this.engine.gui.addFolder('controls')
+        this.engine.gui.addToFolder('controls', this.camera.position, 'x', -1000, 1000)
+        this.engine.gui.addToFolder('controls', this.camera.position, 'y', -1000, 1000)
+        this.engine.gui.addToFolder('controls', this.camera.position, 'z', -1000, 1000)
+
+        this.parseMap()
     }
 
-    loadMap(map) {
-        const loader = new GLTFLoader();
-        loader.load(
-            '../gltf/maps/' + map,
-            ( gltf ) => {
-                this.gltf = gltf.scene
+    parseMap() {
+        const spawners = []
 
-                const spawners = []
-
-                for (const i in this.gltf.children) {
-                    const obj = this.gltf.children[i]
-                    const type = obj.userData.type ?? ''
-                    switch (type) {
-                        case 'Spawner':
-                            spawners.push(obj.position.clone())
-                            break;
-                        default:
-                            break;
-                    }
-                }
-
-                window.ZombieGame.game.serverConnector.socket.emit('register_spawner', spawners)
-
-                // this.gltf.scale.set(1, 1, 1);
-                this.scene.add( this.gltf );
+        for (const i in this.gltf.children) {
+            const obj = this.gltf.children[i]
+            const type = obj.userData.type ?? ''
+            switch (type) {
+                case 'Spawner':
+                    spawners.push(obj.position.clone())
+                    break;
+                default:
+                    break;
             }
-        )
+        }
+        this.engine.serverConnector.socket.emit('register_spawner', spawners)
     }
 
     bind() {
         this.controls.addEventListener( 'lock', (e) => {
+            console.log('lock')
+            this.engine.state = GameEngine.STATE.GAME
 
+            // if (window.ZombieGame.menu.isOpen()) {
+            //     window.ZombieGame.menu.close()
+            // }
         });
         this.controls.addEventListener( 'unlock', (e) => {
-            if (window.ZombieGame.game.inputManager.isChatOpen) {
+            console.log('unlock')
+            if (this.engine.chat.isOpen) {
 
             } else {
-                window.ZombieGame.game.inputManager.openGameMenu()
+                // need this to open the menu on escape key
+                this.engine.menu.open()
             }
         });
 
@@ -94,10 +96,5 @@ export default class GraphicsWorld {
             this.camera.updateProjectionMatrix();
             this.renderer.setSize( window.innerWidth, window.innerHeight );
         });
-    }
-
-    update() {
-
-
     }
 }

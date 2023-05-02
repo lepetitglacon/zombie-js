@@ -1,5 +1,5 @@
-import ZombieGame from "./client/ZombieGame.js";
+import GameEngine from "./client/GameEngine.js";
 
-window.ZombieGame = new ZombieGame()
-window.ZombieGame.play()
+window.ZombieGame = new GameEngine()
+window.ZombieGame.run()
 

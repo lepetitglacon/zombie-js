@@ -1,9 +1,7 @@
-import ZombieGame from "../ZombieGame.js";
+import GameEngine from "../GameEngine.js";
 import Utils from "../../common/Utils.js";
 
 export default class InputManager {
-
-
 
     constructor() {
         this.moveForward = false;
@@ -12,10 +10,14 @@ export default class InputManager {
         this.moveRight = false;
         this.canJump = false;
         this.isChatOpen = false;
-        this.init()
+        this.lastEscapeOrTab = Date.now();
+        this.lastEscapeOrTabRate = 100;
+
     }
 
     init() {
+        this.engine = window.ZombieGame
+        
         document.addEventListener( 'keydown', (e) => {
             // console.log(e)
 
@@ -41,65 +43,57 @@ export default class InputManager {
                     break;
 
                 case 'KeyR':
-                    window.ZombieGame.game.weaponHandler.reload()
+                    this.engine.game.weaponHandler.reload()
                     break;
 
                 case 'Space':
-                    if (window.ZombieGame.chatInput !== document.activeElement && this.canJump) {
-                        window.ZombieGame.game.velocity.y += 25;
+                    if (
+                        !this.engine.chat.isOpen &&
+                        this.canJump
+                    ) {
+                        this.engine.game.player.velocity.y += this.engine.game.cannonWorldConfig.gravity * 3;
                         this.canJump = false
                     }
                     break;
                 case 'Enter':
                 case 'NumpadEnter':
-                    if (window.ZombieGame.chatInput === document.activeElement) {
+                    if (this.engine.chat.isActive()) {
                         //sending chat
-                        // console.log('sending chat')
-                        if (window.ZombieGame.chatInput.value !== '') {
-                            window.ZombieGame.game.serverConnector.socket.emit('chat', window.ZombieGame.chatInput.value)
+                        if (!this.engine.chat.isEmpty()) {
+                            console.log('sending chat')
 
-                            Utils.addMessageToChat(window.ZombieGame.chatInput.value, window.ZombieGame.game.serverConnector.socket.id)
+                            this.engine.serverConnector.socket.emit('chat', this.engine.chat.input.value)
+                            Utils.addMessageToChat(this.engine.chat, this.engine.chat.input.value, this.engine.serverConnector.socket.id)
 
-                            // const msgLi = document.createElement('li')
-                            // msgLi.innerText = 'YOU : ' +
-                            // window.ZombieGame.chatUl.appendChild(msgLi)
-
-                            window.ZombieGame.chatInput.value = ''
-                            document.activeElement.blur()
-                            this.isChatOpen = false
-                            window.ZombieGame.game.three.controls.lock()
+                            this.engine.chat.reset()
+                            this.engine.chat.close()
                         }
-                        // closing chat
                         else {
-                            // console.log('closing chat')
-                            // window.ZombieGame.chatInput.classList.toggle('hidden')
-                            document.activeElement.blur()
-                            this.isChatOpen = false
-                            window.ZombieGame.game.three.controls.lock()
+                            console.log('closing chat')
+                            this.engine.chat.reset()
+                            this.engine.chat.close()
                         }
                     } else {
-                        // focusing chat
-                        // console.log('focusing chat')
-                        window.ZombieGame.game.three.controls.unlock()
-                        // window.ZombieGame.chatInput.classList.toggle('hidden')
-                        window.ZombieGame.chatInput.focus({preventScroll: true})
-                        this.isChatOpen = true
+                        console.log('opening chat')
+                        this.engine.chat.open()
                     }
+                    break;
+
+                case 'Escape':
+                    this.engine.menu.close()
                     break;
 
                 case 'Tab':
                     e.preventDefault()
-                    this.openGameMenu()
-                    break;
-
-                case 'Escape':
-                    window.ZombieGame.state = ZombieGame.STATE.GAME
+                    if (this.lastEscapeOrTab + this.lastEscapeOrTabRate < Date.now()) {
+                        this.engine.menu.toggle()
+                    }
                     break;
 
                 case 'AltLeft':
+                    // Knife
                     e.preventDefault()
-                    window.ZombieGame.game.weaponHandler.raycaster.setFromCamera( window.ZombieGame.game.weaponHandler.pointer, window.ZombieGame.game.three.camera );
-                    window.ZombieGame.game.weaponHandler.knife.shoot()
+                    this.engine.game.weaponHandler.knife.shoot()
                     break;
             }
         });
@@ -126,48 +120,42 @@ export default class InputManager {
         })
 
         document.addEventListener('click', (e) => {
-            switch (window.ZombieGame.state) {
 
+            console.log('should be in 0 not to close', this.engine.state)
+            switch (this.engine.state) {
 
-                case ZombieGame.STATE.GAME:
-                    if (window.ZombieGame.game.three.controls.isLocked) {
+                case GameEngine.STATE.GAME:
+                    if (this.engine.game.three.controls.isLocked) {
 
                         // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button
                         if (e.button === 0) {
-                            window.ZombieGame.game.weaponHandler.raycaster.setFromCamera( window.ZombieGame.game.weaponHandler.pointer, window.ZombieGame.game.three.camera );
-                            window.ZombieGame.game.weaponHandler.shoot()
+                            this.engine.game.weaponHandler.shoot()
                         }
 
                     } else {
+                        let needLock = true
 
-                        if (window.ZombieGame.game.inputManager.isChatOpen && !window.ZombieGame.chatInput.classList.contains('hidden')) {
-                            window.ZombieGame.chatInput.classList.toggle('hidden')
-                            window.ZombieGame.chatInput.value = ''
-                            window.ZombieGame.game.inputManager.isChatOpen = false
+                        // hide option menu
+                        if (this.engine.menu.isOpen()) {
+                            this.engine.menu.close()
                         }
-                        if (!window.ZombieGame.optionMenu.classList.contains('d-none')) {
-                            !window.ZombieGame.optionMenu.classList.toggle('d-none')
+
+                        // hide chat
+                        if (this.isChatOpen && !this.engine.chatInput.classList.contains('hidden')) {
+                            this.engine.chatInput.classList.toggle('hidden')
+                            this.engine.chatInput.value = ''
+                            this.isChatOpen = false
                         }
-                        window.ZombieGame.game.three.controls.lock()
+
+                        this.engine.game.three.controls.lock()
                     }
                     break;
 
-                case ZombieGame.STATE.OPTION:
-
-                    if (window.ZombieGame.optionMenu.classList.contains('d-none')) {
-                        window.ZombieGame.state = ZombieGame.STATE.GAME
-                        window.ZombieGame.game.three.controls.lock()
-                    }
+                case GameEngine.STATE.MENU:
 
                     break;
             }
         })
-    }
-
-    openGameMenu() {
-        window.ZombieGame.game.three.controls.unlock()
-        window.ZombieGame.optionMenu.classList.toggle('d-none')
-        window.ZombieGame.state = ZombieGame.STATE.OPTION
     }
 
 

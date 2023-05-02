@@ -4,7 +4,7 @@ import Knife from "./knife/Knife.js";
 
 export default class WeaponHandler {
 
-    constructor(props) {
+    constructor() {
         this.raycaster = new THREE.Raycaster();
         this.pointer = new THREE.Vector2();
 
@@ -37,6 +37,7 @@ export default class WeaponHandler {
     }
 
     shoot() {
+
         this.weapon.shoot()
     }
 

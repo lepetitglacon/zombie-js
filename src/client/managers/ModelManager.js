@@ -6,23 +6,42 @@ export default class ModelManager {
     constructor() {
         this.loader = new GLTFLoader()
         this.models = new Map()
-
-        this.loadModel('player', '../gltf/Soldier.glb')
-
-
-        console.log('[ASSETS] 3D assets loaded')
+        this.registeredModels = new Map()
     }
 
-    loadModel(name, path) {
-        this.loader.load(
+    async download() {
+        for (const [name, path] of this.registeredModels) {
+            const gltf = await this.downloadModel(name, path)
+            this.models.set(name, gltf.scene)
+            console.log('[ASSETS] loaded model ' + name)
+        }
+        console.log('[ASSETS] loaded')
+    }
+
+    /**
+     * register a model to be loaded
+     * @param name
+     * @param path
+     */
+    registerModel(name, path) {
+        this.registeredModels.set(name, path)
+    }
+
+    /**
+     * downloads the model
+     * @param name
+     * @param path
+     */
+    downloadModel(name, path) {
+        return this.loader.loadAsync(
             path,
             (gltf) => {
-                this.models.set(name, gltf.scene)
-                window.dispatchEvent(new Event('assets_loaded'))
-            },
-            (xhr) => {
-                console.log('loading ' + name + ' at ' + ( xhr.loaded / xhr.total * 100 ) + '%')
+
             }
+            // ,
+            // (xhr) => {
+            //     // console.log('loading ' + name + ' at ' + ( xhr.loaded / xhr.total * 100 ) + '%')
+            // }
         );
     }
 
