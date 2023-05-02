@@ -25,8 +25,8 @@ export default class ClientConnector {
         this.lastPosition = new THREE.Vector3(0, 0, 0)
         this.lastDirection = new THREE.Vector3(0, 0, 0)
 
-        this.bind()
         this.init()
+        this.bind()
         console.log('[CONNECT] ' + this.socket.id + ' connected to room ' + this.roomId)
     }
 
@@ -54,17 +54,19 @@ export default class ClientConnector {
             points: this.points
         })
 
-        // send zombies to socket
-        this.socket.emit('get_zombies', this.game.prepareZombiesToEmit(1))
+        this.socket.on('ready', () => {
+            // send zombies to socket
+            this.socket.emit('get_zombies', this.game.prepareZombiesToEmit(1))
 
-        // send players to socket
-        this.socket.emit('get_players', this.game.preparePlayersToEmit(1))
+            // send players to socket
+            this.socket.emit('get_players', this.game.preparePlayersToEmit(1))
 
-        // send chat messages
-        this.socket.emit('get_chat_messages', this.game.MESSAGES)
+            // send chat messages
+            this.socket.emit('get_chat_messages', this.game.MESSAGES)
 
-        // send chat messages
-        this.socket.emit('points', this.game.preparePoints())
+            // send chat messages
+            this.socket.emit('points', this.game.preparePoints())
+        })
     }
 
     bind() {

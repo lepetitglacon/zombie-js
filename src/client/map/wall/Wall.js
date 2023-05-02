@@ -25,7 +25,7 @@ export default class Wall {
         // this.body = new CANNON.Body({ mass: 1 })
         // this.body.addShape(this.shape)
         // this.body.position.set(this.mesh.x, this.mesh.y, this.mesh.z)
-        // window.ZombieGame.game.world.addBody(this.body)
+        // window.GameEngine.game.world.addBody(this.body)
 
 
     }
