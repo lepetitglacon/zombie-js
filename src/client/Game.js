@@ -8,6 +8,7 @@ import Gui from "./gui/Gui.js";
 import SoundManager from "./managers/SoundManager.js";
 import WeaponHandler from "./weapon/WeaponHandler.js";
 
+
 export default class Game {
 
     constructor() {
@@ -66,6 +67,9 @@ export default class Game {
 
     animate() {
         requestAnimationFrame( () => {this.animate()} );
+
+        this.gui.statsStart()
+
         const time = performance.now();
         const delta = ( time - this.prevTime ) / 1000;
 
@@ -129,6 +133,8 @@ export default class Game {
 
         this.prevTime = time;
         this.three.renderer.render( this.three.scene, this.three.camera );
+
+        this.gui.statsEnd()
     }
 
 }
