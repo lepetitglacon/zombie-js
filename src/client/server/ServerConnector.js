@@ -49,10 +49,7 @@ export default class ServerConnector {
                 // // player points
                 this.socket.on('points', (playerPoints) => {
                     console.log('[PLAYERS] points ', playerPoints)
-                    for (const i in playerPoints) {
-                        const points = playerPoints[i]
-                        // this.updatePoints(points.player, points.points)
-                    }
+                    this.engine.points.update(playerPoints)
                 })
 
                 // player name
@@ -182,22 +179,6 @@ export default class ServerConnector {
 
     updatePoints(player, points) {
 
-        let username = ""
-        if (this.engine.game.PLAYERS.has(player)) {
-            username = this.engine.game.PLAYERS.get(player).username
-        }
-        username += ` (${player})`
-        const text = username + ' : ' + points
-
-        const pointsDiv = document.getElementById('points_' + player)
-        if (pointsDiv !== null) {
-            pointsDiv.innerText = text
-        } else {
-            const msgDiv = document.createElement('div')
-            msgDiv.id = 'points_' + player
-            msgDiv.innerText = text
-            this.engine.points.appendChild(msgDiv)
-        }
     }
 
 }

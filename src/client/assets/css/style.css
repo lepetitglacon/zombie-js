@@ -113,6 +113,12 @@
     top: 40vh;
     right: 10px;
 }
+#points > ul {
+
+}
+#points > ul > li {
+    list-style: none;
+}
 
 #option-menu {
     width: 100%;

@@ -46,7 +46,7 @@ export default class Game {
 
             this.engine.menu.init()
             this.engine.chat.init()
-
+            this.engine.points.init()
 
             this.player.lastPosition = this.three.camera.position.clone()
             this.weaponHandler = new WeaponHandler();
