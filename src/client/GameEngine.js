@@ -20,6 +20,7 @@ import InputManager from "./input/InputManager.js";
 import Gui from "./gui/Gui.js";
 import OptionMenu from "./gui/Menu/OptionMenu.js";
 import ChatThread from "./gui/TextThread/ChatThread.js";
+import PointsThread from "./gui/TextThread/PointsThread.js";
 
 export default class GameEngine {
 
@@ -47,6 +48,7 @@ export default class GameEngine {
         this.menu = new OptionMenu()
 
         this.chat = new ChatThread()
+        this.points = new PointsThread()
 
         this.game = new Game()
     }

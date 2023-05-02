@@ -153,7 +153,10 @@ export default class Game {
     preparePoints() {
         const points = []
         for (const [socket, player] of this.PLAYERS) {
-            points.push({player: socket.id, points:player.points})
+            points.push({
+                player: socket.id,
+                playerName: player.username ?? '',
+                points:player.points})
         }
         return points
     }

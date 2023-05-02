@@ -74,8 +74,6 @@ export default class ClientConnector {
             this.socket.emit('pong')
         })
 
-
-
         this.socket.on('name', (name) => {
             this.username = name
             this.socket.to(this.roomId).emit('player_name', this.socket.id, this.username)
