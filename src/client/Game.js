@@ -1,13 +1,6 @@
 import * as THREE from "three";
-import * as dat from 'dat.gui';
 import ThreeWorld from "./map/world/GraphicsWorld.js";
-import GameMap from "./map/GameMap.js";
-import InputManager from "./input/InputManager.js";
-import ServerConnector from "./server/ServerConnector.js";
-import Gui from "./gui/Gui.js";
-import SoundManager from "./managers/SoundManager.js";
 import WeaponHandler from "./weapon/WeaponHandler.js";
-import ModelManager from "./managers/ModelManager.js";
 
 
 export default class Game {
@@ -77,7 +70,7 @@ export default class Game {
     animate() {
         requestAnimationFrame( () => {this.animate()} );
 
-        this.gui.statsStart()
+        this.engine.gui.statsStart()
 
         const time = performance.now();
         const delta = ( time - this.prevTime ) / 1000;
@@ -134,7 +127,7 @@ export default class Game {
         this.prevTime = time;
         this.three.renderer.render( this.three.scene, this.three.camera );
 
-        this.gui.statsEnd()
+        this.engine.gui.statsEnd()
     }
 
 }
