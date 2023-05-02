@@ -1,17 +1,23 @@
 import * as THREE from "three";
 import * as dat from 'dat.gui';
-import GraphicsWorld from "./map/world/GraphicsWorld.js";
+import ThreeWorld from "./map/world/GraphicsWorld.js";
 import GameMap from "./map/GameMap.js";
 import InputManager from "./input/InputManager.js";
 import ServerConnector from "./server/ServerConnector.js";
 import Gui from "./gui/Gui.js";
 import SoundManager from "./managers/SoundManager.js";
 import WeaponHandler from "./weapon/WeaponHandler.js";
+import ModelManager from "./managers/ModelManager.js";
 
 
 export default class Game {
 
-    constructor() {
+    constructor(props) {
+
+        console.log('engine', this.engine)
+
+        this.PLAYERS = new Map()
+        this.ZOMBIES = new Map()
 
         // player
         this.player = {}
@@ -20,49 +26,52 @@ export default class Game {
         this.player.speed = 50
         this.player.mass = 90
         this.player.height = 1.8
-
-        // three
-        this.three = new GraphicsWorld(500, 500)
-
-        this.startTime = Date.now();
-        this.prevTime = performance.now();
-        this.velocity = new THREE.Vector3();
-        this.direction = new THREE.Vector3();
-        this.lookDirection = new THREE.Vector3();
-        this.gui = new Gui()
-
-        this.config = {
-            gravity: 2 // 9.8 normalement
-        }
-
-
-
-        this.PLAYERS = new Map()
-        this.ZOMBIES = new Map()
-
-        this.socket = undefined
-
-        this.inputManager = new InputManager()
-
-        this.soundManager = new SoundManager({camera: this.three.camera})
-        this.weaponHandler = new WeaponHandler();
-
+        this.player.velocity = new THREE.Vector3();
+        this.player.direction = new THREE.Vector3();
+        this.player.lookDirection = new THREE.Vector3();
+        this.player.lastDirection = this.player.lookDirection.clone()
     }
 
     init() {
+        this.engine = window.ZombieGame
+        this.engine.serverConnector.init()
 
-        this.three.init()
-        // this.map.init()
+        this.engine.modelManager.download().then(r => {
+            console.log('[GAME] init')
+
+            window.dispatchEvent(new Event('z3d-game-start'))
+
+            this.startTime = Date.now();
+            this.prevTime = performance.now();
+
+            // three
+            this.three = new ThreeWorld()
+
+            // three dependencies
+            this.engine.soundManager.init()
+            this.engine.inputManager.init()
+
+            this.engine.menu.init()
+            this.engine.chat.init()
 
 
-        this.lastPosition = this.three.camera.position.clone()
-        this.lastDirection = this.lookDirection.clone()
+            this.player.lastPosition = this.three.camera.position.clone()
+            this.weaponHandler = new WeaponHandler();
 
-        window.addEventListener('ZombieGame-start', () => {
-            this.serverConnector = new ServerConnector(window.location.href.substring(window.location.href.lastIndexOf('/') + 1))
+            this.cannonWorldConfig = {
+                gravity: 9.8 // 9.8 normalement
+            }
+
+            this.three.init()
+
+
+
+            this.engine.loader.hide()
+
+            console.log('[GAME] start')
+            this.animate()
         })
 
-        this.animate()
     }
 
     animate() {
@@ -73,60 +82,51 @@ export default class Game {
         const time = performance.now();
         const delta = ( time - this.prevTime ) / 1000;
 
-        // loader gif
-        if (this.startTime + 2000 < Date.now()) {
-            this.canMove = true
-            if (!window.ZombieGame.loader.classList.contains('d-none')) {
-                window.ZombieGame.loader.classList.toggle('d-none')
-            }
-        }
-
-        this.three.controls.getDirection(this.lookDirection)
-
-        this.three.update()
+        this.three.controls.getDirection(this.player.lookDirection)
 
         // GUN
         this.weaponHandler.update()
 
-        // SOCKET SERVER
-        if (this.serverConnector !== undefined) {
-            if (
-                !this.lastPosition.equals(this.three.camera.position) ||
-                !this.lastDirection.equals(this.lookDirection)
-            ) {
-                let pos = this.three.camera.position.clone()
-                pos.y -= .5
-                this.serverConnector.socket.volatile.emit('player_state', pos, this.lookDirection)
-                this.lastPosition = this.three.camera.position.clone()
-                this.lastDirection = this.lookDirection.clone()
-            }
+        // Send player position to server
+        if (
+            !this.player.lastPosition.equals(this.three.camera.position) ||
+            !this.player.lastDirection.equals(this.player.lookDirection)
+        ) {
+            let pos = this.three.camera.position.clone()
+            pos.y -= .5
+            this.engine.serverConnector.socket.volatile.emit('player_state', pos, this.player.lookDirection)
+            this.player.lastPosition = this.three.camera.position.clone()
+            this.player.lastDirection = this.player.lookDirection.clone()
         }
 
         // PLAYER MOVEMENT
         if (
-            !this.inputManager.isChatOpen &&
-            this.canMove
+            !this.engine.chat.isOpen
         ) {
             // stop forces
-            this.velocity.x -= this.velocity.x * 10 * delta;
-            this.velocity.z -= this.velocity.z * 10 * delta;
-            this.velocity.y -= this.config.gravity * this.player.mass * delta;
+            this.player.velocity.x -= this.player.velocity.x * 10 * delta;
+            this.player.velocity.z -= this.player.velocity.z * 10 * delta;
+            this.player.velocity.y -= this.cannonWorldConfig.gravity * (this.player.mass / 4) * delta;
 
-            this.direction.z = Number( this.inputManager.moveForward ) - Number( this.inputManager.moveBackward );
-            this.direction.x = Number( this.inputManager.moveRight ) - Number( this.inputManager.moveLeft );
-            this.direction.normalize();
+            this.player.direction.z = Number( this.engine.inputManager.moveForward ) - Number( this.engine.inputManager.moveBackward );
+            this.player.direction.x = Number( this.engine.inputManager.moveRight ) - Number( this.engine.inputManager.moveLeft );
+            this.player.direction.normalize();
 
-            if ( this.inputManager.moveForward || this.inputManager.moveBackward ) this.velocity.z -= this.direction.z * this.player.speed * delta;
-            if ( this.inputManager.moveLeft || this.inputManager.moveRight ) this.velocity.x -= this.direction.x * this.player.speed * delta;
+            if ( this.engine.inputManager.moveForward || this.engine.inputManager.moveBackward ) {
+                this.player.velocity.z -= this.player.direction.z * this.player.speed * delta;
+            }
+            if ( this.engine.inputManager.moveLeft || this.engine.inputManager.moveRight ) {
+                this.player.velocity.x -= this.player.direction.x * this.player.speed * delta;
+            }
 
-            this.three.controls.moveRight( - this.velocity.x * delta );
-            this.three.controls.moveForward( - this.velocity.z * delta );
-            this.three.controls.getObject().position.y += ( this.velocity.y * delta );
+            this.three.controls.moveRight( - this.player.velocity.x * delta );
+            this.three.controls.moveForward( - this.player.velocity.z * delta );
+            this.three.controls.getObject().position.y += ( this.player.velocity.y * delta );
         }
 
         if ( this.three.controls.getObject().position.y < .5 ) {
-            this.inputManager.canJump = true
-            this.velocity.y = 0;
+            this.engine.inputManager.canJump = true
+            this.player.velocity.y = 0;
             this.three.controls.getObject().position.y = .5;
         }
 

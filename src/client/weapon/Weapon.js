@@ -28,17 +28,18 @@ export default class Weapon {
         this.soundGunshot = new THREE.Audio( this.listener );
         this.soundReload = new THREE.Audio( this.listener );
 
-
+        this.engine = window.ZombieGame
     }
 
     shoot() {
+        this.weaponHandler.raycaster.setFromCamera( this.weaponHandler.pointer, this.engine.game.three.camera );
         // enough bullet or reload
         if (!this.isReloading) {
             if (this.bulletsInMagazine > 0) {
                 if (this.canShootByFireRate()) {
                     // console.log("[WEAPON] fired")
 
-                    window.ZombieGame.game.soundManager.play('weapon_pistol_shot')
+                    window.ZombieGame.soundManager.play('weapon_pistol_shot')
 
                     const intersects = this.raycaster.intersectObjects( window.ZombieGame.game.three.scene.children );
                     for ( let i = 0; i < intersects.length; i ++ ) {
@@ -50,14 +51,14 @@ export default class Weapon {
                                 this.alreadyHit.add(obj.zombieId)
                                 if (ZombieGame.game.ZOMBIES.has(obj.zombieId)) {
                                     ZombieGame.game.ZOMBIES.get(obj.zombieId).health -= this.damages
-                                    // console.log('zombie' + obj.zombieId + " has " + ZombieGame.game.ZOMBIES.get(obj.zombieId).health + ' hp')
+                                    // console.log('zombie' + obj.zombieId + " has " + GameEngine.game.ZOMBIES.get(obj.zombieId).health + ' hp')
                                 }
                             }
                         }
                     }
 
                     // send to server
-                    window.ZombieGame.game.serverConnector.socket.emit('shot', {
+                    window.ZombieGame.serverConnector.socket.emit('shot', {
                         weapon: {
                             damages: this.damages
                         },
@@ -91,7 +92,7 @@ export default class Weapon {
                 this.realoadStart + this.realoadRate < Date.now() &&
                 this.bulletStorage > 0
             ) {
-                window.ZombieGame.game.soundManager.play('weapon_pistol_reload')
+                window.ZombieGame.soundManager.play('weapon_pistol_reload')
 
                 this.weaponHandler.UIFpsView.style.opacity = 1
 
@@ -111,7 +112,7 @@ export default class Weapon {
 
             if (this.bulletsInMagazine !== this.magazineSize) {
                 if (this.bulletStorage <= 0) {
-                    window.ZombieGame.game.soundManager.play('weapon_pistol_reload')
+                    window.ZombieGame.soundManager.play('weapon_pistol_reload')
 
                 } else {
                     this.isReloading = true
