@@ -26,10 +26,18 @@ export default class Player {
         this.mesh.position.copy(player.position)
         window.ZombieGame.game.three.scene.add(this.mesh)
 
-        console.log('models from player', ModelManager.models)
-
         this.gltf = window.ZombieGame.modelManager.getModelCopy('player')
-        console.log(this.gltf)
+        this.prepareGltf()
+
+        // sound
+        this.sound = undefined
+        this.sound = window.ZombieGame.soundManager.loadAndGetPositionalSound(
+            'weapon_pistol_shot_' + this.socketId,
+            'src/client/assets/sound/gunshot.wav'
+        )
+    }
+
+    prepareGltf() {
         this.gltf.remove(this.gltf.getObjectByName('Plane'))
         this.gltf.scale.set(.9, .9, .9);
         this.gltf.rotateY(Math.PI / 2);
@@ -42,25 +50,7 @@ export default class Player {
                 bodyPart.material = material
             }
         }
-
-        // sound
-        this.sound = undefined
-        this.sound = window.ZombieGame.game.soundManager.loadAndGetPositionalSound(
-            'weapon_pistol_shot_' + this.socketId,
-            'src/client/assets/sound/gunshot.wav'
-        )
-
-        const loader = new GLTFLoader();
-        loader.load(
-            '../gltf/Soldier.glb',
-            ( gltf ) => {
-                this.gltf = gltf.scene
-
-
-
-                window.ZombieGame.game.three.scene.add( this.gltf );
-            }
-        );
+        window.ZombieGame.game.three.scene.add(this.gltf)
     }
 
     removeFromScene() {

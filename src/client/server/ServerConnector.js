@@ -44,6 +44,8 @@ export default class ServerConnector {
             // On game start
             window.addEventListener('z3d-game-start', () => {
 
+                this.socket.emit('ready')
+
                 // // player points
                 this.socket.on('points', (playerPoints) => {
                     console.log('[PLAYERS] points ', playerPoints)
@@ -63,7 +65,7 @@ export default class ServerConnector {
                 // // chat message
                 this.socket.on('chat', (msg, from) => {
                     console.log('[CHAT] message from ', from)
-                    Utils.addMessageToChat(msg, from)
+                    Utils.addMessageToChat(this.engine.chat, msg, from)
                 })
 
                 // get messages for the first time
@@ -71,7 +73,7 @@ export default class ServerConnector {
                     console.log('[CHAT] Messages already sent ', messages)
                     for (const i in messages) {
                         const msg = messages[i]
-                        Utils.addMessageToChat(msg.message, msg.from)
+                        Utils.addMessageToChat(this.engine.chat, msg.message, msg.from)
                     }
                 })
 
