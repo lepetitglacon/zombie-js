@@ -50,7 +50,7 @@ body {
 #current-weapon-fpsview {
     position: absolute;
     right: 100px;
-    bottom: 0;
+    bottom: -20px;
 }
 
 #current-weapon-fpsview > img {

@@ -74,7 +74,6 @@ export default class GraphicsWorld {
 
     bind() {
         this.controls.addEventListener( 'lock', (e) => {
-            console.log('lock')
             this.engine.state = GameEngine.STATE.GAME
 
             // if (window.ZombieGame.menu.isOpen()) {
@@ -82,7 +81,6 @@ export default class GraphicsWorld {
             // }
         });
         this.controls.addEventListener( 'unlock', (e) => {
-            console.log('unlock')
             if (this.engine.chat.isOpen) {
 
             } else {

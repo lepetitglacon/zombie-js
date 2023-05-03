@@ -108,8 +108,19 @@ export default class Weapon {
 
     updateUI() {
         this.weaponHandler.UIBulletCount.innerText = this.bulletsInMagazine
-        // this.weaponHandler.UIBulletMax.innerText = this.magazineSize
         this.weaponHandler.UIStoredBullet.innerText = this.bulletStorage
+
+        this.div.style.transitionDuration = '.1s'
+
+        if (this.isReloading) {
+            this.div.style.transform = 'translateX(2vw) translateY(2vw) rotate(60deg)'
+        }
+        this.div.style.transform = 'translateX(2vw) translateY(2vw) rotate(5deg)'
+
+        setTimeout(() => {
+            this.div.style.transitionDuration = '.05s'
+            this.div.style.transform = 'translateX(0) translateY(0) rotate(0)'
+        }, this.fireRate - 50)
     }
 
     getIntersection_() {
@@ -149,11 +160,6 @@ export default class Weapon {
     }
 
     getPoints_() {
-        console.log(this.isLastHit())
-        console.log(ZombieGame.game.ZOMBIES.get(this.currentHitObject.zombieId).health)
-        console.log(this.getDamage_())
-
-
         if (this.isLastHit() && this.isHeadshot()) {
             return this.headshotPoint
         } else {

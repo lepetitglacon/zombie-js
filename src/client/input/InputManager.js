@@ -60,7 +60,7 @@ export default class InputManager {
                     if (this.engine.chat.isActive()) {
                         //sending chat
                         if (!this.engine.chat.isEmpty()) {
-                            console.log('sending chat')
+                            // console.log('sending chat')
 
                             this.engine.serverConnector.socket.emit('chat', this.engine.chat.input.value)
                             Utils.addMessageToChat(this.engine.chat, this.engine.chat.input.value, this.engine.serverConnector.socket.id)
@@ -69,12 +69,12 @@ export default class InputManager {
                             this.engine.chat.close()
                         }
                         else {
-                            console.log('closing chat')
+                            // console.log('closing chat')
                             this.engine.chat.reset()
                             this.engine.chat.close()
                         }
                     } else {
-                        console.log('opening chat')
+                        // console.log('opening chat')
                         this.engine.chat.open()
                     }
                     break;

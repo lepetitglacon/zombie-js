@@ -7,8 +7,6 @@ export default class Game {
 
     constructor(props) {
 
-        console.log('engine', this.engine)
-
         this.PLAYERS = new Map()
         this.ZOMBIES = new Map()
 
