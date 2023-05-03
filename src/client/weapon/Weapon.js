@@ -9,6 +9,9 @@ export default class Weapon {
         this.raycaster = props.raycaster
         this.weaponHandler = props.weaponHandler
 
+        this.basePoint = 10
+        this.headshotPoint = 50
+
         this.damages = 20
         this.fireRate = 200 // ms
         this.lastFired = Date.now() // ms
@@ -22,11 +25,11 @@ export default class Weapon {
         this.maxBulletStorage = 75
         this.bulletStorage = this.maxBulletStorage
 
-        this.alreadyHit = new Set()
+        this.alreadyHit = new Map()
 
-        this.listener = new THREE.AudioListener();
-        this.soundGunshot = new THREE.Audio( this.listener );
-        this.soundReload = new THREE.Audio( this.listener );
+        this.fireSoundName = 'weapon_pistol_shot'
+
+        this.div = document.getElementById('current-weapon-fpsview')
 
         this.engine = window.ZombieGame
     }
@@ -34,53 +37,26 @@ export default class Weapon {
     shoot() {
         this.weaponHandler.raycaster.setFromCamera( this.weaponHandler.pointer, this.engine.game.three.camera );
         // enough bullet or reload
-        if (!this.isReloading) {
-            if (this.bulletsInMagazine > 0) {
-                if (this.canShootByFireRate()) {
-                    // console.log("[WEAPON] fired")
 
-                    window.ZombieGame.soundManager.play('weapon_pistol_shot')
+        if (!this.weaponHandler.knife.isReloading) {
+            if (!this.isReloading) {
+                if (this.bulletsInMagazine > 0) {
+                    if (this.canShootByFireRate_()) {
+                        console.log("[WEAPON] fired")
 
-                    const intersects = this.raycaster.intersectObjects( window.ZombieGame.game.three.scene.children );
-                    for ( let i = 0; i < intersects.length; i ++ ) {
-                        const obj = intersects[ i ].object
-                        if (obj.isZombie) {
-                            if (this.alreadyHit.has(obj.zombieId)) {
-                                continue
-                            } else {
-                                this.alreadyHit.add(obj.zombieId)
-                                if (ZombieGame.game.ZOMBIES.has(obj.zombieId)) {
-                                    ZombieGame.game.ZOMBIES.get(obj.zombieId).health -= this.damages
-                                    // console.log('zombie' + obj.zombieId + " has " + GameEngine.game.ZOMBIES.get(obj.zombieId).health + ' hp')
-                                }
-                            }
-                        }
+                        this.playFireSound_()
+                        this.handleHit_(this.getIntersection_())
+                        this.sendHitsToServer_()
+                        this.prepareNextShot_()
+                        this.handleMagazinChange_()
+                        this.updateUI()
+
                     }
 
-                    // send to server
-                    window.ZombieGame.serverConnector.socket.emit('shot', {
-                        weapon: {
-                            damages: this.damages
-                        },
-                        hits: [...this.alreadyHit.keys()]
-                    })
-
-                    // reset hit array
-                    this.alreadyHit.clear()
-
-                    this.bulletsInMagazine--
-                    this.lastFired = Date.now()
-                    this.updateUI()
-
-
-                    if (this.bulletsInMagazine === 0) {
-                        this.reload()
-                    }
+                } else {
+                    console.log("[WEAPON] reloading")
+                    this.reload()
                 }
-
-            } else {
-                // console.log("[WEAPON] reloading")
-                this.reload()
             }
         }
 
@@ -126,7 +102,7 @@ export default class Weapon {
     }
 
     // can shoot if cooldown is up
-    canShootByFireRate() {
+    canShootByFireRate_() {
         return (this.lastFired + this.fireRate < Date.now())
     }
 
@@ -135,5 +111,89 @@ export default class Weapon {
         // this.weaponHandler.UIBulletMax.innerText = this.magazineSize
         this.weaponHandler.UIStoredBullet.innerText = this.bulletStorage
     }
+
+    getIntersection_() {
+        return this.raycaster.intersectObjects( window.ZombieGame.game.three.scene.children );
+    }
+
+    playFireSound_() {
+        window.ZombieGame.soundManager.play(this.fireSoundName)
+    }
+
+    handleHit_(intersects) {
+        for ( let i = 0; i < intersects.length; i ++ ) {
+            const obj = intersects[ i ].object
+            this.addToAlreadyHit_(obj)
+        }
+    }
+
+    addToAlreadyHit_(obj) {
+        if (obj.isZombie) {
+            if (!this.alreadyHit.has(obj.zombieId)) {
+                this.currentHitObject = obj
+                this.alreadyHit.set(obj.zombieId, {damages: this.getDamage_(), points: this.getPoints_()})
+
+                if (ZombieGame.game.ZOMBIES.has(this.currentHitObject.zombieId)) {
+                    ZombieGame.game.ZOMBIES.get(this.currentHitObject.zombieId).health -= this.getDamage_()
+                }
+            }
+        }
+    }
+
+    isHeadshot() {
+        return this.currentHitObject.name === 'Head'
+    }
+
+    isLastHit() {
+        return ZombieGame.game.ZOMBIES.get(this.currentHitObject.zombieId).health - this.getDamage_() <= 0;
+    }
+
+    getPoints_() {
+        console.log(this.isLastHit())
+        console.log(ZombieGame.game.ZOMBIES.get(this.currentHitObject.zombieId).health)
+        console.log(this.getDamage_())
+
+
+        if (this.isLastHit() && this.isHeadshot()) {
+            return this.headshotPoint
+        } else {
+            return this.basePoint
+        }
+    }
+
+    getDamage_() {
+        return this.damages * (this.isHeadshot() ? 2 : 1)
+    }
+
+    sendHitsToServer_() {
+        const hits = this.prepareHitsForServer_()
+        this.engine.serverConnector.socket.emit('shot', {hits: hits})
+        this.alreadyHit.clear()
+    }
+
+    handleMagazinChange_() {
+        this.bulletsInMagazine--
+        if (this.bulletsInMagazine === 0) {
+            this.reload()
+        }
+    }
+
+    prepareNextShot_() {
+        this.lastFired = Date.now()
+        this.updateUI()
+    }
+
+    prepareHitsForServer_() {
+        const hits = []
+        for (const [id, object] of this.alreadyHit) {
+            const hit = {}
+            hit.id = id
+            hit.damages = object.damages
+            hit.points = object.points
+            hits.push(hit)
+        }
+        return hits
+    }
+
 
 }

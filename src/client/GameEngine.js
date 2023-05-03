@@ -7,6 +7,7 @@ import "./assets/img/loader.gif"
 import "./assets/img/loader2.gif"
 
 import "./assets/img/weapons/pistol/fpsview.png"
+import "./assets/img/weapons/knife/knife.png"
 import "./assets/gltf/Soldier.glb"
 
 import "./assets/fonts/HelpMe.ttf"

@@ -37,7 +37,6 @@ export default class WeaponHandler {
     }
 
     shoot() {
-
         this.weapon.shoot()
     }
 
