@@ -32,7 +32,6 @@ export default class ChatThread extends AbstractTextThread {
     }
 
     isEmpty() {
-        console.log('lenght', this.input.value.length > 0)
         return this.input.value.length <= 0
     }
 

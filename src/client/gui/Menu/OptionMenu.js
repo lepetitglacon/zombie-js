@@ -57,7 +57,6 @@ export default class OptionMenu {
     }
 
     open() {
-        console.log('opening menu')
         this.engine.state = GameEngine.STATE.MENU
 
         if (this.engine.game.three.controls.isLocked) {
@@ -74,7 +73,6 @@ export default class OptionMenu {
     }
 
     close() {
-        console.log('closing menu')
         this.engine.game.three.controls.lock()
         this.optionMenu.classList.add('d-none')
         console.log('GameEngine.STATE.MENU is', this.engine.state)

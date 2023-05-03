@@ -103,8 +103,6 @@ export default class ClientConnector {
         })
 
         this.socket.on('shot', (shot) => {
-            console.log(shot)
-
             for (let i in shot.hits) {
                 const zombieId = shot.hits[i].id
 

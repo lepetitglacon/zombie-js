@@ -79,8 +79,6 @@ export default class ZombieGameServer {
         game.name = props.name
         game.private = props.private
 
-        console.log('game is private', game.private)
-
         this.GAMES.set(id, game)
 
         console.log('[GAME] created ' + id + ' on map ' + props.map)
