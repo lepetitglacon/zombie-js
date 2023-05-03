@@ -51,7 +51,7 @@ export default class InputManager {
                         !this.engine.chat.isOpen &&
                         this.canJump
                     ) {
-                        this.engine.game.player.velocity.y += this.engine.game.cannonWorldConfig.gravity * 3;
+                        this.engine.game.player.velocity.y += this.engine.game.cannonWorldConfig.gravity * 2;
                         this.canJump = false
                     }
                     break;
@@ -121,7 +121,6 @@ export default class InputManager {
 
         document.addEventListener('click', (e) => {
 
-            console.log('should be in 0 not to close', this.engine.state)
             switch (this.engine.state) {
 
                 case GameEngine.STATE.GAME:
@@ -133,7 +132,6 @@ export default class InputManager {
                         }
 
                     } else {
-                        let needLock = true
 
                         // hide option menu
                         if (this.engine.menu.isOpen()) {

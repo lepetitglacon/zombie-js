@@ -103,12 +103,17 @@ export default class ClientConnector {
         })
 
         this.socket.on('shot', (shot) => {
-            for (let i of shot.hits) {
-                if (this.game.ZOMBIES.has(i)) {
-                    this.game.ZOMBIES.get(i).health -= shot.weapon.damages
-                    this.points += 10
+            console.log(shot)
+
+            for (let i in shot.hits) {
+                const zombieId = shot.hits[i].id
+
+                if (this.game.ZOMBIES.has(zombieId)) {
+                    this.game.ZOMBIES.get(zombieId).health -= shot.hits[i].damages
+                    this.points += shot.hits[i].points
                 }
             }
+
             ZombieServer.io.to(this.roomId).emit('points', this.game.preparePoints())
             this.socket.to(this.roomId).emit('player_shot', this.socket.id)
         })

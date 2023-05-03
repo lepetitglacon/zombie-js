@@ -177,8 +177,4 @@ export default class ServerConnector {
         });
     }
 
-    updatePoints(player, points) {
-
-    }
-
 }

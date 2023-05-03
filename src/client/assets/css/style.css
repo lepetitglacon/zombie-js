@@ -12,6 +12,10 @@
     font-family: z3d;
 }
 
+body {
+    overflow: hidden;
+}
+
 /************* GAME ************/
 
 #info {
@@ -60,6 +64,18 @@
     margin-right: 10px;
 }
 
+#knife {
+    position: absolute;
+    bottom: 25px;
+    width: 150px;
+    height: 150px;
+    transform: translateX(-100vw);
+}
+
+.knife-slide {
+
+}
+
 #crosshair {
     position: absolute;
     width: 100%;
@@ -101,7 +117,7 @@
     margin-top: 2px;
     font-family: Arial;
 }
-#chat-ul > li > span{
+#chat-ul > li > span {
     margin-top: 2px;
     /*font-family: z3d;*/
     font-family: Arial;
@@ -118,6 +134,9 @@
 }
 #points > ul > li {
     list-style: none;
+}
+#points > ul > li > span {
+    margin-right: 5px;
 }
 
 #option-menu {

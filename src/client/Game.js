@@ -99,7 +99,7 @@ export default class Game {
             // stop forces
             this.player.velocity.x -= this.player.velocity.x * 10 * delta;
             this.player.velocity.z -= this.player.velocity.z * 10 * delta;
-            this.player.velocity.y -= this.cannonWorldConfig.gravity * (this.player.mass / 4) * delta;
+            this.player.velocity.y -= this.cannonWorldConfig.gravity * (this.player.mass / 8) * delta;
 
             this.player.direction.z = Number( this.engine.inputManager.moveForward ) - Number( this.engine.inputManager.moveBackward );
             this.player.direction.x = Number( this.engine.inputManager.moveRight ) - Number( this.engine.inputManager.moveLeft );
