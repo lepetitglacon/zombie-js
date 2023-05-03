@@ -13,6 +13,7 @@ export default class Knife extends Weapon {
 
         this.bulletsInMagazine = Infinity
 
+        this.fireSoundName = 'weapon_knife_slash'
         this.div = document.getElementById('knife')
 
         this.range = 2.1
