@@ -4,7 +4,6 @@ import {GLTFLoader} from "three/addons/loaders/GLTFLoader.js";
 // import {PointerLockControls} from "three/addons/controls/PointerLockControls.js";
 
 // assets
-import "../../assets/gltf/maps/scene.glb"
 import "../../assets/gltf/maps/flora_square.glb"
 import ModelManager from "../../managers/ModelManager.js";
 import GameEngine from "../../GameEngine.js";
@@ -13,7 +12,7 @@ export default class GraphicsWorld {
 
     constructor() {
         this.scene = new THREE.Scene();
-        this.scene.background = new THREE.Color( 0xefd1b5 );
+        this.scene.background = new THREE.Color( 0xccccff );
         this.scene.fog = new THREE.FogExp2( 0xefd1b5, 0.0025 );
 
         this.camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 1000 );

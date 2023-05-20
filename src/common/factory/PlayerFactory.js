@@ -1,4 +1,3 @@
-// import Player from "../../client/mob/Player.js";
 import ClientConnector from "../../server/ClientConnector.js";
 
 export default class PlayerFactory {
@@ -9,10 +8,6 @@ export default class PlayerFactory {
         0x993333, // red
         0x999933, // yellow
     ]
-
-    // static createClientPlayer(player) {
-    //     return new Player(player)
-    // }
 
     static createServerPlayer(player) {
         player.color = this.playerColors[this.playerCount++]

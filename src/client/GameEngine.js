@@ -22,6 +22,7 @@ import Gui from "./gui/Gui.js";
 import OptionMenu from "./gui/Menu/OptionMenu.js";
 import ChatThread from "./gui/TextThread/ChatThread.js";
 import PointsThread from "./gui/TextThread/PointsThread.js";
+import WaveGui from "./gui/Info/WaveGui.js";
 
 export default class GameEngine {
 
@@ -46,6 +47,7 @@ export default class GameEngine {
         this.serverConnector = new ServerConnector(window.location.href.substring(window.location.href.lastIndexOf('/') + 1))
 
         this.gui = new Gui()
+        this.waveGui = new WaveGui()
         this.menu = new OptionMenu()
 
         this.chat = new ChatThread()

@@ -69,6 +69,9 @@ export default class Game {
         requestAnimationFrame( () => {this.animate()} );
 
         this.engine.gui.statsStart()
+        if (this.engine.waveGui.wave === 0) {
+            this.engine.serverConnector.socket.emit('wave')
+        }
 
         const time = performance.now();
         const delta = ( time - this.prevTime ) / 1000;
@@ -115,10 +118,10 @@ export default class Game {
             this.three.controls.getObject().position.y += ( this.player.velocity.y * delta );
         }
 
-        if ( this.three.controls.getObject().position.y < .5 ) {
+        if ( this.three.controls.getObject().position.y < 1.8 ) {
             this.engine.inputManager.canJump = true
             this.player.velocity.y = 0;
-            this.three.controls.getObject().position.y = .5;
+            this.three.controls.getObject().position.y = 1.8;
         }
 
 

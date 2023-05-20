@@ -37,13 +37,9 @@ export default class ZombieGameServer {
 
         this.GAMES = new Map()
 
-    }
-
-    init() {
         this.app.use(cors())
         this.app.use(express.static('dist/src/client/assets'));
         this.app.use('/game', express.static('dist'));
-        this.routes = new Routes()
 
         this.createGame({
             name:'TEST',
@@ -53,6 +49,7 @@ export default class ZombieGameServer {
     }
 
     run() {
+        this.routes = new Routes()
 
         this.server.listen(this.port, () => {
             console.log()
