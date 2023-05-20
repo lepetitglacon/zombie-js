@@ -18,8 +18,21 @@ body {
 
 /************* GAME ************/
 
+#game-UI {
+    z-index: 50;
+}
+
 #info {
     position: absolute;
+}
+
+#wave {
+    font-weight: bold;
+    font-size: 128px;
+    position: absolute;
+    left: 100px;
+    bottom: 40px;
+    color: #7C0404;
 }
 
 #loader-gif {
@@ -41,6 +54,8 @@ body {
     height: 100px;
 }
 
+
+
 #current-weapon {
     position: absolute;
     right: 0;
@@ -49,7 +64,7 @@ body {
 
 #current-weapon-fpsview {
     position: absolute;
-    right: 100px;
+    right: 0px;
     bottom: -20px;
 }
 
@@ -58,10 +73,18 @@ body {
     height: 45vh;
 }
 
+.weapon-bullets {
+    position: absolute;
+
+    bottom: 0;
+    right: 45vw;
+}
+
 #current-weapon-bullet {
-    font-size: 64px;
+    font-size: 128px;
     font-weight: bold;
-    margin-right: 10px;
+    margin-right: 20px;
+    color: black;
 }
 
 #knife {

@@ -52,6 +52,12 @@ export default class ServerConnector {
                     this.engine.points.update(playerPoints)
                 })
 
+                // wave update
+                this.socket.on('wave_update', (waveObj) => {
+                    console.log('[WAVE] ', waveObj.wave)
+                    this.engine.waveGui.setWave(waveObj.wave)
+                })
+
                 // player name
                 this.socket.on('player_name', (id, username) => {
                     if (this.engine.game.PLAYERS.has(id)) {

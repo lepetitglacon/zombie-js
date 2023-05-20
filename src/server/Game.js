@@ -1,8 +1,5 @@
 import ZombieFactory from "../common/factory/ZombieFactory.js";
-import {GLTFLoader} from "three/addons/loaders/GLTFLoader.js";
-import path from "path";
-import fs from "fs";
-
+import WaveHandler from "./Wave/WaveHandler.js";
 
 export default class Game {
 
@@ -20,28 +17,23 @@ export default class Game {
         this.tickRate = 60
         this.prevTime = Date.now();
 
-        this.waveCount = 1
-
-        this.waveConfig = {
-
-        }
-
-        this.maxZombiesAlive = 20
-        this.zombieSpawnRate = 5000
-        this.zombieSpawnRateTime = performance.now();
-
         this.name = ''
         this.mapName = props.map
         this.map = undefined
 
-
         this.PLAYERS = new Map()
         this.ZOMBIES = new Map()
         this.MESSAGES = []
+
+        this.waveHandler = new WaveHandler({game: this})
+
+
+
     }
 
     run() {
         this.status = Game.STATUS.RUNNING
+
 
         // Game loop
         setInterval(() => {
@@ -51,19 +43,18 @@ export default class Game {
 
             if (this.PLAYERS.size > 0) {
 
+
                 // update ClientZombie life
                 for (const [id, zombie] of this.ZOMBIES) {
                     if (zombie.health <= 0) {
                         this.io.to(this.roomId).emit('zombie_death', id)
                         this.ZOMBIES.delete(id)
+                        this.waveHandler.killedZombies++
                     }
                 }
 
                 // spawn zombies
-                if (this.zombieSpawnRateTime + this.zombieSpawnRate < Date.now() && this.ZOMBIES.size < this.maxZombiesAlive) {
-                    this.ZOMBIES.set(ZombieFactory.id, ZombieFactory.createServerZombie(this.roomId))
-                    this.zombieSpawnRateTime = Date.now()
-                }
+                this.waveHandler.update()
 
                 // update ClientZombie movement
                 for (const [key, zombie] of this.ZOMBIES) {
