@@ -5,3 +5,8 @@ It was made to learn Socket.io and Three.js
 
 try it out at:
 http://z3d.petitglacon.com
+
+# Next up
+- Physics (simple one, cannon will come after)
+- Doors
+- Mystery box
