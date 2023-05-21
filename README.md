@@ -1,1 +1,7 @@
-hello
+# Z3D
+Z3D is a client server multiplayer, COD zombie like game, playable in the browser using Three.
+It was made to learn Socket.io and Three.js
+
+
+try it out at:
+https://z3d.petitglacon.com
