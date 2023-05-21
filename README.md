@@ -4,4 +4,4 @@ It was made to learn Socket.io and Three.js
 
 
 try it out at:
-https://z3d.petitglacon.com
+http://z3d.petitglacon.com
