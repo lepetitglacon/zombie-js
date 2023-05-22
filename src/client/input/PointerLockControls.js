@@ -88,14 +88,36 @@ export default class PointerLockControls extends EventDispatcher {
 
     }
 
-    moveRight( distance ) {
-
+    /**
+     * gives next position for collision testing
+     * @param distance
+     * @returns {*}
+     */
+    testMoveForward( distance ) {
         const camera = this.camera;
+        const vec = _vector.clone()
+        vec.setFromMatrixColumn( camera.matrix, 0 );
+        vec.crossVectors( camera.up, vec );
+        const pos = camera.position.clone()
+        return pos.addScaledVector( vec, distance );
+    }
 
+    /**
+     *
+     * @param distance
+     */
+    testMoveRight( distance ) {
+        const camera = this.camera;
         _vector.setFromMatrixColumn( camera.matrix, 0 );
+        const pos = camera.position.clone()
+        return pos.addScaledVector( _vector, distance );
+    }
 
+    moveRight( distance ) {
+        const camera = this.camera;
+        const vec = _vector.clone()
+        vec.setFromMatrixColumn( camera.matrix, 0 );
         camera.position.addScaledVector( _vector, distance );
-
     }
 
     lock() {
