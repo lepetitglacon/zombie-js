@@ -1,22 +1,35 @@
 import * as THREE from "three";
+import * as CANNON from "cannon-es";
+import CannonDebugRenderer from "cannon-es-debugger";
 import PointerLockControls from "../../input/PointerLockControls.js";
-import {GLTFLoader} from "three/addons/loaders/GLTFLoader.js";
-// import {PointerLockControls} from "three/addons/controls/PointerLockControls.js";
+import GameEngine from "../../GameEngine.js";
 
 // assets
 import "../../assets/gltf/maps/flora_square.glb"
-import ModelManager from "../../managers/ModelManager.js";
-import GameEngine from "../../GameEngine.js";
+import {OBB} from "three/addons/math/OBB.js";
+import {BoxGeometry, Matrix3, Matrix4} from "three";
+
 
 export default class GraphicsWorld {
 
     constructor() {
+        this.OBBs = []
+        this.HITBOXES = []
+
+        this.world = new CANNON.World({
+            gravity: new CANNON.Vec3(0, -9.82, 0), // m/s²
+        })
+
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color( 0xccccff );
         this.scene.fog = new THREE.FogExp2( 0xefd1b5, 0.0025 );
 
+        this.cannonDebugRenderer = new CannonDebugRenderer(this.scene, this.world)
+
         this.camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 1000 );
         this.camera.position.z = 5;
+
+        this.createPlayer()
 
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.shadowMap.enabled = true;
@@ -39,7 +52,6 @@ export default class GraphicsWorld {
         // 3D map from blender
         this.gltf = window.ZombieGame.modelManager.getModel('map')
         this.scene.add(this.gltf)
-
 
         this.bind()
     }
@@ -64,11 +76,67 @@ export default class GraphicsWorld {
                 case 'Spawner':
                     spawners.push(obj.position.clone())
                     break;
+                case 'Building':
+                    console.log(obj)
+
+                    // const boxShape = new CANNON.Box(obj.scale)
+                    // const boxBody = new CANNON.Body({
+                    //     type: CANNON.Body.STATIC,
+                    //     shape: boxShape
+                    // })
+                    // console.log(boxBody)
+                    // boxBody.position.copy(obj.position)
+                    // boxBody.quaternion.copy(obj.quaternion)
+                    // this.world.addBody(boxBody)
+
+                    const obb = new OBB()
+                    obb.center = obj.position
+                    obb.halfSize = obj.scale
+                    obb.rotation.setFromMatrix4(new Matrix4().makeRotationFromQuaternion(obj.quaternion))
+                    this.OBBs.push(obb)
+
+                    // // create mesh from map geometry
+                    // const boxGeometry = new BoxGeometry(obj.scale.x, obj.scale.y, obj.scale.z)
+                    // boxGeometry.scale(2,2,2)
+                    //
+                    // const material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true })
+                    // const mesh = new THREE.Mesh(boxGeometry, material)
+                    // mesh.position.copy(obj.position)
+                    // mesh.rotation.copy(obj.rotation)
+                    // this.scene.add( mesh );
+                    //
+                    // // update mesh
+                    // mesh.updateMatrix();
+                    // mesh.updateMatrixWorld();
+                    // mesh.geometry.computeBoundingBox()
+                    // mesh.geometry.boundingBox.applyMatrix4( mesh.matrixWorld );
+                    //
+                    // const helper = new THREE.Box3Helper( mesh.geometry.boundingBox, 0xffff00 );
+                    // this.scene.add( helper );
+
+
+                    // boxGeometry.obb = new OBB();
+
+
+
+                    break;
+                case 'Floor':
+                    const groundBody = new CANNON.Body({
+                        type: CANNON.Body.STATIC,
+                        shape: new CANNON.Plane(),
+                    })
+                    groundBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0) // make it face up
+                    this.world.addBody(groundBody)
+                    break;
                 default:
                     break;
             }
         }
         this.engine.serverConnector.socket.emit('register_spawner', spawners)
+    }
+
+    createPlayer() {
+
     }
 
     bind() {
