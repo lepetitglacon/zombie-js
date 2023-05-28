@@ -51,7 +51,7 @@ export default class InputManager {
                         !this.engine.chat.isOpen &&
                         this.canJump
                     ) {
-                        this.engine.game.player.velocity.y += this.engine.game.cannonWorldConfig.gravity * 2;
+                        this.engine.game.player.velocity.y += 50;
                         this.canJump = false
                     }
                     break;

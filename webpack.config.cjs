@@ -36,7 +36,7 @@ module.exports = {
                 ],
             },
             {
-                test: /\.(png|jpe?g|gif|glb|gltf|tga|ogg|mp3|wav|ttf)$/i,
+                test: /\.(png|jpe?g|gif|glb|gltf|fbx|tga|ogg|mp3|wav|ttf)$/i,
                 loader: 'file-loader',
                 options: {
                     name: '[path][name].[ext]',

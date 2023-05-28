@@ -21,7 +21,7 @@ export default class ServerZombie {
         this.lastPosition = new THREE.Vector3(0, 0, 0)
         this.lastDirection = new THREE.Vector3(0, 0, 0)
 
-        this.speed = 0.02 // dm/s
+        this.speed = 0.01 // dm/s
         this.health = 100
     }
 

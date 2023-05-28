@@ -69,13 +69,11 @@ export default class OptionMenu {
         setTimeout(() => {
             this.resumeGame.disabled = false
         }, 1100)
-        console.log('GameEngine.STATE.MENU is', this.engine.state)
     }
 
     close() {
         this.engine.game.three.controls.lock()
         this.optionMenu.classList.add('d-none')
-        console.log('GameEngine.STATE.MENU is', this.engine.state)
     }
 
     isOpen() {

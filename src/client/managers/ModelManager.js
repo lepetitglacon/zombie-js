@@ -1,19 +1,40 @@
 import * as THREE from "three";
 import {GLTFLoader} from "three/addons/loaders/GLTFLoader.js";
+import {FBXLoader} from "three/addons/loaders/FBXLoader.js";
+import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
 
 export default class ModelManager {
 
     constructor() {
-        this.loader = new GLTFLoader()
+        this.gltfLoader = new GLTFLoader()
+        this.fbxLoader = new FBXLoader()
+
         this.models = new Map()
+        this.animations = []
         this.registeredModels = new Map()
     }
 
     async download() {
         for (const [name, path] of this.registeredModels) {
-            const gltf = await this.downloadModel(name, path)
-            this.models.set(name, gltf.scene)
-            console.log('[ASSETS] loaded model ' + name)
+            const model = await this.downloadModel(name, path)
+            const ext = ModelManager.getExtFromPath(path)
+
+            switch (ext) {
+                case 'fbx':
+                    if (model.animations.length > 0) {
+                        this.animations.push(...model.animations)
+                    }
+                    this.models.set(name, model)
+                    break;
+                default:
+                    if (model.animations.length > 0) {
+                        this.animations.push(...model.animations)
+                    }
+                    this.models.set(name, model.scene)
+                    break;
+            }
+
+            console.log('[ASSETS] Loaded model "' + name + '"', model)
         }
         console.log('[ASSETS] loaded')
     }
@@ -33,16 +54,25 @@ export default class ModelManager {
      * @param path
      */
     downloadModel(name, path) {
-        return this.loader.loadAsync(
-            path,
-            (gltf) => {
+        const ext = ModelManager.getExtFromPath(path)
 
-            }
-            // ,
-            // (xhr) => {
-            //     // console.log('loading ' + name + ' at ' + ( xhr.loaded / xhr.total * 100 ) + '%')
-            // }
-        );
+        switch (ext) {
+            case 'fbx':
+                return this.fbxLoader.loadAsync(
+                    path,
+                    (xhr) => {
+
+                    }
+                );
+            default:
+                return this.gltfLoader.loadAsync(
+                    path,
+                    (xhr) => {
+
+                    }
+                );
+
+        }
     }
 
     /**
@@ -65,7 +95,27 @@ export default class ModelManager {
     getModelCopy(name) {
         if (this.models.has(name)) {
             return this.models.get(name).clone()
+        } else {
+            console.error('Model not recognized : "' + name + '"')
         }
+    }
+
+    /**
+     * return a copy of the OG model
+     * that you can transform
+     * @param name
+     * @returns {*}
+     */
+    getModelSkeletonCopy(name) {
+        if (this.models.has(name)) {
+            return SkeletonUtils.clone(this.models.get(name))
+        } else {
+            console.error('Model not recognized : "' + name + '"')
+        }
+    }
+
+    static getExtFromPath(path) {
+        return path.substring(path.lastIndexOf('.')+1, path.length)
     }
 
 }
