@@ -9,6 +9,8 @@ import "./assets/img/loader2.gif"
 import "./assets/img/weapons/pistol/fpsview.png"
 import "./assets/img/weapons/knife/knife.png"
 import "./assets/gltf/Soldier.glb"
+import "./assets/gltf/zombie/zombie.glb"
+import "./assets/gltf/zombie/zombie_walk.fbx"
 
 import "./assets/fonts/HelpMe.ttf"
 
@@ -24,7 +26,7 @@ import ChatThread from "./gui/TextThread/ChatThread.js";
 import PointsThread from "./gui/TextThread/PointsThread.js";
 import WaveGui from "./gui/Info/WaveGui.js";
 
-export default class GameEngine {
+export default class GameEngine /** extends EventTarget */ {
 
     static STATE = {
         MENU: 0,
@@ -43,6 +45,8 @@ export default class GameEngine {
         this.soundManager = new SoundManager()
         this.modelManager = new ModelManager()
         this.modelManager.registerModel('player', '../gltf/Soldier.glb')
+        this.modelManager.registerModel('zombie', '../gltf/zombie/zombie.glb')
+        // this.modelManager.registerModel('zombie_walk', '../gltf/zombie/zombie_walk.fbx')
 
         this.serverConnector = new ServerConnector(window.location.href.substring(window.location.href.lastIndexOf('/') + 1))
 

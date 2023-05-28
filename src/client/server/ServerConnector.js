@@ -48,7 +48,6 @@ export default class ServerConnector {
 
                 // // player points
                 this.socket.on('points', (playerPoints) => {
-                    console.log('[PLAYERS] points ', playerPoints)
                     this.engine.points.update(playerPoints)
                 })
 

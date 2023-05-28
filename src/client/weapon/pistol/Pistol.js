@@ -6,6 +6,4 @@ export default class Pistol extends Weapon {
         super(props);
     }
 
-
-
 }

@@ -77,8 +77,8 @@ export default class GraphicsWorld {
                     spawners.push(obj.position.clone())
                     break;
                 case 'Building':
-                    console.log(obj)
 
+                    /** CANNON buildings **/
                     // const boxShape = new CANNON.Box(obj.scale)
                     // const boxBody = new CANNON.Body({
                     //     type: CANNON.Body.STATIC,
@@ -89,10 +89,12 @@ export default class GraphicsWorld {
                     // boxBody.quaternion.copy(obj.quaternion)
                     // this.world.addBody(boxBody)
 
+                    /** OBB **/
                     const obb = new OBB()
                     obb.center = obj.position
                     obb.halfSize = obj.scale
                     obb.rotation.setFromMatrix4(new Matrix4().makeRotationFromQuaternion(obj.quaternion))
+                    obb.object = obj
                     this.OBBs.push(obb)
 
                     // // create mesh from map geometry
@@ -121,12 +123,13 @@ export default class GraphicsWorld {
 
                     break;
                 case 'Floor':
-                    const groundBody = new CANNON.Body({
-                        type: CANNON.Body.STATIC,
-                        shape: new CANNON.Plane(),
-                    })
-                    groundBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0) // make it face up
-                    this.world.addBody(groundBody)
+                    // const groundBody = new CANNON.Body({
+                    //     type: CANNON.Body.STATIC,
+                    //     shape: new CANNON.Plane(),
+                    // })
+                    // groundBody.position.y = .5
+                    // groundBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0) // make it face up
+                    // this.world.addBody(groundBody)
                     break;
                 default:
                     break;
@@ -160,6 +163,16 @@ export default class GraphicsWorld {
             this.camera.aspect = window.innerWidth / window.innerHeight;
             this.camera.updateProjectionMatrix();
             this.renderer.setSize( window.innerWidth, window.innerHeight );
+        });
+
+        /**
+         * Save player config in localstorage
+         */
+        window.addEventListener('beforeunload', function (e) {
+            e.preventDefault();
+            console.log('saved config in localStorage')
+            // TODO
+            console.log('bye')
         });
     }
 }

@@ -4,9 +4,6 @@ import {
     Vector3
 } from 'three';
 
-const _euler = new Euler( 0, 0, 0, 'YXZ' );
-const _vector = new Vector3();
-
 const _changeEvent = { type: 'change' };
 const _lockEvent = { type: 'lock' };
 const _unlockEvent = { type: 'unlock' };
@@ -16,8 +13,10 @@ const _PI_2 = Math.PI / 2;
 export default class PointerLockControls extends EventDispatcher {
 
     constructor( camera, domElement ) {
-
         super();
+
+        this._euler = new Euler( 0, 0, 0, 'YXZ' );
+        this._vector = new Vector3();
 
         this.camera = camera;
         this.domElement = domElement;
@@ -73,51 +72,45 @@ export default class PointerLockControls extends EventDispatcher {
 
     }
 
-    moveForward( distance ) {
-
-        // move forward parallel to the xz-plane
-        // assumes camera.up is y-up
-
-        const camera = this.camera;
-
-        _vector.setFromMatrixColumn( camera.matrix, 0 );
-
-        _vector.crossVectors( camera.up, _vector );
-
-        camera.position.addScaledVector( _vector, distance );
-
-    }
-
     /**
      * gives next position for collision testing
      * @param distance
+     * @param times
      * @returns {*}
      */
-    testMoveForward( distance ) {
+    testMoveForward( distance, times = 1 ) {
         const camera = this.camera;
-        const vec = _vector.clone()
+        const vec = this._vector.clone()
         vec.setFromMatrixColumn( camera.matrix, 0 );
         vec.crossVectors( camera.up, vec );
         const pos = camera.position.clone()
-        return pos.addScaledVector( vec, distance );
+        return pos.addScaledVector( vec, distance * times );
     }
 
     /**
      *
      * @param distance
+     * @param times
      */
-    testMoveRight( distance ) {
+    testMoveRight( distance, times = 1  ) {
         const camera = this.camera;
-        _vector.setFromMatrixColumn( camera.matrix, 0 );
+        const vec = this._vector.clone()
+        vec.setFromMatrixColumn( camera.matrix, 0 );
         const pos = camera.position.clone()
-        return pos.addScaledVector( _vector, distance );
+        return pos.addScaledVector( vec, distance * times );
+    }
+
+    moveForward( distance ) {
+        const camera = this.camera;
+        this._vector.setFromMatrixColumn( camera.matrix, 0 );
+        this._vector.crossVectors( camera.up, this._vector );
+        camera.position.addScaledVector( this._vector, distance );
     }
 
     moveRight( distance ) {
         const camera = this.camera;
-        const vec = _vector.clone()
-        vec.setFromMatrixColumn( camera.matrix, 0 );
-        camera.position.addScaledVector( _vector, distance );
+        this._vector.setFromMatrixColumn( camera.matrix, 0 );
+        camera.position.addScaledVector( this._vector, distance );
     }
 
     lock() {
@@ -134,6 +127,7 @@ export default class PointerLockControls extends EventDispatcher {
 
     }
 
+
 }
 
 // event listeners
@@ -145,15 +139,17 @@ function onMouseMove( event ) {
     const movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
     const movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
 
+    window.ZombieGame.game.weaponHandler.pointer.set(event.clientX, event.clientY)
+
     const camera = this.camera;
-    _euler.setFromQuaternion( camera.quaternion );
+    this._euler.setFromQuaternion( camera.quaternion );
 
-    _euler.y -= movementX * 0.002 * this.pointerSpeed;
-    _euler.x -= movementY * 0.002 * this.pointerSpeed;
+    this._euler.y -= movementX * 0.002 * this.pointerSpeed;
+    this._euler.x -= movementY * 0.002 * this.pointerSpeed;
 
-    _euler.x = Math.max( _PI_2 - this.maxPolarAngle, Math.min( _PI_2 - this.minPolarAngle, _euler.x ) );
+    this._euler.x = Math.max( _PI_2 - this.maxPolarAngle, Math.min( _PI_2 - this.minPolarAngle, this._euler.x ) );
 
-    camera.quaternion.setFromEuler( _euler );
+    camera.quaternion.setFromEuler( this._euler );
 
     this.dispatchEvent( _changeEvent );
 

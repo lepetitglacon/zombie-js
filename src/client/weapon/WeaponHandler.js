@@ -1,10 +1,11 @@
 import * as THREE from "three";
 import Weapon from "./Weapon.js";
 import Knife from "./knife/Knife.js";
+import Pistol from "./pistol/Pistol.js";
 
 export default class WeaponHandler {
 
-    constructor() {
+    constructor(props) {
         this.raycaster = new THREE.Raycaster();
         this.pointer = new THREE.Vector2();
 

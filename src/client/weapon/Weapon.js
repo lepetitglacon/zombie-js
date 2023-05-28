@@ -35,14 +35,12 @@ export default class Weapon {
     }
 
     shoot() {
-        this.weaponHandler.raycaster.setFromCamera( this.weaponHandler.pointer, this.engine.game.three.camera );
-        // enough bullet or reload
+        this.weaponHandler.raycaster.set(this.engine.game.three.camera.position, this.engine.game.player.lookDirection)
 
         if (!this.weaponHandler.knife.isReloading) {
             if (!this.isReloading) {
                 if (this.bulletsInMagazine > 0) {
                     if (this.canShootByFireRate_()) {
-                        console.log("[WEAPON] fired")
 
                         this.playFireSound_()
                         this.handleHit_(this.getIntersection_())
@@ -54,7 +52,6 @@ export default class Weapon {
                     }
 
                 } else {
-                    console.log("[WEAPON] reloading")
                     this.reload()
                 }
             }
@@ -139,7 +136,9 @@ export default class Weapon {
     }
 
     addToAlreadyHit_(obj) {
+        console.log(obj)
         if (obj.isZombie) {
+            console.log(obj)
             if (!this.alreadyHit.has(obj.zombieId)) {
                 this.currentHitObject = obj
                 this.alreadyHit.set(obj.zombieId, {damages: this.getDamage_(), points: this.getPoints_()})
@@ -186,7 +185,6 @@ export default class Weapon {
 
     prepareNextShot_() {
         this.lastFired = Date.now()
-        this.updateUI()
     }
 
     prepareHitsForServer_() {
