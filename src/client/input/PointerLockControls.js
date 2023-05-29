@@ -1,6 +1,6 @@
 import {
     Euler,
-    EventDispatcher,
+    EventDispatcher, Matrix4,
     Vector3
 } from 'three';
 
@@ -12,14 +12,16 @@ const _PI_2 = Math.PI / 2;
 
 export default class PointerLockControls extends EventDispatcher {
 
-    constructor( camera, domElement ) {
+    constructor( camera, domElement, engine ) {
         super();
 
         this._euler = new Euler( 0, 0, 0, 'YXZ' );
         this._vector = new Vector3();
+        this.direction = new Vector3()
 
         this.camera = camera;
         this.domElement = domElement;
+        this.engine = engine;
 
         this.isLocked = false;
 
@@ -55,21 +57,25 @@ export default class PointerLockControls extends EventDispatcher {
     }
 
     dispose() {
-
         this.disconnect();
+    }
 
+    lock() {
+        this.domElement.requestPointerLock({
+            unadjustedMovement: true,
+        });
+    }
+
+    unlock() {
+        this.domElement.ownerDocument.exitPointerLock();
     }
 
     getObject() { // retaining this method for backward compatibility
-
         return this.camera;
-
     }
 
     getDirection( v ) {
-
         return v.set( 0, 0, - 1 ).applyQuaternion( this.camera.quaternion );
-
     }
 
     /**
@@ -113,18 +119,19 @@ export default class PointerLockControls extends EventDispatcher {
         camera.position.addScaledVector( this._vector, distance );
     }
 
-    lock() {
+    move(velocity) {
+        const camera = this.camera;
 
-        this.domElement.requestPointerLock({
-            unadjustedMovement: true,
-        });
+        // // set z velocity facing the camera
+        this._vector.setFromMatrixColumn( camera.matrix, 0 );
+        camera.position.addScaledVector( this._vector, velocity.x );
+        this.direction.addScaledVector(this._vector, velocity.x)
 
-    }
+        this._vector.crossVectors( camera.up, this._vector );
+        camera.position.addScaledVector( this._vector, velocity.z );
+        this.direction.addScaledVector(this._vector, velocity.x)
 
-    unlock() {
-
-        this.domElement.ownerDocument.exitPointerLock();
-
+        this.direction.normalize()
     }
 
 
