@@ -1,4 +1,5 @@
 import AbstractTextThread from "./AbstractTextThread.js";
+import GameEngine from "../../GameEngine.js";
 
 export default class ChatThread extends AbstractTextThread {
 
@@ -20,6 +21,8 @@ export default class ChatThread extends AbstractTextThread {
     }
 
     open() {
+        this.engine.state = GameEngine.STATE.CHAT
+
         this.isOpen = true
         this.ul.style.opacity = 1
         this.input.focus({preventScroll: true})
@@ -29,6 +32,8 @@ export default class ChatThread extends AbstractTextThread {
     }
 
     close() {
+        this.engine.state = GameEngine.STATE.GAME
+
         this.isOpen = false
         this.engine.game.three.controls.lock()
 

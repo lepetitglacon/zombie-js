@@ -9,8 +9,7 @@ import "./assets/img/loader2.gif"
 import "./assets/img/weapons/pistol/fpsview.png"
 import "./assets/img/weapons/knife/knife.png"
 import "./assets/gltf/Soldier.glb"
-import "./assets/gltf/zombie/zombie.glb"
-import "./assets/gltf/zombie/zombie_walk.fbx"
+import "./assets/gltf/player.glb"
 
 import "./assets/fonts/HelpMe.ttf"
 
@@ -32,6 +31,7 @@ export default class GameEngine /** extends EventTarget */ {
         MENU: 0,
         OPTION: 1,
         GAME: 2,
+        CHAT: 3,
     }
 
     constructor() {
@@ -44,9 +44,8 @@ export default class GameEngine /** extends EventTarget */ {
 
         this.soundManager = new SoundManager()
         this.modelManager = new ModelManager()
-        this.modelManager.registerModel('player', '../gltf/Soldier.glb')
-        this.modelManager.registerModel('zombie', '../gltf/zombie/zombie.glb')
-        // this.modelManager.registerModel('zombie_walk', '../gltf/zombie/zombie_walk.fbx')
+        this.modelManager.registerModel('soldier', '../gltf/Soldier.glb')
+        this.modelManager.registerModel('player', '../gltf/player.glb')
 
         this.serverConnector = new ServerConnector(window.location.href.substring(window.location.href.lastIndexOf('/') + 1))
 
