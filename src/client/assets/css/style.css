@@ -169,6 +169,14 @@ body {
 }
 
 #points {
+    padding: 20px;
+    border-radius: 10px;
+
+    font-size: 24px;
+
+    background-color: rgba(255,255,255,.5);
+    color: black;
+
     position: absolute;
     top: 40vh;
     right: 10px;

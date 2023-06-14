@@ -134,6 +134,11 @@ export default class ClientConnector {
                 if (this.game.DOORS.has(buyObject.doorId)) {
 
                     if (player.points >= this.game.DOORS.get(buyObject.doorId).price) {
+
+                        player.points -= this.game.DOORS.get(buyObject.doorId).price
+                        this.socket.emit('points', this.game.preparePoints())
+
+
                         console.log(`door ${buyObject.doorId} opened`)
                         ZombieServer.io.to(this.roomId).emit('door_opened', buyObject.doorId)
                         this.game.DOORS.delete(buyObject.doorId)
@@ -152,6 +157,7 @@ export default class ClientConnector {
 
             // send doors opened
             this.socket.emit('get_opened_door', [...doors])
+            this.socket.emit('points', this.game.preparePoints())
         })
 
 
