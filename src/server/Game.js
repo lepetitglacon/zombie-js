@@ -1,4 +1,7 @@
 import WaveHandler from "./Wave/WaveHandler.js";
+import fs from "fs";
+import ZombieFactory from "../common/factory/ZombieFactory.js";
+import NodeThreeExporter from "@injectit/threejs-nodejs-exporters";
 
 export default class Game {
 
@@ -20,6 +23,7 @@ export default class Game {
         this.mapName = props.map
         this.map = undefined
 
+        this.loader = new NodeThreeExporter()
         this.parseMap()
 
         this.PLAYERS = new Map()
@@ -33,7 +37,6 @@ export default class Game {
     run() {
         this.status = Game.STATUS.RUNNING
 
-
         // Game loop
         setInterval(() => {
 
@@ -41,7 +44,6 @@ export default class Game {
             const delta = ( time - this.prevTime ) / 1000;
 
             if (this.PLAYERS.size > 0) {
-
 
                 // update ClientZombie life
                 for (const [id, zombie] of this.ZOMBIES) {
@@ -152,6 +154,39 @@ export default class Game {
     }
 
     parseMap() {
+        const file = fs.readFileSync('./src/client/assets/gltf/maps/' + this.mapName)
 
+        this.loader.parse('glb', file,
+            (gltf) => {
+
+                for (const mesh of gltf.scene.children) {
+                    switch (mesh.userData.type) {
+                        case 'Ground':
+                            break;
+
+                        case 'Building':
+                            break;
+
+                        case 'Spawner':
+                            ZombieFactory.spawners.push(mesh.position)
+                            break;
+
+                        case 'Door':
+                            mesh.price = 50
+                            mesh.isOpen = false
+                            this.DOORS.set(mesh.name, mesh)
+                            break;
+
+                        default:
+                            console.warn('[MAP] Unrecognized node')
+                            break;
+                    }
+                }
+                console.info('[MAP] Map ' + this.mapName + ' has been loaded')
+
+            },
+            (err) => {
+                console.log(err)
+            })
     }
 }

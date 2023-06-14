@@ -13,6 +13,7 @@
     "deploy": "git pull && npm i && webpack && node src/app-server.js"
   },
   "dependencies": {
+    "@injectit/threejs-nodejs-exporters": "^0.0.2",
     "cannon-es": "^0.20.0",
     "cannon-es-debugger": "^1.0.0",
     "cors": "^2.8.5",

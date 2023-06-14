@@ -47,7 +47,6 @@ export default class InputManager {
                     break;
 
                 case 'KeyF':
-                    console.log('f pressed')
                     let door = this.engine.actionGui.door
                     if (door !== null) {
                         door.buy()

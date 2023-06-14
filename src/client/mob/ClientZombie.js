@@ -34,26 +34,24 @@ export default class ClientZombie {
 
     prepareGltf() {
 
-        console.log(this.gltf)
-
         // add animation
         // this.animationManager = new THREE.AnimationMixer(this.gltf)
         // const clip = THREE.AnimationClip.findByName(window.ZombieGame.modelManager, 'walking')
         // const action = this.animationManager.clipAction(clip)
         // action.play()
-        //
-        // // children
-        // for (const bodyPart of this.gltf.children[0].children) {
-        //     bodyPart.isZombie = true
-        //     bodyPart.zombieId = this.id
-        //     bodyPart.material = this.zombieMaterial
-        // }
-        //
-        // // properties
-        // this.gltf.isZombie = true
-        // this.gltf.name = 'Zombie ' + this.id
-        // this.gltf.material = this.zombieMaterial
-        //
+
+        // children
+        for (const bodyPart of this.gltf.children[0].children) {
+            bodyPart.isZombie = true
+            bodyPart.zombieId = this.id
+            bodyPart.material = this.zombieMaterial
+        }
+
+        // properties
+        this.gltf.isZombie = true
+        this.gltf.name = 'Zombie ' + this.id
+        this.gltf.material = this.zombieMaterial
+
         // // transform
         // this.gltf.scale.setScalar(1)
         // this.gltf.position.copy(this.mesh.position);
@@ -62,15 +60,12 @@ export default class ClientZombie {
         this.aabb = new Box3()
         this.aabb.setFromObject(this.gltf)
 
-
         // this.mesh.updateMatrix();
         // this.mesh.updateMatrixWorld();
         // this.mesh.geometry.computeBoundingBox()
 
         this.meshHelper = new Box3Helper(this.aabb)
         window.ZombieGame.game.three.scene.add(this.meshHelper)
-
-
 
         window.ZombieGame.game.three.scene.add( this.gltf );
     }
@@ -80,6 +75,9 @@ export default class ClientZombie {
     }
 
     removeFromScene() {
+        window.ZombieGame.game.three.scene.remove(this.aabb)
+        window.ZombieGame.game.three.scene.remove(this.meshHelper)
+
         window.ZombieGame.game.three.scene.remove(this.mesh)
         window.ZombieGame.game.three.scene.remove(this.gltf)
     }

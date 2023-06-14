@@ -70,8 +70,6 @@ export default class GraphicsWorld {
     }
 
     parseMap() {
-        const spawners = []
-
         for (const i in this.gltf.children) {
             const obj = this.gltf.children[i]
             const type = obj.userData.type ?? ''
@@ -83,7 +81,6 @@ export default class GraphicsWorld {
             switch (type) {
 
                 case 'Spawner':
-                    spawners.push(obj.position.clone())
                     break;
 
                 case 'Building':
@@ -100,7 +97,6 @@ export default class GraphicsWorld {
                     normalHelper = new VertexNormalsHelper( obj, 1, 0xffffff );
                     this.scene.add( normalHelper );
 
-                    console.log(obj)
                     break;
 
                 case 'Door':
@@ -109,25 +105,15 @@ export default class GraphicsWorld {
                     this.DOORS.set(obj.name, door)
                     this.WALLS.set(obj.name, door.aabb)
 
-
-
-                    console.log(obj)
                     break;
 
                 case 'Floor':
-                    // const groundBody = new CANNON.Body({
-                    //     type: CANNON.Body.STATIC,
-                    //     shape: new CANNON.Plane(),
-                    // })
-                    // groundBody.position.y = .5
-                    // groundBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0) // make it face up
-                    // this.world.addBody(groundBody)
                     break;
                 default:
                     break;
             }
         }
-        this.engine.serverConnector.socket.emit('register_spawner', spawners)
+        this.engine.serverConnector.socket.emit('map_loaded_doors')
     }
 
     createPlayer() {

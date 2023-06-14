@@ -136,9 +136,7 @@ export default class Weapon {
     }
 
     addToAlreadyHit_(obj) {
-        console.log(obj)
         if (obj.isZombie) {
-            console.log(obj)
             if (!this.alreadyHit.has(obj.zombieId)) {
                 this.currentHitObject = obj
                 this.alreadyHit.set(obj.zombieId, {damages: this.getDamage_(), points: this.getPoints_()})

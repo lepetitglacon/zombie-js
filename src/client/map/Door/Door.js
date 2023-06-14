@@ -36,20 +36,20 @@ export default class Door {
     }
 
     buy() {
-        if (this.engine.game.points >= this.price && !this.isOpen) {
+        if (
+            this.engine.game.points >= this.price &&
+            !this.isOpen
+        ) {
 
             // send to server
-            this.engine.serverConnector.socket.send('door_buy', {
+            this.engine.serverConnector.socket.emit('door_buy', {
                 doorId: this.obj.name
             })
 
-            this.engine.game.points -= this.price
-            this.isOpen = true
+            console.log('send open door to server')
 
-            setTimeout(() => {
-                this.remove_()
-                this.engine.soundManager.play('door-buy')
-            }, 1000)
+            this.engine.game.points -= this.price
+
         }
     }
 

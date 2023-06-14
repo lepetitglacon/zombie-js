@@ -66,6 +66,7 @@ export default class ClientConnector {
 
             // send chat messages
             this.socket.emit('points', this.game.preparePoints())
+
         })
     }
 
@@ -125,21 +126,34 @@ export default class ClientConnector {
          */
         this.socket.on('door_buy', (buyObject) => {
 
+            console.log(`${this.socket} trying to buy door ${buyObject.doorId}`)
+
             if (this.game.PLAYERS.has(this.socket)) {
                 const player = this.game.PLAYERS.get(this.socket)
 
                 if (this.game.DOORS.has(buyObject.doorId)) {
 
                     if (player.points >= this.game.DOORS.get(buyObject.doorId).price) {
-                        ZombieServer.io.to(this.roomId).emit('door_open', this.socket.id)
-                        this.game.DOORS.remove(buyObject.doorId)
+                        console.log(`door ${buyObject.doorId} opened`)
+                        ZombieServer.io.to(this.roomId).emit('door_opened', buyObject.doorId)
+                        this.game.DOORS.delete(buyObject.doorId)
                     }
                 }
+            }
+        })
 
+        this.socket.on('map_loaded_doors', () => {
+            let doors = new Map()
+            for (const [doorId, door] of this.game.DOORS) {
+                if (door.isOpen) {
+                    doors.set(doorId, door)
+                }
             }
 
-
-
+            // send doors opened
+            this.socket.emit('get_opened_door', [...doors])
         })
+
+
     }
 }

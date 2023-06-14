@@ -99,6 +99,22 @@ export default class ServerConnector {
                     }
                 })
 
+                /**
+                 * Get opened doors for the first time
+                 */
+                this.socket.on('get_opened_door', (doors) => {
+                    console.log('[DOORS] Doors already opened ', doors)
+                    for (const [doorId, door] of doors) {
+                        console.log('[DOORS] remove '+ doorId)
+                        if (this.engine.game.three.DOORS.has(doorId)) {
+                            this.engine.game.three.DOORS.get(doorId).isOpen = true
+
+                            this.engine.game.three.DOORS.get(doorId).remove_()
+                            this.engine.soundManager.play('door-buy')
+                        }
+                    }
+                })
+
                 // get a new player that just connected
                 this.socket.on('player_connect', (player) => {
                     console.log('[CONNECT] Player ' + player.socketId + ' connected')
@@ -180,10 +196,13 @@ export default class ServerConnector {
                 /**
                  * On door opened
                  */
-                this.socket.on('zombie_death', (zombieId) => {
-                    if (this.engine.game.ZOMBIES.has(zombieId)) {
-                        this.engine.game.ZOMBIES.get(zombieId).removeFromScene()
-                        this.engine.game.ZOMBIES.delete(zombieId)
+                this.socket.on('door_opened', (doorId) => {
+                    if (this.engine.game.three.DOORS.has(doorId)) {
+                        this.engine.game.three.DOORS.get(doorId).isOpen = true
+                        setTimeout(() => {
+                            this.engine.game.three.DOORS.get(doorId).remove_()
+                            this.engine.soundManager.play('door-buy')
+                        }, 1000)
                     }
                 })
 
