@@ -9,12 +9,14 @@ import "../../assets/gltf/maps/flora_square.glb"
 import {OBB} from "three/addons/math/OBB.js";
 import {Box3, BoxGeometry, Euler, Matrix3, Matrix4, Vector3} from "three";
 import {VertexNormalsHelper} from "three/addons/helpers/VertexNormalsHelper.js";
+import Door from "../Door/Door.js";
 
 
 export default class GraphicsWorld {
 
     constructor() {
-        this.BUILDINGS = []
+        this.WALLS = new Map()
+        this.DOORS = new Map()
 
         this.world = new CANNON.World({
             gravity: new CANNON.Vec3(0, -9.82, 0), // m/s²
@@ -73,6 +75,11 @@ export default class GraphicsWorld {
         for (const i in this.gltf.children) {
             const obj = this.gltf.children[i]
             const type = obj.userData.type ?? ''
+
+            let aabb
+            let aabbHelper
+            let normalHelper
+
             switch (type) {
 
                 case 'Spawner':
@@ -83,23 +90,28 @@ export default class GraphicsWorld {
 
                     obj.geometry.computeBoundingBox()
 
-                    const aabb = new Box3()
+                    aabb = new Box3()
                     aabb.setFromObject(obj)
-                    this.BUILDINGS.push(aabb)
+                    this.WALLS.set(obj.name, aabb)
 
-                    const aabbHelper = new THREE.Box3Helper( aabb, 0xff0000 );
+                    aabbHelper = new THREE.Box3Helper( aabb, 0xff0000 );
                     this.scene.add( aabbHelper );
 
-                    const normalHelper = new VertexNormalsHelper( obj, 1, 0xffffff );
+                    normalHelper = new VertexNormalsHelper( obj, 1, 0xffffff );
                     this.scene.add( normalHelper );
 
-                    /** OBB **/
-                    // const obb = new OBB()
-                    // obb.center = obj.position
-                    // obb.halfSize = obj.scale
-                    // obb.rotation.setFromMatrix4(new Matrix4().makeRotationFromQuaternion(obj.quaternion))
-                    // // obb.rotation.rotate(90)
+                    console.log(obj)
+                    break;
 
+                case 'Door':
+                    const door = new Door(obj)
+
+                    this.DOORS.set(obj.name, door)
+                    this.WALLS.set(obj.name, door.aabb)
+
+
+
+                    console.log(obj)
                     break;
 
                 case 'Floor':

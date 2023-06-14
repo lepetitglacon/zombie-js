@@ -1,4 +1,3 @@
-import ZombieFactory from "../common/factory/ZombieFactory.js";
 import WaveHandler from "./Wave/WaveHandler.js";
 
 export default class Game {
@@ -21,14 +20,14 @@ export default class Game {
         this.mapName = props.map
         this.map = undefined
 
+        this.parseMap()
+
         this.PLAYERS = new Map()
         this.ZOMBIES = new Map()
+        this.DOORS = new Map()
         this.MESSAGES = []
 
         this.waveHandler = new WaveHandler({game: this})
-
-
-
     }
 
     run() {
@@ -152,4 +151,7 @@ export default class Game {
         return points
     }
 
+    parseMap() {
+
+    }
 }

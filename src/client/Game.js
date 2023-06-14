@@ -1,11 +1,6 @@
-import * as THREE from "three";
-import * as CANNON from "cannon-es";
 import ThreeWorld from "./map/world/GraphicsWorld.js";
 import WeaponHandler from "./weapon/WeaponHandler.js";
-import {OBB} from "three/addons/math/OBB.js";
-import {Box3, Box3Helper, Matrix3, Matrix4, Vector3} from "three";
-import ZombieFactory from "../common/factory/ZombieFactory.js";
-import ModelManager from "./managers/ModelManager.js";
+import {Box3} from "three";
 import ControllablePlayer from "./mob/ControllablePlayer.js";
 
 
@@ -18,6 +13,9 @@ export default class Game {
 
         this.player = new ControllablePlayer()
 
+        this.collisionAabb = new Box3()
+
+        this.points = 2000
     }
 
     init() {
@@ -94,14 +92,6 @@ export default class Game {
             zombie.update()
         }
 
-        // PLAYER MOVEMENT
-        if (
-            !this.engine.chat.isOpen
-        ) {
-
-        }
-
-
         // GUN
         this.weaponHandler.update()
 
@@ -117,12 +107,6 @@ export default class Game {
             this.player.lastDirection = this.player.lookDirection.clone()
         }
 
-
-
-
-
-        // this.three.cannonDebugRenderer.update()
-        // this.three.world.step(delta)
 
         this.three.renderer.render( this.three.scene, this.three.camera );
 

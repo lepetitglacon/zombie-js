@@ -26,6 +26,28 @@ body {
     position: absolute;
 }
 
+#action-gui {
+    position: absolute;
+
+    width: 100vw;
+    height: 100vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#action-gui-message {
+    position: relative;
+    top: 20vh;
+
+    padding: 10px;
+    border-radius: 10px;
+
+    font-size: 16px;
+    color: black;
+    background-color: rgba(255, 255, 255, .5);
+}
+
 #wave {
     font-weight: bold;
     font-size: 128px;

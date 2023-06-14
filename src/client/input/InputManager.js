@@ -46,6 +46,17 @@ export default class InputManager {
                     this.engine.game.weaponHandler.reload()
                     break;
 
+                case 'KeyF':
+                    console.log('f pressed')
+                    let door = this.engine.actionGui.door
+                    if (door !== null) {
+                        door.buy()
+                    }
+
+
+
+                    break;
+
                 case 'Space':
                     if (
                         !this.engine.chat.isOpen &&

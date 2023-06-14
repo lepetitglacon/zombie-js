@@ -8,6 +8,8 @@ export default class PointsThread extends AbstractTextThread {
         this.ul = document.getElementById("points-ul")
 
         this.pointsLi = new Map()
+
+
     }
 
     init() {
@@ -29,6 +31,10 @@ export default class PointsThread extends AbstractTextThread {
 
                 if (this.engine.game.PLAYERS.has(playerId)) {
                     usernameSpan.style.color = '#'+ this.engine.game.PLAYERS.get(playerId).color.toString(16)
+
+                    if (playerId === this.engine.serverConnector.socket) {
+
+                    }
                 }
 
                 this.pointsLi.set(playerId, {username: usernameSpan, points: pointSpan})

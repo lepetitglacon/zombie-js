@@ -177,6 +177,16 @@ export default class ServerConnector {
                     }
                 })
 
+                /**
+                 * On door opened
+                 */
+                this.socket.on('zombie_death', (zombieId) => {
+                    if (this.engine.game.ZOMBIES.has(zombieId)) {
+                        this.engine.game.ZOMBIES.get(zombieId).removeFromScene()
+                        this.engine.game.ZOMBIES.delete(zombieId)
+                    }
+                })
+
             })
 
         });

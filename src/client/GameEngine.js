@@ -24,6 +24,7 @@ import OptionMenu from "./gui/Menu/OptionMenu.js";
 import ChatThread from "./gui/TextThread/ChatThread.js";
 import PointsThread from "./gui/TextThread/PointsThread.js";
 import WaveGui from "./gui/Info/WaveGui.js";
+import ActionGui from "./gui/Info/ActionGui.js";
 
 export default class GameEngine /** extends EventTarget */ {
 
@@ -51,6 +52,7 @@ export default class GameEngine /** extends EventTarget */ {
 
         this.gui = new Gui()
         this.waveGui = new WaveGui()
+        this.actionGui = new ActionGui()
         this.menu = new OptionMenu()
 
         this.chat = new ChatThread()

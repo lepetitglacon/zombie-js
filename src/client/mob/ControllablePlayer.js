@@ -7,7 +7,6 @@ export default class ControllablePlayer {
 
     constructor() {
 
-
         // game attributes
         this.maxHealth = 100
         this.health = this.maxHealth
@@ -54,6 +53,8 @@ export default class ControllablePlayer {
         this.aabbHelper = new Box3Helper(this.aabb)
         this.three.scene.add(this.aabbHelper)
 
+
+
     }
 
     update(delta) {
@@ -63,7 +64,11 @@ export default class ControllablePlayer {
         this.velocity.z -= this.velocity.z * 10 * delta;
         this.velocity.y -= 10 * (this.mass) * delta;
 
-        if (this.engine.state !== GameEngine.STATE.CHAT) {
+        if (
+            this.engine.state !== GameEngine.STATE.CHAT ||
+            this.engine.state !== GameEngine.STATE.MENU
+        ) {
+
             // normalized direction of the keys pressed
             this.feetDirection.z = Number( this.engine.inputManager.moveForward ) - Number( this.engine.inputManager.moveBackward );
             this.feetDirection.x = Number( this.engine.inputManager.moveRight ) - Number( this.engine.inputManager.moveLeft );
@@ -76,21 +81,36 @@ export default class ControllablePlayer {
             if ( this.engine.inputManager.moveLeft || this.engine.inputManager.moveRight ) {
                 this.velocity.x += this.feetDirection.x * this.speed * delta;
             }
-
-            console.log(this.three.controls.direction)
-
-            // collisions
-            for (let i = 0; i < this.three.BUILDINGS.length; i++) {
-                const wallBox = this.three.BUILDINGS[i]
-
-                // console.log(this.sweptAABB(this.aabb, wallBox, this.velocity))
-            }
-
-            this.three.controls.move(this.velocity.clone().multiplyScalar(delta));
-            this.three.controls.getObject().position.y += ( this.velocity.y * delta );
         }
 
+        let hitDoor = false
+        for (const [name, door] of this.three.DOORS) {
+            if (this.aabb.intersectsBox(door.actionAABB)) {
+                const doorMessage = `Press F to Unlock Door : ${door.price}`
+                this.engine.actionGui.setMessage(doorMessage)
+                this.engine.actionGui.setDoor(door)
+                hitDoor = true
+            }
+        }
+        if (hitDoor === false) {
+            this.engine.actionGui.hide()
+        }
 
+        // update positions
+        this.three.controls.move(this.velocity.clone().multiplyScalar(delta));
+        this.three.controls.getObject().position.y += ( this.velocity.y * delta );
+
+        // arrow helpers
+        let lookDirectionVec = this.three.controls._direction.clone()
+        if (this.lookDirectionVec) this.three.scene.remove(this.lookDirectionVec);
+        this.lookDirectionVec = new THREE.ArrowHelper( lookDirectionVec, this.three.camera.position, 2, 0xffff00 );
+        this.three.scene.add( this.lookDirectionVec );
+
+        let feetDirectionVec = this.three.controls._worldDirection.clone()
+        feetDirectionVec.y = 0
+        if (this.feetDirectionVec) this.three.scene.remove(this.feetDirectionVec);
+        this.feetDirectionVec = new THREE.ArrowHelper( feetDirectionVec, this.three.camera.position, 2, 0x00ff00 );
+        this.three.scene.add( this.feetDirectionVec );
 
         // not falling through ground
         if ( this.three.controls.getObject().position.y < 1.8 ) {
@@ -101,45 +121,9 @@ export default class ControllablePlayer {
 
         // update mesh
         this.mesh.position.copy(this.three.camera.position)
-        this.mesh.rotation.copy(this.three.camera.rotation)
 
         // update AABB
         this.aabb.setFromObject(this.mesh)
 
-    }
-
-    sweptAABB(box1, box2, velocity) {
-        // Calculate the delta between the two bounding boxes
-        const delta = box2.min.clone().sub(box1.max);
-
-        // Calculate the time of impact in each axis
-        const tMin = new THREE.Vector3();
-        const tMax = new THREE.Vector3();
-
-        // Calculate the inverse velocity components
-        const invVelocity = new THREE.Vector3(1 / velocity.x, 1 / velocity.y, 1 / velocity.z);
-
-        // Calculate the time of impact on each axis
-        tMin.x = delta.x * invVelocity.x;
-        tMax.x = delta.x * invVelocity.x;
-        tMin.y = delta.y * invVelocity.y;
-        tMax.y = delta.y * invVelocity.y;
-        tMin.z = delta.z * invVelocity.z;
-        tMax.z = delta.z * invVelocity.z;
-
-        // Find the maximum of the minimum time of impact values
-        const tEnter = Math.max(Math.max(tMin.x, tMin.y), tMin.z);
-
-        // Find the minimum of the maximum time of impact values
-        const tExit = Math.min(Math.min(tMax.x, tMax.y), tMax.z);
-
-        // Check if there is a collision
-        if (tEnter > tExit || tEnter > 1 || tExit < 0) {
-            return null; // No collision
-        } else {
-            const collisionTime = Math.max(0, tEnter);
-            const collisionPoint = box1.max.clone().addScaledVector(velocity, collisionTime);
-            return collisionPoint;
-        }
     }
 }
