@@ -1,15 +1,21 @@
 import express from 'express'
 import http from 'http'
 import cors from 'cors'
-import path from "path"
 import os from "os"
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import {Server} from "socket.io";
 import Routes from "./routes/Routes.js";
-import ClientConnector from "./ClientConnector.js";
 import Game from "./Game.js";
 import PlayerFactory from "../common/factory/PlayerFactory.js";
+import passport from "passport";
+import {OAuth2Strategy} from "passport-google-oauth";
+import session from "express-session";
+
+import dotenv from 'dotenv'
+dotenv.config()
+
+
 
 const nets = os.networkInterfaces();
 const ipAddresses = new Map();
@@ -40,6 +46,25 @@ export default class ZombieGameServer {
         this.app.use(cors())
         this.app.use(express.static('dist/src/client/assets'));
         this.app.use('/game', express.static('dist'));
+
+        this.app.use(session({
+            resave: false,
+            saveUninitialized: true,
+            secret: process.env.GOOGLE_CLIENT_SECRET
+        }));
+
+        this.app.use(passport.initialize());
+        this.app.use(passport.session());
+
+        this.passport = passport;
+        this.googleStrategy = OAuth2Strategy;
+
+        this.passport.serializeUser(function(user, done) {
+            done(null, user);
+        });
+        this.passport.deserializeUser(function(user, done) {
+            done(null, user);
+        });
 
         this.createGame({
             name:'TEST',
