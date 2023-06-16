@@ -1,6 +1,6 @@
-import WaveHandler from "./Wave/WaveHandler.js";
+import WaveHandler from "./wave/WaveHandler.js";
 import fs from "fs";
-import ZombieFactory from "../common/factory/ZombieFactory.js";
+import ZombieFactory from "../../common/factory/ZombieFactory.js";
 import NodeThreeExporter from "@injectit/threejs-nodejs-exporters";
 
 export default class Game {
@@ -12,9 +12,10 @@ export default class Game {
 
     constructor(props) {
         this.io = props.server
-        this.status = Game.STATUS.PAUSED
         this.private = false
         this.roomId = props.roomId
+
+        this.status = Game.STATUS.PAUSED
 
         this.tickRate = 60
         this.prevTime = Date.now();
@@ -36,6 +37,8 @@ export default class Game {
 
     run() {
         this.status = Game.STATUS.RUNNING
+
+        this.io.to(this.roomId).emit('game_start')
 
         // Game loop
         setInterval(() => {

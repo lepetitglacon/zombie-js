@@ -33,13 +33,13 @@ export default class GameEngine /** extends EventTarget */ {
         OPTION: 1,
         GAME: 2,
         CHAT: 3,
+        LOBBY: 4,
     }
 
     constructor() {
         this.state = GameEngine.STATE.GAME
 
         this.loader = new Loader()
-        this.loader.show()
 
         this.inputManager = new InputManager()
 
@@ -67,7 +67,24 @@ export default class GameEngine /** extends EventTarget */ {
         this.points = document.getElementById("points")
     }
 
+    lobby() {
+        this.loader.hide()
+
+        this.serverConnector.prepareLobby()
+
+        let btn = document.getElementById('lobby-start-game')
+        let url = btn.dataset.url
+        btn.addEventListener("click", (e) => {
+            e.preventDefault()
+            fetch(url)
+                .then(function(response) {
+
+                })
+        })
+    }
+
     run() {
+        this.loader.show()
         this.game.init()
     }
 }

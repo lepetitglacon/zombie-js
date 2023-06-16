@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import {Server} from "socket.io";
 import Routes from "./routes/Routes.js";
-import Game from "./Game.js";
+import Game from "./service/Game.js";
 import PlayerFactory from "../common/factory/PlayerFactory.js";
 import passport from "passport";
 import {OAuth2Strategy} from "passport-google-oauth";
@@ -16,19 +16,6 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 
-
-const nets = os.networkInterfaces();
-const ipAddresses = new Map();
-for (const name of Object.keys(nets)) {
-    for (const net of nets[name]) {
-        const familyV4Value = typeof net.family === 'string' ? 'IPv4' : 4
-        if (net.family === familyV4Value && !net.internal) {
-            if (!ipAddresses.has(name)) {
-                ipAddresses.set(name, net.address);
-            }
-        }
-    }
-}
 
 export default class ZombieGameServer {
 
@@ -47,10 +34,14 @@ export default class ZombieGameServer {
         this.app.use(express.static('dist/src/client/assets'));
         this.app.use('/game', express.static('dist'));
 
+        this.app.set('view engine', 'ejs');
+        this.app.set('views', this.__dirname + '\\vue\\');
+
         this.app.use(session({
+            name: 'z3d-connect',
             resave: false,
             saveUninitialized: true,
-            secret: process.env.GOOGLE_CLIENT_SECRET
+            secret: 'z3d-secret' // process.env.GOOGLE_CLIENT_SECRET
         }));
 
         this.app.use(passport.initialize());
@@ -76,17 +67,20 @@ export default class ZombieGameServer {
     run() {
         this.routes = new Routes()
 
+
+        this.getAvailableNetworks()
         this.server.listen(this.port, () => {
             console.log()
             console.log("----------------------------")
             console.log(`Zombie server listening port ${this.port}`)
             console.log(`Join a game here http://localhost:${this.port}`)
-            console.log(`Join a game here http://${ipAddresses.values().next().value}:${this.port}`)
+            console.log(`Join a game here http://${this.ipAddresses.values().next().value}:${this.port}`)
             console.log("----------------------------")
             console.log()
 
             this.io.on('connection', (socket) => {
                 let roomName = socket.handshake.query.roomName;
+
                 if (this.GAMES.has(roomName)) {
                     const game = this.GAMES.get(roomName)
                     game.PLAYERS.set(socket, PlayerFactory.createServerPlayer({socket: socket, room:roomName}))
@@ -97,6 +91,7 @@ export default class ZombieGameServer {
 
     createGame(props) {
         let id = this.getRandomId(10)
+
         let game = new Game({roomId: id, server: this.io, map: props.map})
         game.name = props.name
         game.private = props.private
@@ -104,7 +99,7 @@ export default class ZombieGameServer {
         this.GAMES.set(id, game)
 
         console.log('[GAME] created ' + id + ' on map ' + props.map)
-        game.run()
+        // game.run()
         return id
     }
 
@@ -118,6 +113,21 @@ export default class ZombieGameServer {
             counter += 1;
         }
         return result;
+    }
+
+    getAvailableNetworks() {
+        const nets = os.networkInterfaces();
+        this.ipAddresses = new Map();
+        for (const name of Object.keys(nets)) {
+            for (const net of nets[name]) {
+                const familyV4Value = typeof net.family === 'string' ? 'IPv4' : 4
+                if (net.family === familyV4Value && !net.internal) {
+                    if (!this.ipAddresses.has(name)) {
+                        this.ipAddresses.set(name, net.address);
+                    }
+                }
+            }
+        }
     }
 }
 

@@ -15,13 +15,19 @@ export default class ServerConnector {
         });
     }
 
+    prepareLobby() {
+        this.socket.on('game_start', () => {
+            console.log('game starts')
+            document.getElementById('lobby').classList.toggle('d-none')
+            window.ZombieGame.run()
+        })
+    }
+
     init() {
         this.engine = window.ZombieGame
 
         this.socket.on("connect", () => {
             console.log('[SOCKET] connected to room : ' + this.roomId)
-
-            // window.GameEngine.infoDiv.innerText = this.socket.id
 
             // test event
             this.socket.on('pong', () => {
@@ -45,6 +51,10 @@ export default class ServerConnector {
             window.addEventListener('z3d-game-start', () => {
 
                 this.socket.emit('ready')
+
+
+
+
 
                 // // player points
                 this.socket.on('points', (playerPoints) => {

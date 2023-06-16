@@ -1,6 +1,6 @@
 import * as THREE from "three"
-import Utils from "../common/Utils.js";
-import ZombieFactory from "../common/factory/ZombieFactory.js";
+import Utils from "../../common/Utils.js";
+import ZombieFactory from "../../common/factory/ZombieFactory.js";
 
 
 export default class ClientConnector {

@@ -5,8 +5,7 @@ module.exports = {
     mode: 'development',
 
     entry: {
-        main: './src/app-client.js',
-        // server: './src/app-server.js',
+        main: './src/app-client.js'
     },
 
     output: {
@@ -19,7 +18,8 @@ module.exports = {
 
     plugins: [
         new HtmlWebpackPlugin({
-            template: "src/server/html/template.html"
+            template: "!!raw-loader!src/server/vue/game.ejs",
+            filename: 'index.ejs',
         })
     ],
 

@@ -30,6 +30,7 @@
     "nodemon": "^2.0.22",
     "passport": "^0.6.0",
     "passport-google-oauth": "^2.0.0",
+    "raw-loader": "^4.0.2",
     "socket.io": "^4.6.1",
     "stats.js": "^0.17.0",
     "style-loader": "^3.3.1",

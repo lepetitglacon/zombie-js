@@ -1,4 +1,4 @@
-import ClientConnector from "../../server/ClientConnector.js";
+import ClientConnector from "../../server/service/ClientConnector.js";
 
 export default class PlayerFactory {
     static playerCount = 0

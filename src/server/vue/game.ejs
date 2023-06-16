@@ -12,7 +12,34 @@
     <img src="../img/loader2.gif">
 </div>
 
-<div id="game-UI">
+<div id="lobby">
+    <div id="lobby-left" class="col">
+        <div id="lobby-room-name"><%= game.name %></div>
+        <div id="lobby-room-id"><%= game.roomId %></div>
+
+        <div id="lobby-form">
+            <form>
+                <!-- map slider -->
+
+                <!-- modifier -->
+
+
+                <button id="lobby-start-game" data-url="/game/start/<%= game.roomId %>">Start</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="lobby-right" class="col">
+        <div>Z3D</div>
+        <div id="lobby-map">Map name</div>
+        <div id="lobby-map-name"><img src="" alt="map"/></div>
+        <div id="lobby-players">
+            <ul id="lobby-players-list"></ul>
+        </div>
+    </div>
+</div>
+
+<div id="game-UI" class="d-none">
 
     <div id="info">
 

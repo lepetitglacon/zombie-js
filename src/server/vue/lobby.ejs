@@ -15,12 +15,17 @@
         src: url("/fonts/HelpMe.ttf");
     }
 
+    body {
+        background: #333;
+        color: #7C0404;
+    }
+
     .column {
         flex-direction: column;
     }
     .d-flex {
-         display: flex;
-     }
+        display: flex;
+    }
     .lp-zombie-hand {
         position: absolute;
         bottom: 0;
@@ -46,7 +51,7 @@
         <div class="row mb-5">
             <div class="col">
 
-                <a href="/auth/google" class="btn btn-danger"><span class="fa fa-google"></span> SignIn with Google</a>
+
 
                 <h2>Set username</h2>
 
@@ -96,13 +101,13 @@
             <div class="container">
                 <table id="games-table" class="table">
                     <thead>
-                        <tr class="table-danger">
-                            <th scope="col">Name</th>
-                            <th scope="col">Map</th>
-                            <th scope="col">Players</th>
-                            <th scope="col">Ping</th>
-                            <th scope="col">Action</th>
-                        </tr>
+                    <tr class="table-danger">
+                        <th scope="col">Name</th>
+                        <th scope="col">Map</th>
+                        <th scope="col">Players</th>
+                        <th scope="col">Ping</th>
+                        <th scope="col">Action</th>
+                    </tr>
                     </thead>
                     <tbody id="public-games-tbody">
                     </tbody>

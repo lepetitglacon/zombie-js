@@ -138,6 +138,7 @@ body {
 .d-none {
     display: none!important;
 }
+
 .hidden {
     opacity: 0;
 }
