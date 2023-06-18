@@ -7,8 +7,8 @@ export default class ClientConnector {
 
     constructor(props) {
         this.socket = props.socket
-        this.roomId = props.room
-        this.game = ZombieServer.GAMES.get(this.roomId)
+        this.roomId = props.roomId
+        this.game = props.game
 
         this.username = 'Unknown'
 
@@ -27,23 +27,11 @@ export default class ClientConnector {
 
         this.init()
         this.bind()
-        console.log('[CONNECT] ' + this.socket.id + ' connected to room ' + this.roomId)
+        console.log('[PLAYER][CONNECTED] ' + this.socket.id + ' connected to room ' + this.roomId)
     }
 
     init() {
         this.socket.join(this.roomId)
-
-        // set map
-        this.socket.emit('map', this.game.mapName)
-
-        this.socket.on('register_spawner', (spawners) => {
-            if (ZombieFactory.spawners.isSet === undefined) {
-                console.log('loading spawners')
-                ZombieFactory.spawners.length = 0
-                ZombieFactory.spawners = spawners
-                ZombieFactory.spawners.isSet = true
-            }
-        })
 
         // tell other player the new connection
         this.socket.to(this.roomId).emit('player_connect', {
@@ -52,6 +40,18 @@ export default class ClientConnector {
             position: this.position,
             color: this.color,
             points: this.points
+        })
+
+        this.socket.on('game-state', () => {
+            this.socket.emit('game-state', {
+                state: this.game.status,
+                map: this.game.mapName,
+            })
+        })
+
+        this.socket.on('lobby-ready', () => {
+
+            this.socket.emit('lobby-players', this.game.prepareLobbyPlayersToEmit())
         })
 
         this.socket.on('ready', () => {

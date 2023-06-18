@@ -83,6 +83,7 @@ export default class ControllablePlayer {
             }
         }
 
+        // Doors hitbox
         let hitDoor = false
         for (const [name, door] of this.three.DOORS) {
             if (this.aabb.intersectsBox(door.actionAABB)) {

@@ -36,10 +36,11 @@ export default class Door {
     }
 
     buy() {
-        if (
-            this.engine.game.points >= this.price &&
-            !this.isOpen
-        ) {
+        // frontend verification is not useful for now
+        // if (
+        //     this.engine.game.points >= this.price &&
+        //     !this.isOpen
+        // ) {
 
             // send to server
             this.engine.serverConnector.socket.emit('door_buy', {
@@ -50,7 +51,7 @@ export default class Door {
 
             this.engine.game.points -= this.price
 
-        }
+        // }
     }
 
     /**

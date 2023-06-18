@@ -8,6 +8,7 @@ export default class Game {
     static STATUS = {
         PAUSED: 0,
         RUNNING: 1,
+        TERMINATED: 2,
     }
 
     constructor(props) {
@@ -21,7 +22,7 @@ export default class Game {
         this.prevTime = Date.now();
 
         this.name = ''
-        this.mapName = props.map
+        this.mapName = props.map ?? 'flora_square.glb'
         this.map = undefined
 
         this.loader = new NodeThreeExporter()
@@ -38,7 +39,8 @@ export default class Game {
     run() {
         this.status = Game.STATUS.RUNNING
 
-        this.io.to(this.roomId).emit('game_start')
+        console.log('[GAME] game started : ' + this.roomId)
+        this.io.to(this.roomId).emit('game_load', {mapName: this.mapName})
 
         // Game loop
         setInterval(() => {
@@ -115,6 +117,21 @@ export default class Game {
         toSend[i].direction = socketHandler.direction
         toSend[i].color = socketHandler.color
         socketHandler.lastPosition.copy(socketHandler.position)
+    }
+
+    prepareLobbyPlayersToEmit() {
+        let toSend = []
+        let i = 0
+        for (const [socket, socketHandler] of this.PLAYERS) {
+            if (!socketHandler.position.equals(socketHandler.lastPosition)) {
+                toSend[i] = {}
+                toSend[i].socketId = socketHandler.socket.id
+                toSend[i].username = socketHandler.username
+                i++
+            }
+
+        }
+        return toSend
     }
 
     prepareZombiesToEmit(all) {

@@ -6,6 +6,8 @@ import "./assets/img/enter.png"
 import "./assets/img/loader.gif"
 import "./assets/img/loader2.gif"
 
+import "./assets/img/map-preview/flora_square.jpg"
+
 import "./assets/img/weapons/pistol/fpsview.png"
 import "./assets/img/weapons/knife/knife.png"
 import "./assets/gltf/Soldier.glb"
@@ -25,8 +27,9 @@ import ChatThread from "./gui/TextThread/ChatThread.js";
 import PointsThread from "./gui/TextThread/PointsThread.js";
 import WaveGui from "./gui/Info/WaveGui.js";
 import ActionGui from "./gui/Info/ActionGui.js";
+import Lobby from "./server/Lobby.js";
 
-export default class GameEngine /** extends EventTarget */ {
+export default class GameEngine extends EventTarget {
 
     static STATE = {
         MENU: 0,
@@ -37,54 +40,45 @@ export default class GameEngine /** extends EventTarget */ {
     }
 
     constructor() {
-        this.state = GameEngine.STATE.GAME
+        super();
+
+        this.state = GameEngine.STATE.LOBBY
 
         this.loader = new Loader()
-
-        this.inputManager = new InputManager()
 
         this.soundManager = new SoundManager()
         this.modelManager = new ModelManager()
         this.modelManager.registerModel('soldier', '../gltf/Soldier.glb')
         this.modelManager.registerModel('player', '../gltf/player.glb')
 
-        this.serverConnector = new ServerConnector(window.location.href.substring(window.location.href.lastIndexOf('/') + 1))
+        this.inputManager = new InputManager()
+        this.serverConnector = new ServerConnector()
+        this.chat = new ChatThread()
+
+        this.lobby = new Lobby(this.loader, this.serverConnector, this.modelManager, this)
+        this.lobby.run()
+        this.game = new Game()
+    }
+
+    run() {
+        this.lobby.run()
+    }
+
+    init() {
+        this.lobby.hide()
+
+        this.state = GameEngine.STATE.GAME
+
+        // show GUI
+        document.getElementById('game-UI').classList.toggle('d-none')
 
         this.gui = new Gui()
         this.waveGui = new WaveGui()
         this.actionGui = new ActionGui()
         this.menu = new OptionMenu()
-
-        this.chat = new ChatThread()
         this.points = new PointsThread()
 
-        this.game = new Game()
-    }
 
-    bind() {
-        this.infoDiv = document.getElementById("info")
-        this.crosshairDiv = document.getElementById("crosshair")
-        this.points = document.getElementById("points")
-    }
-
-    lobby() {
-        this.loader.hide()
-
-        this.serverConnector.prepareLobby()
-
-        let btn = document.getElementById('lobby-start-game')
-        let url = btn.dataset.url
-        btn.addEventListener("click", (e) => {
-            e.preventDefault()
-            fetch(url)
-                .then(function(response) {
-
-                })
-        })
-    }
-
-    run() {
-        this.loader.show()
         this.game.init()
     }
 }

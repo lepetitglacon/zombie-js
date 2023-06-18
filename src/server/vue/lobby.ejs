@@ -17,7 +17,12 @@
 
     body {
         background: #333;
-        color: #7C0404;
+        color: #ccc;
+    }
+
+    #landing-page {
+        width: 100vw;
+        height: 100vh;
     }
 
     .column {
@@ -46,75 +51,73 @@
 </style>
 
 <div id="landing-page" class="container-fluid d-flex">
-    <div class="col container">
+    <div class="col py-5 d-flex flex-column justify-content-between align-items-stretch">
 
-        <div class="row mb-5">
-            <div class="col">
-
-
-
-                <h2>Set username</h2>
-
-                <label class="form-label" for="set-username">Username</label>
-                <div class="input-group mb-3">
-                    <input class="form-control" type="text" id="set-username">
-                </div>
-                <button class="btn btn-danger" id="set-username-button">Set username</button>
-
-            </div>
-
-            <div class="col">
-
-                <h2>Create game</h2>
-
-                <label class="form-label" for="create-game-title">Name</label>
-                <div class="input-group mb-3">
-                    <input class="form-control" type="text" name="create-game-title" id="create-game-title">
-                </div>
-
-                <label class="form-label" for="create-game-map">Map</label>
-                <div class="input-group mb-3">
-                    <select class="form-select" name="create-game-map" id="create-game-map">
-                        <option value="">Chose a map</option>
-                    </select>
-                </div>
-
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="" id="create-game-private">
-                    <label class="form-check-label" for="create-game-private">
-                        Private ?
-                    </label>
-                </div>
-
-                <button class="btn btn-danger mt-2" id="create-game-button">Create Game</button>
-            </div>
-        </div>
 
         <div class="row">
+            <div class="col">
 
-            <div class="d-flex justify-content-between">
-                <h2>Public games</h2>
-                <button class="btn btn-secondary m-1" id="refresh-btn">Refresh</button>
+                <div class="input-group mb-3">
+                    <button class="btn btn-danger" type="button" id="set-username">Set username</button>
+                    <input type="text" class="form-control" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
+                </div>
+
+            </div>
+        </div>
+
+        <div>
+
+            <div class="row">
+                <div class="col">
+
+                    <div class="input-group mb-3">
+                        <button class="btn btn-danger" type="button" id="create-game-button">Create room</button>
+                        <input id="create-game-title" type="text" class="form-control" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
+                        <span class="input-group-text text-danger">Private?</span>
+
+                        <div class="input-group-text">
+                            <input id="create-game-private" class="form-check-input mt-0" type="checkbox" value="" aria-label="Checkbox for following text input">
+                        </div>
+                    </div>
+
+                    <!--                <label class="form-label" for="create-game-map">Map</label>-->
+                    <!--                <div class="input-group mb-3">-->
+                    <!--                    <select class="form-select" name="create-game-map" id="create-game-map">-->
+                    <!--                        <option value="">Chose a map</option>-->
+                    <!--                    </select>-->
+                    <!--                </div>-->
+                </div>
             </div>
 
+            <div class="row">
 
-            <div class="container">
-                <table id="games-table" class="table">
-                    <thead>
-                    <tr class="table-danger">
-                        <th scope="col">Name</th>
-                        <th scope="col">Map</th>
-                        <th scope="col">Players</th>
-                        <th scope="col">Ping</th>
-                        <th scope="col">Action</th>
-                    </tr>
-                    </thead>
-                    <tbody id="public-games-tbody">
-                    </tbody>
-                </table>
+                <div class="d-flex justify-content-between">
+                    <h2>Public games</h2>
+                    <button class="btn btn-secondary m-1" id="refresh-btn">Refresh</button>
+                </div>
+
+
+                <div class="container">
+                    <table id="games-table" class="">
+                        <thead>
+                            <tr class="">
+                                <th scope="col">Name</th>
+                                <th scope="col">Map</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Players</th>
+                                <th scope="col">Ping</th>
+                            </tr>
+                        </thead>
+                        <tbody id="public-games-tbody">
+                        </tbody>
+                    </table>
+                </div>
+
             </div>
 
         </div>
+
+
     </div>
 
     <div class="col">
@@ -155,11 +158,11 @@
     createGameButton.addEventListener('click', (e) => {
         e.preventDefault()
         if (
-            createGameTitle.value !== '' &&
-            mapSelect.value !== ''
+            createGameTitle.value !== ''
         ) {
-            window.location.assign('/create/' + createGameTitle.value + '/' + mapSelect.value + '/' + createGamePrivate.checked)
+            window.location.assign('/game/create/' + createGameTitle.value + '/' + createGamePrivate.checked)
         }
+
     })
 
     function refresh() {
@@ -184,6 +187,7 @@
 
         row.appendChild(createTd(gameConf.name))
         row.appendChild(createTd(gameConf.map))
+        row.appendChild(createTd(gameConf.status))
         row.appendChild(createTd(gameConf.players))
         row.appendChild(createTd(gameConf.ping))
 
@@ -210,39 +214,39 @@
 
     refresh()
 
-    function setUsername() {
-        const usernameButton = document.getElementById('set-username-button')
-        const username = document.getElementById('set-username')
+    // function setUsername() {
+    //     const usernameButton = document.getElementById('set-username-button')
+    //     const username = document.getElementById('set-username')
+    //
+    //     const textConf = localStorage.getItem("ZombieGame")
+    //     if (textConf !== null) {
+    //         const conf = JSON.parse(textConf)
+    //         username.value = conf.username
+    //     }
+    //
+    //     usernameButton.addEventListener('click', () => {
+    //         if (username.value.length > 0) {
+    //             const conf = {username: username.value}
+    //             localStorage.setItem("ZombieGame", JSON.stringify(conf))
+    //         }
+    //     })
+    // }
+    // setUsername()
 
-        const textConf = localStorage.getItem("ZombieGame")
-        if (textConf !== null) {
-            const conf = JSON.parse(textConf)
-            username.value = conf.username
-        }
-
-        usernameButton.addEventListener('click', () => {
-            if (username.value.length > 0) {
-                const conf = {username: username.value}
-                localStorage.setItem("ZombieGame", JSON.stringify(conf))
-            }
-        })
-    }
-    setUsername()
-
-    const mapSelect = document.getElementById('create-game-map')
-    function getMaps() {
-        fetch('/lp/maps', httpHeadersOption)
-            .then(response => response.json())
-            .then(body => {
-                for (const mapFile of body) {
-                    const option = document.createElement('option')
-                    option.innerText = mapFile
-                    option.value = mapFile
-                    mapSelect.append(option)
-                }
-            });
-    }
-    getMaps()
+    // const mapSelect = document.getElementById('create-game-map')
+    // function getMaps() {
+    //     fetch('/lp/maps', httpHeadersOption)
+    //         .then(response => response.json())
+    //         .then(body => {
+    //             for (const mapFile of body) {
+    //                 const option = document.createElement('option')
+    //                 option.innerText = mapFile
+    //                 option.value = mapFile
+    //                 mapSelect.append(option)
+    //             }
+    //         });
+    // }
+    // getMaps()
 </script>
 
 

@@ -6,16 +6,19 @@ import ControllablePlayer from "./mob/ControllablePlayer.js";
 
 export default class Game {
 
+    static STATUS = {
+        PAUSED: 0,
+        RUNNING: 1,
+        TERMINATED: 2,
+    }
+
     constructor(props) {
 
         this.PLAYERS = new Map()
         this.ZOMBIES = new Map()
 
         this.player = new ControllablePlayer()
-
-        this.collisionAabb = new Box3()
-
-        this.points = 2000
+        this.points = 0
     }
 
     init() {
@@ -56,7 +59,7 @@ export default class Game {
             this.weaponHandler = new WeaponHandler();
 
             this.cannonWorldConfig = {
-                gravity: 9.8 // 9.8 normalement
+                gravity: 9.8 // 9.8 normalementq
             }
 
             // /** player OBB **/

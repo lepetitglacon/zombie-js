@@ -12,7 +12,10 @@ import passport from "passport";
 import {OAuth2Strategy} from "passport-google-oauth";
 import session from "express-session";
 
+
 import dotenv from 'dotenv'
+import SocketRequestHandler from "./service/socket/SocketRequestHandler.js";
+import DatabaseHandler from "./database/DatabaseHandler.js";
 dotenv.config()
 
 
@@ -27,6 +30,9 @@ export default class ZombieGameServer {
         this.app = express()
         this.server = http.createServer(this.app)
         this.io = new Server(this.server);
+
+        this.dbHandler = new DatabaseHandler()
+        this.dbHandler.init().then(r => console.log('[DB] connected'))
 
         this.GAMES = new Map()
 
@@ -79,12 +85,12 @@ export default class ZombieGameServer {
             console.log()
 
             this.io.on('connection', (socket) => {
-                let roomName = socket.handshake.query.roomName;
 
-                if (this.GAMES.has(roomName)) {
-                    const game = this.GAMES.get(roomName)
-                    game.PLAYERS.set(socket, PlayerFactory.createServerPlayer({socket: socket, room:roomName}))
-                }
+                const srh = new SocketRequestHandler({
+                    server: this,
+                    socket: socket
+                })
+
             });
         })
     }
@@ -95,12 +101,24 @@ export default class ZombieGameServer {
         let game = new Game({roomId: id, server: this.io, map: props.map})
         game.name = props.name
         game.private = props.private
+        game.owner = props.owner ?? null
 
         this.GAMES.set(id, game)
 
         console.log('[GAME] created ' + id + ' on map ' + props.map)
-        // game.run()
         return id
+    }
+
+    startGame(gameId) {
+        if (this.GAMES.has(gameId)) {
+            const game = this.GAMES.get(gameId)
+            if (game.status !== Game.STATUS.RUNNING) {
+                game.run()
+            }
+            return true
+        } else {
+            return false
+        }
     }
 
     getRandomId(length = 10) {

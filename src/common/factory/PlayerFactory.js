@@ -9,7 +9,7 @@ export default class PlayerFactory {
         0x999933, // yellow
     ]
 
-    static createServerPlayer(player) {
+    static createClientConnector(player) {
         player.color = this.playerColors[this.playerCount++]
 
         return new ClientConnector(player)

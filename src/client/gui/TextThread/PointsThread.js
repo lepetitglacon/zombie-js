@@ -22,6 +22,13 @@ export default class PointsThread extends AbstractTextThread {
             const playerName = playerPoints[i].playerName
             const points = playerPoints[i].points
 
+            // set controllablePlayer points
+            if (this.engine.game.PLAYERS.has(playerId)) {
+                if (playerId === this.engine.serverConnector.socket) {
+                    this.engine.game.points = points
+                }
+            }
+
             if (this.pointsLi.has(playerId)) {
                 this.pointsLi.get(playerId).points.innerText = points
                 this.pointsLi.get(playerId).username.innerText = playerName
@@ -31,10 +38,6 @@ export default class PointsThread extends AbstractTextThread {
 
                 if (this.engine.game.PLAYERS.has(playerId)) {
                     usernameSpan.style.color = '#'+ this.engine.game.PLAYERS.get(playerId).color.toString(16)
-
-                    if (playerId === this.engine.serverConnector.socket) {
-
-                    }
                 }
 
                 this.pointsLi.set(playerId, {username: usernameSpan, points: pointSpan})

@@ -36,7 +36,7 @@ export default class ModelManager {
 
             console.log('[ASSETS] Loaded model "' + name + '"', model)
         }
-        console.log('[ASSETS] loaded')
+        console.log('[ASSETS] loaded all registered models')
     }
 
     /**
@@ -45,6 +45,7 @@ export default class ModelManager {
      * @param path
      */
     registerModel(name, path) {
+        console.log('[ASSET] Registered asset : ' + name)
         this.registeredModels.set(name, path)
     }
 

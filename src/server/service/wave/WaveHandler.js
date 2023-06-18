@@ -55,7 +55,7 @@ export default class WaveHandler {
         this.pauseBetweenWaveStartTime = Date.now()
 
         this.game.io.to(this.game.roomId).emit('wave_update', {wave: this.wave})
-        console.debug('wave update')
+        console.debug('[WAVEHANDLER] wave ' + this.wave)
     }
 
     isPausedBetweenWave() {
@@ -74,10 +74,12 @@ export default class WaveHandler {
 
     spawnZombie() {
         this.game.ZOMBIES.set(ZombieFactory.id, ZombieFactory.createServerZombie(this.game.roomId))
+        console.debug('[WAVEHANDLER] spawned zombie ' + this.spawnedZombies)
 
         this.spawnedZombies++
 
         this.zombieSpawnRate = this.getRandomNumberBetween(500, 5000)
         this.zombieSpawnRateTime = Date.now()
+
     }
 }

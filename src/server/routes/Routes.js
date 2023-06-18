@@ -4,15 +4,24 @@ import fs from "fs"
 import passport from "passport";
 
 import dotenv from 'dotenv'
-dotenv.config()
+import GameController from "../controllers/GameController.js";
+import UserController from "../controllers/UserController.js";
+import Game from "../service/Game.js";
+
 
 export default class Routes {
 
     constructor() {
+        dotenv.config()
+
+        this.gameController = new GameController({
+            dbName: 'games'
+        })
+        this.userController = new UserController({
+            dbName: 'users'
+        })
 
         this.setRoutes()
-
-        this.user = null
 
         passport.use(new ZombieServer.googleStrategy({
                 clientID: process.env.GOOGLE_CLIENT_ID,
@@ -20,16 +29,14 @@ export default class Routes {
                 callbackURL: "http://localhost:3000/auth/google/callback"
             },
             (accessToken, refreshToken, profile, done) => {
-                this.user = profile;
-                console.log(profile)
-                return done(null, this.user);
+                this.userController.insert(profile)
+                return done(null, profile);
             }
         ));
     }
 
     setRoutes() {
         ZombieServer.app.get('/', (req, res) => {
-            console.log(req.session)
             if (this.isUserConnected(req)) {
                 res.redirect('/lobbies');
             } else {
@@ -38,7 +45,6 @@ export default class Routes {
         })
 
         ZombieServer.app.get('/lobbies', (req, res) => {
-            console.log(req.session)
             if (this.isUserConnected(req)) {
                 res.render('lobby');
             } else {
@@ -50,11 +56,12 @@ export default class Routes {
             const games = []
             let i = 0;
             for (const [key, val] of ZombieServer.GAMES) {
-                if (val.private === false) {
+                if (val.private === false && val.status === Game.STATUS.PAUSED) {
                     games[i] = {}
                     games[i].id = key
                     games[i].name = val.name ?? 'Untitled'
                     games[i].map = val.mapName ?? 'No map'
+                    games[i].status = val.status
                     games[i].players = val.PLAYERS.size
                     games[i].ping = 25
                     i++
@@ -85,18 +92,33 @@ export default class Routes {
 
         })
 
+        // create game
+        ZombieServer.app.get('/game/create/:name/:private', (req, res) => {
+
+            if (this.isUserConnected(req)) {
+                res.redirect(`/game/${ZombieServer.createGame({
+                        name: req.params.name,
+                        private: req.params.private === 'true',
+                        owner: req.session.passport.user.id
+                    }
+                )}`)
+            } else {
+                res.redirect('/')
+            }
+
+        })
+
         // play game
         ZombieServer.app.get('/game/:id', (req, res) => {
             if (this.isUserConnected(req)) {
                 if (ZombieServer.GAMES.has(req.params.id)) {
                     const game = ZombieServer.GAMES.get(req.params.id)
                     ZombieServer.app.set('views', path.join(ZombieServer.__dirname, '../../dist/'));
-                    // TODO changer le template par du ejs
                     res.render('index', {
-                        game: game
+                        game: game,
+                        user: req.session.passport.user,
                     })
                     ZombieServer.app.set('views', ZombieServer.__dirname + '\\vue\\');
-                    // res.sendFile(path.join(ZombieServer.__dirname, '../../dist/index.html'));
                 } else {
                     res.redirect('/')
                 }
@@ -108,20 +130,11 @@ export default class Routes {
         // start game
         ZombieServer.app.get('/game/start/:id', (req, res) => {
             if (this.isUserConnected(req)) {
-                if (ZombieServer.GAMES.has(req.params.id)) {
-                    ZombieServer.GAMES.get(req.params.id).run()
-                    // res.redirect('/game/' + req.params.id)
-                    res.json({status: 'ok'})
-                } else {
-
-                }
+                res.json({succes: ZombieServer.startGame(req.params.id)})
             } else {
                 res.redirect('/')
             }
-
         })
-
-        console.log(passport)
 
         /**
          * OAuth to Google

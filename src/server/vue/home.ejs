@@ -19,6 +19,13 @@
         background: #333;
         color: #7C0404;
     }
+
+    #z3d {
+        font-family: z3d;
+
+        font-size: 128px;
+    }
+
     #home {
          width: 100vw;
          height: 100vh;
@@ -27,25 +34,37 @@
         justify-content: center;
         align-items: center;
      }
-    .red {
-        background: #7C0404;
-        color: white;
 
+    .button {
+        background-color: #880000;
         border-radius: 10px;
-        padding: 10px;
-        margin: 10px;
-
+        /*border: 2px solid #880000;*/
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
         text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
     }
+
+    .button {
+      transition-duration: 0.4s;
+    }
+
+    .button:hover {
+      background-color: #C20707;
+      color: #FFF;
+    }
+
 </style>
 
 <div id="home" class="">
 
     <div class="login">
 
-        <h2>Login</h2>
+        <h2 id="z3d">Z3D</h2>
 
-        <a href="/auth/google" class="red"><span class="fa fa-google"></span> Login with Google</a>
+        <a href="/auth/google" class="button"><span class="fa fa-google"></span>Connect with Google</a>
 
     </div>
 

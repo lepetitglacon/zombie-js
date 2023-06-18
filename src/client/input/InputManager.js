@@ -51,9 +51,6 @@ export default class InputManager {
                     if (door !== null) {
                         door.buy()
                     }
-
-
-
                     break;
 
                 case 'Space':
