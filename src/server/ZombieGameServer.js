@@ -31,8 +31,8 @@ export default class ZombieGameServer {
         this.server = http.createServer(this.app)
         this.io = new Server(this.server);
 
-        this.dbHandler = new DatabaseHandler()
-        this.dbHandler.init().then(r => console.log('[DB] connected'))
+        // this.dbHandler = new DatabaseHandler()
+        // this.dbHandler.init().then(r => console.log('[DB] connected'))
 
         this.GAMES = new Map()
 

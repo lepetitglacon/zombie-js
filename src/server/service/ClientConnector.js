@@ -42,6 +42,8 @@ export default class ClientConnector {
             points: this.points
         })
 
+
+
         this.socket.on('game-state', () => {
             this.socket.emit('game-state', {
                 state: this.game.status,
@@ -50,10 +52,20 @@ export default class ClientConnector {
         })
 
         this.socket.on('lobby-ready', () => {
-
-            this.socket.emit('lobby-players', this.game.prepareLobbyPlayersToEmit())
+            // send lobby players to socket
+            this.socket.emit('get_players', this.game.preparePlayersToEmit(1))
         })
 
+        /**
+         * On player is ready in lobby
+         */
+        this.socket.on('lobby-player-ready', () => {
+            // TODO set player as ready to start game
+        })
+
+        /**
+         * On game ready
+         */
         this.socket.on('ready', () => {
             // send zombies to socket
             this.socket.emit('get_zombies', this.game.prepareZombiesToEmit(1))

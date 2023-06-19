@@ -78,7 +78,7 @@
                             <% if(game.owner === user.id){ %>
                                 <button id="lobby-start_game" data-url="/game/start/<%= game.roomId %>" type="submit" class="btn btn-red">Start</button>
                             <% } else{ %>
-                                <button id="lobby-ready" data-url="/game/start/<%= game.roomId %>" type="submit" class="btn btn-red">Ready</button>
+                                <button id="lobby-player-ready" data-url="/game/start/<%= game.roomId %>" type="submit" class="btn btn-red">Ready</button>
                             <% } %>
 
 

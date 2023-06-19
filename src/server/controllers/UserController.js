@@ -5,8 +5,8 @@ export default class UserController extends AbstractController{
 
 
     insert(user) {
-        let db = new DatabaseHandler()
-        db.insertUser(user).then(r => console.log('user inserted'))
+        // let db = new DatabaseHandler()
+        // db.insertUser(user).then(r => console.log('user inserted'))
     }
 
 }

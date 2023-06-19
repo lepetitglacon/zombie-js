@@ -14,6 +14,8 @@ export default class Lobby {
     run() {
         this.loader.hide()
 
+        this.setPlayers()
+
         let btn = document.getElementById('lobby-start_game')
         if (btn !== null) {
             let url = btn.dataset.url
@@ -23,12 +25,11 @@ export default class Lobby {
             })
         }
 
-
-        let btnReady = document.getElementById('lobby-ready')
+        let btnReady = document.getElementById('lobby-player-ready')
         if (btnReady !== null) {
             btnReady.addEventListener("click", (e) => {
                 e.preventDefault()
-                this.serverConnector.socket.emit('lobby-ready', {
+                this.serverConnector.socket.emit('lobby-player-ready', {
                     ready: btnReady.dataset.ready
                 })
                 btnReady.dataset.ready = (!btnReady.dataset.ready).toString()
@@ -50,8 +51,45 @@ export default class Lobby {
                 this.modelManager.registerModel('map', '../gltf/maps/' + mapObject.mapName)
                 this.engine.init()
             }
-
         })
+
+        // send lobby players to socket
+        this.serverConnector.socket.emit('lobby-ready')
+    }
+
+    setPlayers() {
+        const playerUl = document.getElementById('lobby-players-list')
+        playerUl.innerHTML = ''
+
+        this.serverConnector.socket.on('get_players', (players) => {
+            console.log('[LOBBY] player already connected : ', players)
+            for (const player of players) {
+                const li = document.createElement('li')
+                li.innerText = player.socketId //player.username
+                li.id = 'lobby-player-' + player.socketId
+                li.style.color = '#' + player.color
+                playerUl.append(li)
+            }
+        })
+
+        this.serverConnector.socket.on('player_connect', (player) => {
+            console.log('[LOBBY] player connected : ' + player.socketId)
+
+            const li = document.createElement('li')
+            li.innerText = player.socketId //player.username
+            li.id = 'lobby-player-' + player.socketId
+            li.style.color = '#' + player.color
+            playerUl.append(li)
+        })
+
+        this.serverConnector.socket.on('player_disconnect', (player) => {
+            const li = document.getElementById(li.id = 'lobby-player-' + player.socketId)
+            if (li !== null) {
+                li.remove()
+            }
+        })
+
+        this.serverConnector.socket.emit('lobby_players')
     }
 
     hide() {

@@ -127,6 +127,7 @@ export default class Game {
                 toSend[i] = {}
                 toSend[i].socketId = socketHandler.socket.id
                 toSend[i].username = socketHandler.username
+                toSend[i].color = socketHandler.color
                 i++
             }
 
