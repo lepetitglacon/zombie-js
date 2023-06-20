@@ -16,6 +16,10 @@ export default class Lobby {
 
         this.setPlayers()
 
+        this.serverConnector.socket.on('connect', () => {
+            console.table(['[SOCKET] connected'])
+        })
+
         let btn = document.getElementById('lobby-start_game')
         if (btn !== null) {
             let url = btn.dataset.url
@@ -41,8 +45,11 @@ export default class Lobby {
                 console.log('[GAME] game already started on map : ' + stateObj.mapName)
                 this.modelManager.registerModel('map', '../gltf/maps/' + stateObj.mapName)
                 this.engine.init()
+            } else {
+                console.log('[GAME] game has not started yet')
             }
         })
+
         this.serverConnector.socket.emit('game-state')
 
         this.serverConnector.socket.on('game_load', (mapObject) => {

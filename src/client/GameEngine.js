@@ -56,7 +56,6 @@ export default class GameEngine extends EventTarget {
         this.chat = new ChatThread()
 
         this.lobby = new Lobby(this.loader, this.serverConnector, this.modelManager, this)
-        this.lobby.run()
         this.game = new Game()
     }
 

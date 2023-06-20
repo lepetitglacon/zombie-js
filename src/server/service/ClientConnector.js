@@ -31,6 +31,12 @@ export default class ClientConnector {
     }
 
     init() {
+
+        this.socket.on('connect', () => {
+            console.warn('[SOCKET] connected')
+        })
+
+
         this.socket.join(this.roomId)
 
         // tell other player the new connection
@@ -42,8 +48,6 @@ export default class ClientConnector {
             points: this.points
         })
 
-
-
         this.socket.on('game-state', () => {
             this.socket.emit('game-state', {
                 state: this.game.status,
@@ -52,6 +56,7 @@ export default class ClientConnector {
         })
 
         this.socket.on('lobby-ready', () => {
+            console.log('~lobby-ready')
             // send lobby players to socket
             this.socket.emit('get_players', this.game.preparePlayersToEmit(1))
         })
