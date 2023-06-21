@@ -71,26 +71,14 @@ export default class Lobby {
         this.serverConnector.socket.on('get_players', (players) => {
             console.log('[LOBBY] player already connected : ', players)
             for (const player of players) {
-                const li = document.createElement('li')
-                li.innerText = player.socketId //player.username
-                li.id = 'lobby-player-' + player.socketId
-                let hexa = player.color.toString(16).toUpperCase();
-                console.log(hexa)
-                li.style.color = '#' + hexa
-                playerUl.append(li)
+                this.createPlayerLi(player, playerUl)
             }
         })
 
         this.serverConnector.socket.on('player_connect', (player) => {
             console.log('[LOBBY] player connected : ' + player.socketId)
+            this.createPlayerLi(player, playerUl)
 
-            const li = document.createElement('li')
-            li.innerText = player.socketId //player.username
-            li.id = 'lobby-player-' + player.socketId
-            let hexa = player.color.toString(16).toUpperCase();
-            console.log(hexa)
-            li.style.color = '#' + hexa
-            playerUl.append(li)
         })
 
         this.serverConnector.socket.on('player_disconnect', (socketId) => {
@@ -107,6 +95,18 @@ export default class Lobby {
 
     hide() {
         document.getElementById('lobby').classList.toggle('d-none')
+    }
+
+    createPlayerLi(player, playerUl) {
+        const li = document.createElement('li')
+        li.innerText = player.socketId //player.username
+        li.id = 'lobby-player-' + player.socketId
+        li.classList.add('lobby-player')
+
+        let hexa = player.color.toString(16).toUpperCase();
+        li.style.color = '#' + hexa
+
+        playerUl.append(li)
     }
 
 }
