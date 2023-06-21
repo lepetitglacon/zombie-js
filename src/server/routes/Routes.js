@@ -113,6 +113,12 @@ export default class Routes {
             if (this.isUserConnected(req)) {
                 if (ZombieServer.GAMES.has(req.params.id)) {
                     const game = ZombieServer.GAMES.get(req.params.id)
+
+                    if (game.PLAYERS.size >= 4) {
+                        res.redirect('/lobbies');
+                        return;
+                    }
+
                     ZombieServer.app.set('views', path.join(ZombieServer.__dirname, '../../dist/'));
                     res.render('index', {
                         game: game,

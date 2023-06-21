@@ -74,7 +74,9 @@ export default class Lobby {
                 const li = document.createElement('li')
                 li.innerText = player.socketId //player.username
                 li.id = 'lobby-player-' + player.socketId
-                li.style.color = '#' + player.color
+                let hexa = player.color.toString(16).toUpperCase();
+                console.log(hexa)
+                li.style.color = '#' + hexa
                 playerUl.append(li)
             }
         })
@@ -85,12 +87,16 @@ export default class Lobby {
             const li = document.createElement('li')
             li.innerText = player.socketId //player.username
             li.id = 'lobby-player-' + player.socketId
-            li.style.color = '#' + player.color
+            let hexa = player.color.toString(16).toUpperCase();
+            console.log(hexa)
+            li.style.color = '#' + hexa
             playerUl.append(li)
         })
 
-        this.serverConnector.socket.on('player_disconnect', (player) => {
-            const li = document.getElementById(li.id = 'lobby-player-' + player.socketId)
+        this.serverConnector.socket.on('player_disconnect', (socketId) => {
+            console.log('player disconnected')
+            const li = document.getElementById('lobby-player-' + socketId)
+            console.log(li)
             if (li !== null) {
                 li.remove()
             }
