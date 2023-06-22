@@ -2,6 +2,7 @@ import ThreeWorld from "./map/world/GraphicsWorld.js";
 import WeaponHandler from "./weapon/WeaponHandler.js";
 import {Box3} from "three";
 import ControllablePlayer from "./mob/ControllablePlayer.js";
+import * as THREE from "three";
 
 
 export default class Game {
@@ -29,6 +30,9 @@ export default class Game {
         this.engine.gui.addToFolder('Velocity', this.player.velocity, 'x', -50, 50)
         this.engine.gui.addToFolder('Velocity', this.player.velocity, 'y', -50, 50)
         this.engine.gui.addToFolder('Velocity', this.player.velocity, 'z', -50, 50)
+
+        this.engine.gui.addFolder("GameEngine")
+        this.engine.gui.addToFolder('GameEngine', this.engine, 'debug', true, false)
 
         this.engine.modelManager.download().then(r => {
             console.log('[GAME] init')
