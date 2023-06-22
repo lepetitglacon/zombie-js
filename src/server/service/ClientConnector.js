@@ -135,7 +135,7 @@ export default class ClientConnector {
             }
 
             ZombieServer.io.to(this.roomId).emit('points', this.game.preparePoints())
-            this.socket.to(this.roomId).emit('player_shot', this.socket.id)
+            this.socket.to(this.roomId).emit('player_shot', {playerId: this.socket.id, weapon: shot.weapon, sound: shot.soundName})
         })
 
         /**
