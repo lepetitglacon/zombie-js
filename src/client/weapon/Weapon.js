@@ -12,6 +12,8 @@ export default class Weapon {
         this.basePoint = 10
         this.headshotPoint = 50
 
+        this.name = "Weapon"
+
         this.damages = 20
         this.fireRate = 200 // ms
         this.lastFired = Date.now() // ms
@@ -170,7 +172,7 @@ export default class Weapon {
 
     sendHitsToServer_() {
         const hits = this.prepareHitsForServer_()
-        this.engine.serverConnector.socket.emit('shot', {hits: hits})
+        this.engine.serverConnector.socket.emit('shot', {hits: hits, weapon: this.name, soundName: this.fireSoundName})
         this.alreadyHit.clear()
     }
 

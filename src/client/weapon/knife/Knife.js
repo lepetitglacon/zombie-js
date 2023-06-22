@@ -5,6 +5,8 @@ export default class Knife extends Weapon {
     constructor(props) {
         super(props);
 
+        this.name = "Knife"
+
         this.basePoint = 130
         this.headshotPoint = 130
 

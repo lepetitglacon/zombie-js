@@ -141,11 +141,21 @@ export default class ServerConnector {
                             if (p.gltf !== undefined) {
                                 p.gltf.position.set(playerList[i].position.x, playerList[i].position.y - 1, playerList[i].position.z)
                                 p.gltf.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -angle - -(Math.PI/2))
+
+                                // update sounds
                                 p.sound.getOutput().positionX.setValueAtTime(
                                     playerList[i].position.x ,
                                     0
                                 )
                                 p.sound.getOutput().positionZ.setValueAtTime(
+                                    playerList[i].position.z ,
+                                    0
+                                )
+                                p.knifeSound.getOutput().positionX.setValueAtTime(
+                                    playerList[i].position.x ,
+                                    0
+                                )
+                                p.knifeSound.getOutput().positionZ.setValueAtTime(
                                     playerList[i].position.z ,
                                     0
                                 )
@@ -177,10 +187,28 @@ export default class ServerConnector {
             })
 
             // on other player shot
-            this.socket.on('player_shot', (socketId) => {
+            this.socket.on('player_shot', (playerShot) => {
+                const socketId = playerShot.playerId
                 if (this.engine.game.PLAYERS.has(socketId)) {
-                    this.engine.game.PLAYERS.get(socketId).sound.play()
-                    this.engine.game.PLAYERS.get(socketId).sound.onEnded()
+                    const player = this.engine.game.PLAYERS.get(socketId)
+                    this.engine.soundManager.play(playerShot.sound)
+                    this.engine.soundManager.onEnded()
+
+                    switch (playerShot.weapon) {
+                        case 'M1911':
+                        default:
+                            player.sound.play()
+                            player.sound.onEnded()
+                            break;
+                        case 'Knife':
+                            player.knifeSound.play()
+                            player.knifeSound.onEnded()
+                            break;
+
+                    }
+
+
+
                 }
             })
 

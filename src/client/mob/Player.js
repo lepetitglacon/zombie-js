@@ -35,6 +35,13 @@ export default class Player {
             'weapon_pistol_shot_' + this.socketId,
             'src/client/assets/sound/gunshot.wav'
         )
+
+        // TODO https://web.dev/webaudio-positional-audio/
+        this.knifeSound = undefined
+        this.knifeSound = window.ZombieGame.soundManager.loadAndGetPositionalSound(
+            'weapon_knife_shot_' + this.socketId,
+            'src/client/assets/sound/knife.wav'
+        )
     }
 
     prepareGltf() {
