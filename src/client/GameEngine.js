@@ -44,6 +44,8 @@ export default class GameEngine extends EventTarget {
 
         this.state = GameEngine.STATE.LOBBY
 
+        this.debug = true
+
         this.loader = new Loader()
 
         this.soundManager = new SoundManager()
