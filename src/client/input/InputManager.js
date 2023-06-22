@@ -46,6 +46,20 @@ export default class InputManager {
                     this.engine.game.weaponHandler.reload()
                     break;
 
+                case 'KeyX':
+                    // toggle debug objects
+                    this.engine.debug = !this.engine.debug
+                    this.engine.game.three.scene.traverse((e) => {
+                        switch (e.constructor.name) {
+                            case 'Box3Helper':
+                            case 'VertexNormalsHelper':
+                            case 'ArrowHelper':
+                                e.visible = this.engine.debug
+                                break;
+                        }
+                    })
+                    break;
+
                 case 'KeyF':
                     let door = this.engine.actionGui.door
                     if (door !== null) {
