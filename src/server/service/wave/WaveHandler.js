@@ -1,9 +1,12 @@
 import ZombieFactory from "../../../common/factory/ZombieFactory.js";
+import ObjectSpawner from "./ObjectSpawner.js";
 
 export default class WaveHandler {
 
     constructor(props) {
         this.game = props.game
+
+        this.objectSpawner = new ObjectSpawner()
 
         this.wave = 0
 
@@ -21,7 +24,8 @@ export default class WaveHandler {
             0: 0,
             1: 10,
             2: 20,
-            3: 30
+            3: 30,
+
         }
 
     }
@@ -82,4 +86,15 @@ export default class WaveHandler {
         this.zombieSpawnRateTime = Date.now()
 
     }
+
+    killzombie(id) {
+        this.game.io.to(this.game.roomId).emit('zombie_death', {
+            id: id,
+            objects: this.objectSpawner.spawnObject()
+        })
+        this.game.ZOMBIES.delete(id)
+        this.killedZombies++
+    }
+
+
 }

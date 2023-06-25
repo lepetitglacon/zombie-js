@@ -78,6 +78,10 @@ body {
 
     font-size: 128px;
 }
+#lobby-room-name {
+    font-size: 64px;
+}
+
 #lobby-map-name {
     position: relative;
     right: 50px;

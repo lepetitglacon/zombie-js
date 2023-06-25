@@ -75,7 +75,7 @@
                         </div>
                         <div class="d-flex justify-content-center mb-5">
 
-                            <% if(game.owner === user.id){ %>
+                            <% if(game.owner === user.id || !game.isOnlineMode){ %>
                                 <button id="lobby-start_game" data-url="/game/start/<%= game.roomId %>" type="submit" class="btn btn-red">Start</button>
                             <% } else{ %>
                                 <button id="lobby-player-ready" data-url="/game/start/<%= game.roomId %>" type="submit" class="btn btn-red">Ready</button>

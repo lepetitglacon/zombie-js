@@ -16,6 +16,8 @@ export default class Game {
         this.private = false
         this.roomId = props.roomId
 
+        this.isOnlineMode = props.online
+
         this.status = Game.STATUS.PAUSED
 
         this.tickRate = 60
@@ -53,9 +55,7 @@ export default class Game {
                 // update ClientZombie life
                 for (const [id, zombie] of this.ZOMBIES) {
                     if (zombie.health <= 0) {
-                        this.io.to(this.roomId).emit('zombie_death', id)
-                        this.ZOMBIES.delete(id)
-                        this.waveHandler.killedZombies++
+                        this.waveHandler.killzombie()
                     }
                 }
 

@@ -96,10 +96,18 @@ export default class Routes {
         ZombieServer.app.get('/game/create/:name/:private', (req, res) => {
 
             if (this.isUserConnected(req)) {
+                let owner
+
+                if (req.session.passport !== undefined && req.session.passport.user !== undefined) {
+                    owner = req.session.passport.user.id
+                } else {
+                    owner = 'offline'
+                }
+
                 res.redirect(`/game/${ZombieServer.createGame({
                         name: req.params.name,
-                        private: req.params.private === 'true',
-                        owner: req.session.passport.user.id
+                        owner: owner,
+                        private: req.params.private === 'true'
                     }
                 )}`)
             } else {
@@ -119,10 +127,17 @@ export default class Routes {
                         return;
                     }
 
+                    let user
+                    if (req.session.passport !== undefined && req.session.passport.user !== undefined) {
+                        user = req.session.passport.user
+                    } else {
+                        user = 'offline'
+                    }
+
                     ZombieServer.app.set('views', path.join(ZombieServer.__dirname, '../../dist/'));
                     res.render('index', {
                         game: game,
-                        user: req.session.passport.user,
+                        user: user,
                     })
                     ZombieServer.app.set('views', ZombieServer.__dirname + '\\vue\\');
                 } else {
@@ -157,7 +172,7 @@ export default class Routes {
     }
 
     isUserConnected(req) {
-        return req.session.passport && req.session.passport.user !== undefined
+        return req.session.passport && req.session.passport.user !== undefined || !ZombieServer.isOnlineMode
     }
 
 }

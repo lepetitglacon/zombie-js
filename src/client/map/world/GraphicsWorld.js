@@ -3,14 +3,18 @@ import * as CANNON from "cannon-es";
 import CannonDebugRenderer from "cannon-es-debugger";
 import PointerLockControls from "../../input/PointerLockControls.js";
 import GameEngine from "../../GameEngine.js";
-
-// assets
-import "../../assets/gltf/maps/flora_square.glb"
-import {OBB} from "three/addons/math/OBB.js";
-import {Box3, BoxGeometry, Euler, Matrix3, Matrix4, Vector3} from "three";
+import {Box3} from "three";
 import {VertexNormalsHelper} from "three/addons/helpers/VertexNormalsHelper.js";
 import Door from "../Door/Door.js";
 
+// assets
+import "../../assets/gltf/maps/flora_square.glb"
+import "../../assets/img/skyboxes/interstellar_skybox/xpos.png"
+import "../../assets/img/skyboxes/interstellar_skybox/xneg.png"
+import "../../assets/img/skyboxes/interstellar_skybox/ypos.png"
+import "../../assets/img/skyboxes/interstellar_skybox/yneg.png"
+import "../../assets/img/skyboxes/interstellar_skybox/zpos.png"
+import "../../assets/img/skyboxes/interstellar_skybox/zneg.png"
 
 export default class GraphicsWorld {
 
@@ -23,7 +27,7 @@ export default class GraphicsWorld {
         })
 
         this.scene = new THREE.Scene();
-        this.scene.background = new THREE.Color( 0xccccff );
+        this.scene.background = new THREE.Color( 0x222222 );
         this.scene.fog = new THREE.FogExp2( 0xefd1b5, 0.0025 );
 
         this.cannonDebugRenderer = new CannonDebugRenderer(this.scene, this.world)
@@ -51,6 +55,29 @@ export default class GraphicsWorld {
         // 3D map from blender
         this.gltf = window.ZombieGame.modelManager.getModel('map')
         this.scene.add(this.gltf)
+
+        // skybox
+        // let materialArray = [];
+        // let texture_ft = new THREE.TextureLoader().load( '../img/skyboxes/interstellar_skybox/xpos.png');
+        // let texture_bk = new THREE.TextureLoader().load( '../img/skyboxes/interstellar_skybox/xneg.png');
+        // let texture_up = new THREE.TextureLoader().load( '../img/skyboxes/interstellar_skybox/xpos.png');
+        // let texture_dn = new THREE.TextureLoader().load( '../img/skyboxes/interstellar_skybox/xneg.png');
+        // let texture_rt = new THREE.TextureLoader().load( '../img/skyboxes/interstellar_skybox/xpos.png');
+        // let texture_lf = new THREE.TextureLoader().load( '../img/skyboxes/interstellar_skybox/xneg.png');
+        //
+        // materialArray.push(new THREE.MeshBasicMaterial( { map: texture_ft }));
+        // materialArray.push(new THREE.MeshBasicMaterial( { map: texture_bk }));
+        // materialArray.push(new THREE.MeshBasicMaterial( { map: texture_up }));
+        // materialArray.push(new THREE.MeshBasicMaterial( { map: texture_dn }));
+        // materialArray.push(new THREE.MeshBasicMaterial( { map: texture_rt }));
+        // materialArray.push(new THREE.MeshBasicMaterial( { map: texture_lf }));
+        //
+        // for (let i = 0; i < 6; i++)
+        //     materialArray[i].side = THREE.BackSide;
+        //
+        // let skyboxGeo = new THREE.BoxGeometry( 10000, 10000, 10000);
+        // let skybox = new THREE.Mesh( skyboxGeo, materialArray );
+        // this.scene.add( skybox );
 
     }
 

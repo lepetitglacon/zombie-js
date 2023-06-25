@@ -26,6 +26,8 @@ export default class ZombieGameServer {
         this.__filename = fileURLToPath(import.meta.url);
         this.__dirname = dirname(this.__filename);
 
+        this.isOnlineMode = false
+
         this.port = 3000
         this.app = express()
         this.server = http.createServer(this.app)
@@ -98,7 +100,7 @@ export default class ZombieGameServer {
     createGame(props) {
         let id = this.getRandomId(10)
 
-        let game = new Game({roomId: id, server: this.io, map: props.map})
+        let game = new Game({roomId: id, server: this.io, map: props.map, online: this.isOnlineMode})
         game.name = props.name
         game.private = props.private
         game.owner = props.owner ?? null

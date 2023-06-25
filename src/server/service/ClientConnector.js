@@ -143,7 +143,7 @@ export default class ClientConnector {
          */
         this.socket.on('door_buy', (buyObject) => {
 
-            console.log(`${this.socket} trying to buy door ${buyObject.doorId}`)
+            console.log(`[DOORS] ${this.socket.id} trying to buy door ${buyObject.doorId}`)
 
             if (this.game.PLAYERS.has(this.socket)) {
                 const player = this.game.PLAYERS.get(this.socket)
@@ -156,7 +156,7 @@ export default class ClientConnector {
                         this.socket.emit('points', this.game.preparePoints())
 
 
-                        console.log(`door ${buyObject.doorId} opened`)
+                        console.log(`[DOORS] ${buyObject.doorId} opened`)
                         ZombieServer.io.to(this.roomId).emit('door_opened', buyObject.doorId)
                         this.game.DOORS.delete(buyObject.doorId)
                     }

@@ -62,8 +62,8 @@ export default class ServerConnector {
                     this.engine.game.PLAYERS.get(id).username = username
                 }
             })
-            //
-            // // chat message
+
+            // chat message
             this.socket.on('chat', (msg, from) => {
                 console.log('[CHAT] message from ', from)
                 Utils.addMessageToChat(this.engine.chat, msg, from)
@@ -207,16 +207,21 @@ export default class ServerConnector {
 
                     }
 
-
-
                 }
             })
 
             // on zombie death
-            this.socket.on('zombie_death', (zombieId) => {
-                if (this.engine.game.ZOMBIES.has(zombieId)) {
-                    this.engine.game.ZOMBIES.get(zombieId).removeFromScene()
-                    this.engine.game.ZOMBIES.delete(zombieId)
+            this.socket.on('zombie_death', (zombieDeathObject) => {
+                if (this.engine.game.ZOMBIES.has(zombieDeathObject.id)) {
+                    const zombie = this.engine.game.ZOMBIES.get(zombieDeathObject.id)
+
+                    // spawn objects
+                    if (zombieDeathObject.objects.lenght > 0) {
+                        console.log(zombieDeathObject.objects)
+                    }
+
+                    zombie.removeFromScene()
+                    this.engine.game.ZOMBIES.delete(zombieDeathObject.id)
                 }
             })
 

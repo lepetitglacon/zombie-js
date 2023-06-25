@@ -174,6 +174,7 @@ export default class Weapon {
         const hits = this.prepareHitsForServer_()
         this.engine.serverConnector.socket.emit('shot', {hits: hits, weapon: this.name, soundName: this.fireSoundName})
         this.alreadyHit.clear()
+
     }
 
     handleMagazinChange_() {
