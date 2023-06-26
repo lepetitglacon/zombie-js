@@ -12,7 +12,9 @@ export default class ObjectSpawner {
         const rdm = Math.random()
         console.log(rdm)
         if (this.spawnProbability > Math.random()) {
-            return ['max_ammo']
+            const objects = ['max_ammo']
+            console.log("[OBJECT] spawned " + objects)
+            return objects
         } else {
             return []
         }
