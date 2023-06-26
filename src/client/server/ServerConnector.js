@@ -212,12 +212,13 @@ export default class ServerConnector {
 
             // on zombie death
             this.socket.on('zombie_death', (zombieDeathObject) => {
+                console.log('zombie died')
                 if (this.engine.game.ZOMBIES.has(zombieDeathObject.id)) {
                     const zombie = this.engine.game.ZOMBIES.get(zombieDeathObject.id)
 
                     // spawn objects
-                    if (zombieDeathObject.objects.lenght > 0) {
-                        console.log(zombieDeathObject.objects)
+                    for (const object of zombieDeathObject.objects) {
+                        console.log("[OBJECT] spawned " + object)
                     }
 
                     zombie.removeFromScene()

@@ -55,7 +55,7 @@ export default class Game {
                 // update ClientZombie life
                 for (const [id, zombie] of this.ZOMBIES) {
                     if (zombie.health <= 0) {
-                        this.waveHandler.killzombie()
+                        this.waveHandler.killzombie(id)
                     }
                 }
 

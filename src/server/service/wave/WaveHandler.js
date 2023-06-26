@@ -17,7 +17,7 @@ export default class WaveHandler {
         this.zombieSpawnRate = 5000
         this.zombieSpawnRateTime = Date.now();
 
-        this.pauseBetweenWaveTime = 10000;
+        this.pauseBetweenWaveTime = 1000; // 10000
         this.pauseBetweenWaveStartTime = Date.now();
 
         this.waveConfig = {

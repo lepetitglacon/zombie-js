@@ -9,12 +9,12 @@ import Door from "../Door/Door.js";
 
 // assets
 import "../../assets/gltf/maps/flora_square.glb"
-import "../../assets/img/skyboxes/interstellar_skybox/xpos.png"
-import "../../assets/img/skyboxes/interstellar_skybox/xneg.png"
-import "../../assets/img/skyboxes/interstellar_skybox/ypos.png"
-import "../../assets/img/skyboxes/interstellar_skybox/yneg.png"
-import "../../assets/img/skyboxes/interstellar_skybox/zpos.png"
-import "../../assets/img/skyboxes/interstellar_skybox/zneg.png"
+// import "../../assets/img/skyboxes/interstellar_skybox/xpos.png"
+// import "../../assets/img/skyboxes/interstellar_skybox/xneg.png"
+// import "../../assets/img/skyboxes/interstellar_skybox/ypos.png"
+// import "../../assets/img/skyboxes/interstellar_skybox/yneg.png"
+// import "../../assets/img/skyboxes/interstellar_skybox/zpos.png"
+// import "../../assets/img/skyboxes/interstellar_skybox/zneg.png"
 
 export default class GraphicsWorld {
 
