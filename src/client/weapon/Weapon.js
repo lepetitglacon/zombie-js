@@ -9,6 +9,10 @@ export default class Weapon {
         this.raycaster = props.raycaster
         this.weaponHandler = props.weaponHandler
 
+
+        this.isAutomatic = false
+        this.switchTime = 500 // ms
+
         this.basePoint = 10
         this.headshotPoint = 50
 

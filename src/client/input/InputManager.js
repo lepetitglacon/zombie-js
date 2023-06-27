@@ -12,7 +12,7 @@ export default class InputManager {
         this.isChatOpen = false;
         this.lastEscapeOrTab = Date.now();
         this.lastEscapeOrTabRate = 100;
-
+        this.isClicking = false
     }
 
     init() {
@@ -136,6 +136,105 @@ export default class InputManager {
                 case 'ArrowRight':
                 case 'KeyD':
                     this.moveRight = false;
+                    break;
+            }
+        })
+
+        document.addEventListener('mousedown', (e) => {
+
+            switch (this.engine.state) {
+
+                case GameEngine.STATE.GAME:
+                    if (this.engine.game.three.controls.isLocked) {
+
+                        // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button
+                        if (e.button === 0) {
+                            this.isClicking = true
+                        }
+
+                    } else {
+
+                        // hide option menu
+                        if (this.engine.menu.isOpen()) {
+                            this.engine.menu.close()
+                        }
+
+                        // hide chat
+                        if (this.isChatOpen && !this.engine.chatInput.classList.contains('hidden')) {
+                            this.engine.chatInput.classList.toggle('hidden')
+                            this.engine.chatInput.value = ''
+                            this.isChatOpen = false
+                        }
+
+                        this.engine.game.three.controls.lock()
+                    }
+                    break;
+
+                case GameEngine.STATE.MENU:
+
+                    break;
+            }
+        })
+
+        document.addEventListener('wheel', (e) => {
+
+            switch (this.engine.state) {
+
+                case GameEngine.STATE.GAME:
+                    if (this.engine.game.three.controls.isLocked) {
+                        this.engine.game.weaponHandler.dispatchEvent(new Event('switch', e))
+                    } else {
+
+                        // hide option menu
+                        if (this.engine.menu.isOpen()) {
+                            this.engine.menu.close()
+                        }
+
+                        // hide chat
+                        if (this.isChatOpen && !this.engine.chatInput.classList.contains('hidden')) {
+                            this.engine.chatInput.classList.toggle('hidden')
+                            this.engine.chatInput.value = ''
+                            this.isChatOpen = false
+                        }
+
+                        this.engine.game.three.controls.lock()
+                    }
+                    break;
+            }
+        })
+
+        document.addEventListener('mouseup', (e) => {
+
+            switch (this.engine.state) {
+
+                case GameEngine.STATE.GAME:
+                    if (this.engine.game.three.controls.isLocked) {
+
+                        // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button
+                        if (e.button === 0) {
+                            this.isClicking = false
+                        }
+
+                    } else {
+
+                        // hide option menu
+                        if (this.engine.menu.isOpen()) {
+                            this.engine.menu.close()
+                        }
+
+                        // hide chat
+                        if (this.isChatOpen && !this.engine.chatInput.classList.contains('hidden')) {
+                            this.engine.chatInput.classList.toggle('hidden')
+                            this.engine.chatInput.value = ''
+                            this.isChatOpen = false
+                        }
+
+                        this.engine.game.three.controls.lock()
+                    }
+                    break;
+
+                case GameEngine.STATE.MENU:
+
                     break;
             }
         })
