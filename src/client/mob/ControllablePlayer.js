@@ -13,6 +13,7 @@ export default class ControllablePlayer {
 
         // movement
         this.speed = 50
+        this.speedBoost = 1.05
         this.mass = 90
         this.velocity = new THREE.Vector3();
         this.feetDirection = new THREE.Vector3();
@@ -80,6 +81,12 @@ export default class ControllablePlayer {
             }
             if ( this.engine.inputManager.moveLeft || this.engine.inputManager.moveRight ) {
                 this.velocity.x += this.feetDirection.x * this.speed * delta;
+            }
+
+            if (this.engine.inputManager.isRunning) {
+                if (this.velocity.z > 0) {
+                    this.velocity.z *= this.speedBoost
+                }
             }
         }
 

@@ -17,6 +17,7 @@ export default class Weapon {
         this.headshotPoint = 50
 
         this.name = "Weapon"
+        this.imgSrc = "../img/weapons/pistol/fpsview.png"
 
         this.damages = 20
         this.fireRate = 200 // ms
@@ -112,6 +113,7 @@ export default class Weapon {
     updateUI() {
         this.weaponHandler.UIBulletCount.innerText = this.bulletsInMagazine
         this.weaponHandler.UIStoredBullet.innerText = this.bulletStorage
+        this.weaponHandler.UIFpsViewImg.src = this.imgSrc
 
         this.div.style.transitionDuration = '.1s'
 

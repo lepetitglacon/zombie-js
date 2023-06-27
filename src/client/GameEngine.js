@@ -9,7 +9,9 @@ import "./assets/img/loader2.gif"
 import "./assets/img/map-preview/flora_square.jpg"
 
 import "./assets/img/weapons/pistol/fpsview.png"
+import "./assets/img/weapons/smg/mp40.png"
 import "./assets/img/weapons/knife/knife.png"
+
 import "./assets/gltf/Soldier.glb"
 import "./assets/gltf/player.glb"
 import "./assets/gltf/objects/max_ammo.glb"

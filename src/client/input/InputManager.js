@@ -9,10 +9,14 @@ export default class InputManager {
         this.moveLeft = false;
         this.moveRight = false;
         this.canJump = false;
+        this.isRunning = false
+
+        this.isClicking = false
+
         this.isChatOpen = false;
+
         this.lastEscapeOrTab = Date.now();
         this.lastEscapeOrTabRate = 100;
-        this.isClicking = false
     }
 
     init() {
@@ -65,6 +69,10 @@ export default class InputManager {
                     if (door !== null) {
                         door.buy()
                     }
+                    break;
+
+                case 'ShiftLeft':
+                    this.isRunning = true
                     break;
 
                 case 'Space':
@@ -136,6 +144,9 @@ export default class InputManager {
                 case 'ArrowRight':
                 case 'KeyD':
                     this.moveRight = false;
+                    break;
+                case 'ShiftLeft':
+                    this.isRunning = false
                     break;
             }
         })

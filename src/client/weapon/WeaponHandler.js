@@ -25,6 +25,7 @@ export default class WeaponHandler extends EventTarget {
         this.UIStoredBullet = document.getElementById('current-weapon-stored-bullet')
 
         this.UIFpsView = document.getElementById('current-weapon-fpsview')
+        this.UIFpsViewImg = document.getElementById('current-weapon-fpsview-img')
 
 
         this.UIBulletCount.innerText = this.weapon.bulletsInMagazine
@@ -43,6 +44,7 @@ export default class WeaponHandler extends EventTarget {
                         this.weapon = this.weapons[0]
                     }
                     this.lastSwitch = Date.now()
+
                     this.weapon.updateUI()
 
                     console.log('[WEAPON] switched to ' + this.weapon.name)
@@ -50,6 +52,8 @@ export default class WeaponHandler extends EventTarget {
             }
 
         })
+
+        this.weapon.updateUI()
 
         this.bind()
     }
