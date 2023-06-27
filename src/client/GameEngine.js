@@ -12,6 +12,7 @@ import "./assets/img/weapons/pistol/fpsview.png"
 import "./assets/img/weapons/knife/knife.png"
 import "./assets/gltf/Soldier.glb"
 import "./assets/gltf/player.glb"
+import "./assets/gltf/objects/max_ammo.glb"
 
 import "./assets/fonts/HelpMe.ttf"
 
@@ -52,6 +53,7 @@ export default class GameEngine extends EventTarget {
         this.modelManager = new ModelManager()
         this.modelManager.registerModel('soldier', '../gltf/Soldier.glb')
         this.modelManager.registerModel('player', '../gltf/player.glb')
+        this.modelManager.registerModel('object-max_ammo', '../gltf/objects/max_ammo.glb')
 
         this.inputManager = new InputManager()
         this.serverConnector = new ServerConnector()

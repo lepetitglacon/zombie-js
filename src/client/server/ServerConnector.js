@@ -4,6 +4,7 @@ import ZombieFactory from "../../common/factory/ZombieFactory.js";
 import {attribute} from "three/nodes";
 import Utils from "../../common/Utils.js";
 import Game from "../Game.js";
+import ModelManager from "../managers/ModelManager.js";
 
 export default class ServerConnector {
 
@@ -212,13 +213,22 @@ export default class ServerConnector {
 
             // on zombie death
             this.socket.on('zombie_death', (zombieDeathObject) => {
-                console.log('zombie died')
                 if (this.engine.game.ZOMBIES.has(zombieDeathObject.id)) {
                     const zombie = this.engine.game.ZOMBIES.get(zombieDeathObject.id)
 
                     // spawn objects
                     for (const object of zombieDeathObject.objects) {
                         console.log("[OBJECT] spawned " + object)
+
+                        const obj = this.engine.modelManager.getModelCopy('object-max_ammo')
+                        obj.position.copy(zombie.gltf.position)
+                        obj.position.y = 0
+
+                        this.engine.game.three.scene.add(obj)
+
+
+                        // this.engine.game.OBJECTS.set()
+
                     }
 
                     zombie.removeFromScene()

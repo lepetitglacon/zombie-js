@@ -17,6 +17,7 @@ export default class Game {
 
         this.PLAYERS = new Map()
         this.ZOMBIES = new Map()
+        this.OBJECTS = new Map()
 
         this.player = new ControllablePlayer()
         this.points = 0
