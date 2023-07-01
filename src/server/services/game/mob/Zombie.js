@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import Utils from "../../../common/Utils.js";
-import MovementManager from "../../../common/MovementManager.js";
+import Utils from "../../../../common/Utils.js";
+import MovementManager from "../../../../common/MovementManager.js";
 
-export default class ServerZombie {
+export default class Zombie {
 
     constructor(props) {
         this.id = props.id

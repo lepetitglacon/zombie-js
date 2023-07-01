@@ -1,4 +1,9 @@
-import ZombieGameServer from "./server/ZombieGameServer.js";
+import Server from "./server/Server.js";
 
-global.ZombieServer = new ZombieGameServer()
+global.ZombieServer = new Server({
+    online: true,
+    database: {
+        name: 'mongo'
+    }
+})
 ZombieServer.run()

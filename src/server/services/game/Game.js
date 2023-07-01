@@ -1,6 +1,6 @@
 import WaveHandler from "./wave/WaveHandler.js";
 import fs from "fs";
-import ZombieFactory from "../../common/factory/ZombieFactory.js";
+import ZombieFactory from "../../../common/factory/ZombieFactory.js";
 import NodeThreeExporter from "@injectit/threejs-nodejs-exporters";
 
 export default class Game {
@@ -13,6 +13,7 @@ export default class Game {
 
     constructor(props) {
         this.io = props.server
+
         this.private = false
         this.roomId = props.roomId
 
@@ -112,7 +113,7 @@ export default class Game {
     fillPlayerInfo(toSend, socketHandler, i) {
         toSend[i] = {}
         toSend[i].socketId = socketHandler.socket.id
-        toSend[i].username = socketHandler.username
+        toSend[i].username = socketHandler.user.username
         toSend[i].position = socketHandler.position
         toSend[i].direction = socketHandler.direction
         toSend[i].color = socketHandler.color

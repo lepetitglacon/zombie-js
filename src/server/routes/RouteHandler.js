@@ -6,38 +6,22 @@ import passport from "passport";
 import dotenv from 'dotenv'
 import GameController from "../controllers/GameController.js";
 import UserController from "../controllers/UserController.js";
-import Game from "../service/Game.js";
+import Game from "../services/game/Game.js";
+import AuthRoutes from "./auth/AuthRoutes.js";
 
 
-export default class Routes {
+export default class RouteHandler {
 
     constructor() {
         dotenv.config()
 
-        this.gameController = new GameController({
-            dbName: 'games'
-        })
-        this.userController = new UserController({
-            dbName: 'users'
-        })
-
+        this.authRoutes = new AuthRoutes()
         this.setRoutes()
-
-        passport.use(new ZombieServer.googleStrategy({
-                clientID: process.env.GOOGLE_CLIENT_ID,
-                clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-                callbackURL: "http://localhost:3000/auth/google/callback"
-            },
-            (accessToken, refreshToken, profile, done) => {
-                this.userController.insert(profile)
-                return done(null, profile);
-            }
-        ));
     }
 
     setRoutes() {
         ZombieServer.app.get('/', (req, res) => {
-            if (this.isUserConnected(req)) {
+            if (req.isAuthenticated()) {
                 res.redirect('/lobbies');
             } else {
                 res.render('home');
@@ -45,7 +29,7 @@ export default class Routes {
         })
 
         ZombieServer.app.get('/lobbies', (req, res) => {
-            if (this.isUserConnected(req)) {
+            if (req.isAuthenticated()) {
                 res.render('lobby');
             } else {
                 res.redirect('/')
@@ -79,7 +63,7 @@ export default class Routes {
         // create game
         ZombieServer.app.get('/create/:name/:map/:private', (req, res) => {
 
-            if (this.isUserConnected(req)) {
+            if (req.isAuthenticated()) {
                 res.redirect(`/game/${ZombieServer.createGame({
                         name: req.params.name,
                         map: req.params.map,
@@ -95,11 +79,12 @@ export default class Routes {
         // create game
         ZombieServer.app.get('/game/create/:name/:private', (req, res) => {
 
-            if (this.isUserConnected(req)) {
+            if (req.isAuthenticated()) {
                 let owner
 
                 if (req.session.passport !== undefined && req.session.passport.user !== undefined) {
-                    owner = req.session.passport.user.id
+                    console.log('test', req.session.passport.user)
+                    owner = req.session.passport.user._id
                 } else {
                     owner = 'offline'
                 }
@@ -113,12 +98,11 @@ export default class Routes {
             } else {
                 res.redirect('/')
             }
-
         })
 
         // play game
         ZombieServer.app.get('/game/:id', (req, res) => {
-            if (this.isUserConnected(req)) {
+            if (req.isAuthenticated()) {
                 if (ZombieServer.GAMES.has(req.params.id)) {
                     const game = ZombieServer.GAMES.get(req.params.id)
 
@@ -139,7 +123,7 @@ export default class Routes {
                         game: game,
                         user: user,
                     })
-                    ZombieServer.app.set('views', ZombieServer.__dirname + '\\vue\\');
+                    ZombieServer.app.set('views', ZombieServer.__dirname + '\\views\\');
                 } else {
                     res.redirect('/')
                 }
@@ -150,25 +134,19 @@ export default class Routes {
 
         // start game
         ZombieServer.app.get('/game/start/:id', (req, res) => {
-            if (this.isUserConnected(req)) {
+            if (req.isAuthenticated()) {
                 res.json({succes: ZombieServer.startGame(req.params.id)})
             } else {
                 res.redirect('/')
             }
         })
 
-        /**
-         * OAuth to Google
-         */
-        ZombieServer.app.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
+        //The 404 Route (ALWAYS Keep this as the last route)
+        ZombieServer.app.get('*', function(req, res){
+            res.redirect('/')
+        });
 
-        ZombieServer.app.get('/auth/google/callback',
-            passport.authenticate('google', { failureRedirect: '/' }),
-            (req, res) => {
-                // Successful authentication, redirect success.
 
-                res.redirect('/lobbies');
-            });
     }
 
     isUserConnected(req) {

@@ -1,6 +1,4 @@
 import * as THREE from "three"
-import Utils from "../../common/Utils.js";
-import ZombieFactory from "../../common/factory/ZombieFactory.js";
 
 
 export default class ClientConnector {
@@ -8,26 +6,28 @@ export default class ClientConnector {
     constructor(props) {
         this.socket = props.socket
         this.roomId = props.roomId
+        this.user = props.user
         this.game = props.game
 
-        this.username = 'Unknown'
-
+        this.username = props.username ?? 'Unknown'
         this.maxHealth = 100
         this.health = this.maxHealth
-
-        this.points = 0
-
-        this.position = new THREE.Vector3(0, 0, 0)
-        this.position.set(0, 0, 0)
-        this.direction = new THREE.Vector3(0, 0, 0)
         this.color = props.color
 
+        this.position = props.position.clone()
+        this.direction = new THREE.Vector3(0, 0, 0)
         this.lastPosition = new THREE.Vector3(0, 0, 0)
         this.lastDirection = new THREE.Vector3(0, 0, 0)
 
+        // stats
+        this.kills = 0
+        this.headshotKills = 0
+        this.points = 0
+        this.allPoints = 0
+
         this.init()
         this.bind()
-        console.log('[PLAYER][CONNECTED] ' + this.socket.id + ' connected to room ' + this.roomId)
+        console.log(`[PLAYER][CONNECTED] ${this.socket.id} (${this.user.username}) connected to room ${this.roomId}`)
     }
 
     init() {
@@ -42,7 +42,7 @@ export default class ClientConnector {
         // tell other player the new connection
         this.socket.to(this.roomId).emit('player_connect', {
             socketId: this.socket.id,
-            username: this.username,
+            username: this.user.username,
             position: this.position,
             color: this.color,
             points: this.points
@@ -56,7 +56,6 @@ export default class ClientConnector {
         })
 
         this.socket.on('lobby-ready', () => {
-            console.log('~lobby-ready')
             // send lobby players to socket
             this.socket.emit('get_players', this.game.preparePlayersToEmit(1))
         })

@@ -4,37 +4,33 @@ import cors from 'cors'
 import os from "os"
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import {Server} from "socket.io";
-import Routes from "./routes/Routes.js";
-import Game from "./service/Game.js";
+import {Server as SocketServer} from "socket.io";
+import RouteHandler from "./routes/RouteHandler.js";
+import Game from "./services/game/Game.js";
 import PlayerFactory from "../common/factory/PlayerFactory.js";
 import passport from "passport";
-import {OAuth2Strategy} from "passport-google-oauth";
 import session from "express-session";
 
-
 import dotenv from 'dotenv'
-import SocketRequestHandler from "./service/socket/SocketRequestHandler.js";
+import SocketRequestHandler from "./services/game/socket/SocketRequestHandler.js";
 import DatabaseHandler from "./database/DatabaseHandler.js";
+
 dotenv.config()
 
+export default class Server {
 
-
-export default class ZombieGameServer {
-
-    constructor() {
+    constructor(props) {
         this.__filename = fileURLToPath(import.meta.url);
         this.__dirname = dirname(this.__filename);
 
-        this.isOnlineMode = false
+        this.isOnlineMode = props.online ?? false
 
         this.port = 3000
         this.app = express()
         this.server = http.createServer(this.app)
-        this.io = new Server(this.server);
+        this.io = new SocketServer(this.server);
 
-        // this.dbHandler = new DatabaseHandler()
-        // this.dbHandler.init().then(r => console.log('[DB] connected'))
+        this.dbHandler = new DatabaseHandler(props)
 
         this.GAMES = new Map()
 
@@ -43,7 +39,7 @@ export default class ZombieGameServer {
         this.app.use('/game', express.static('dist'));
 
         this.app.set('view engine', 'ejs');
-        this.app.set('views', this.__dirname + '\\vue\\');
+        this.app.set('views', this.__dirname + '\\views\\');
 
         this.app.use(session({
             name: 'z3d-connect',
@@ -56,7 +52,6 @@ export default class ZombieGameServer {
         this.app.use(passport.session());
 
         this.passport = passport;
-        this.googleStrategy = OAuth2Strategy;
 
         this.passport.serializeUser(function(user, done) {
             done(null, user);
@@ -67,20 +62,19 @@ export default class ZombieGameServer {
 
         this.createGame({
             name:'TEST',
-            map:'flora_square.glb',
             private: false
         })
     }
 
     run() {
-        this.routes = new Routes()
+        this.routes = new RouteHandler()
 
+        this.getAvailableNetworks_()
 
-        this.getAvailableNetworks()
         this.server.listen(this.port, () => {
             console.log()
+            console.log(`Z3D Server`)
             console.log("----------------------------")
-            console.log(`Zombie server listening port ${this.port}`)
             console.log(`Join a game here http://localhost:${this.port}`)
             console.log(`Join a game here http://${this.ipAddresses.values().next().value}:${this.port}`)
             console.log("----------------------------")
@@ -97,8 +91,13 @@ export default class ZombieGameServer {
         })
     }
 
+    /**
+     * Create a game (lobby)
+     * @param props
+     * @returns {string}
+     */
     createGame(props) {
-        let id = this.getRandomId(10)
+        let id = this.getRandomId_(10)
 
         let game = new Game({roomId: id, server: this.io, map: props.map, online: this.isOnlineMode})
         game.name = props.name
@@ -111,6 +110,11 @@ export default class ZombieGameServer {
         return id
     }
 
+    /**
+     * Starts the game if exists
+     * @param gameId
+     * @returns {boolean}
+     */
     startGame(gameId) {
         if (this.GAMES.has(gameId)) {
             const game = this.GAMES.get(gameId)
@@ -123,7 +127,7 @@ export default class ZombieGameServer {
         }
     }
 
-    getRandomId(length = 10) {
+    getRandomId_(length = 10) {
         let result = '';
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
         const charactersLength = characters.length;
@@ -135,7 +139,7 @@ export default class ZombieGameServer {
         return result;
     }
 
-    getAvailableNetworks() {
+    getAvailableNetworks_() {
         const nets = os.networkInterfaces();
         this.ipAddresses = new Map();
         for (const name of Object.keys(nets)) {

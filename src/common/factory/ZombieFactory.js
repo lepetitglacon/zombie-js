@@ -1,4 +1,4 @@
-import ServerZombie from "../../server/service/mob/ServerZombie.js";
+import ServerZombie from "../../server/services/game/mob/Zombie.js";
 import ClientZombie from "../../client/mob/ClientZombie.js";
 import * as THREE from "three";
 

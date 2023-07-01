@@ -9,9 +9,11 @@ import ModelManager from "../managers/ModelManager.js";
 export default class ServerConnector {
 
     static roomId = window.location.href.substring(window.location.href.lastIndexOf('/') + 1)
+    static userId = document.getElementById('userId').value ?? 'offline'
     static socket = io({
         query: {
             roomId: ServerConnector.roomId,
+            userId: ServerConnector.userId,
         },
     });
 

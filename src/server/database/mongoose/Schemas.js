@@ -1,6 +1,7 @@
 import mongoose from 'mongoose'
 
 export default class MongooseSchemas {
+
     constructor() {
 
         this.schemas = new Map()

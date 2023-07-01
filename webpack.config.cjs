@@ -18,7 +18,7 @@ module.exports = {
 
     plugins: [
         new HtmlWebpackPlugin({
-            template: "!!raw-loader!src/server/vue/game.ejs",
+            template: "!!raw-loader!src/server/views/game.ejs",
             filename: 'index.ejs',
         })
     ],

@@ -33,7 +33,6 @@ export default class GraphicsWorld {
         this.cannonDebugRenderer = new CannonDebugRenderer(this.scene, this.world)
 
         this.camera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 0.1, 1000 );
-        this.camera.position.z = 5;
 
         this.createPlayer()
 

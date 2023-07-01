@@ -1,5 +1,6 @@
-import PlayerFactory from "../../../common/factory/PlayerFactory.js";
+import PlayerFactory from "../../../../common/factory/PlayerFactory.js";
 import Game from "../Game.js";
+import UserModel from "../../../database/models/UserModel.js";
 
 export default class SocketRequestHandler {
 
@@ -9,11 +10,20 @@ export default class SocketRequestHandler {
         this.socket = props.socket
 
         this.roomId = this.socket.handshake.query.roomId;
+        this.userId = this.socket.handshake.query.userId;
+        console.log('user ID from client ' + this.userId)
 
-        this.handleRequest()
+        this.getUserFromDB_().then(() => {
+            console.log(this.user)
+            this.handleRequest()
+        })
     }
 
+    /**
+     * Handle connexion to a game
+     */
     handleRequest() {
+
         if (!this.server.GAMES.has(this.roomId)) {
             this.socket.disconnect(true);
             return;
@@ -34,8 +44,12 @@ export default class SocketRequestHandler {
         game.PLAYERS.set(this.socket, PlayerFactory.createClientConnector({
             socket: this.socket,
             roomId: this.roomId,
+            user: this.user,
             game: game
         }))
     }
 
+    async getUserFromDB_() {
+        this.user = await UserModel.findOne({_id: this.userId})
+    }
 }
