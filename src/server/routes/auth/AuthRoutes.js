@@ -42,7 +42,7 @@ export default class AuthRoutes {
         passport.use(new OAuth2Strategy({
                 clientID: process.env.GOOGLE_CLIENT_ID,
                 clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-                callbackURL: "http://localhost:3000/auth/google/callback"
+                callbackURL: "http://82.64.177.251:3000/auth/google/callback"
             },
             async (accessToken, refreshToken, profile, done) => {
                 try {

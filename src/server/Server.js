@@ -39,7 +39,7 @@ export default class Server {
         this.app.use('/game', express.static('dist'));
 
         this.app.set('view engine', 'ejs');
-        this.app.set('views', this.__dirname + '\\views\\');
+        this.app.set('views', this.__dirname + '/views/');
 
         this.app.use(session({
             name: 'z3d-connect',

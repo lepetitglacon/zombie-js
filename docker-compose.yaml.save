@@ -1,0 +1,13 @@
+services:
+
+  crdb-1:
+    container_name: z3d-mongo
+    hostname: z3d-mongo
+    image: arm64v8/mongo:4.4.18
+    # volumes:
+    #  - ../data01:/cockroach/cockroach-data
+    command: start --cluster-name=cockroach-cluste
+    networks:
+      prometheus:
+        aliases:
+          - node-1
