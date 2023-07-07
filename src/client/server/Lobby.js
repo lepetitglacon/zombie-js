@@ -40,6 +40,17 @@ export default class Lobby {
             })
         }
 
+        this.serverConnector.socket.on('lobby-map-change', (e) => {
+            if (e.direction === 'left') {
+                $('#lobby-main-map-carousel').carousel('next')
+                this.serverConnector.socket.emit('lobby-map-change', {
+                    e
+                })
+            } else {
+                $('#lobby-main-map-carousel').carousel('prev')
+            }
+        })
+
         this.serverConnector.socket.on('game-state', (stateObj) => {
             if (stateObj.state === Game.STATUS.RUNNING) {
                 console.log('[GAME] game already started on map : ' + stateObj.mapName)
@@ -57,6 +68,17 @@ export default class Lobby {
                 console.log('[GAME] host started the game on map : ' + mapObject.mapName)
                 this.modelManager.registerModel('map', '../gltf/maps/' + mapObject.mapName)
                 this.engine.init()
+            }
+        })
+
+        $('#lobby-map-carousel').on('slide.bs.carousel', (e) => {
+            console.log(e)
+            if (e.direction === 'left') {
+                $('#lobby-main-map-carousel').carousel('next')
+                this.serverConnector.socket.emit('lobby-map-change', e)
+            } else {
+                $('#lobby-main-map-carousel').carousel('prev')
+                this.serverConnector.socket.emit('lobby-map-change', e)
             }
         })
 
