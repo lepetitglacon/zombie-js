@@ -72,6 +72,7 @@ export default class ClientConnector {
          * On owner changes map
          */
         this.socket.on('lobby-map-change', (e) => {
+            console.log(e)
             this.socket.broadcast.emit('lobby-map-change', e)
         })
 

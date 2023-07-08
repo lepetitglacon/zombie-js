@@ -15,6 +15,7 @@ export default class Lobby {
         this.loader.hide()
 
         this.setPlayers()
+        this.buildMapSelector()
 
         this.serverConnector.socket.on('connect', () => {
             console.table(['[SOCKET] connected'])
@@ -40,17 +41,6 @@ export default class Lobby {
             })
         }
 
-        this.serverConnector.socket.on('lobby-map-change', (e) => {
-            if (e.direction === 'left') {
-                $('#lobby-main-map-carousel').carousel('next')
-                this.serverConnector.socket.emit('lobby-map-change', {
-                    e
-                })
-            } else {
-                $('#lobby-main-map-carousel').carousel('prev')
-            }
-        })
-
         this.serverConnector.socket.on('game-state', (stateObj) => {
             if (stateObj.state === Game.STATUS.RUNNING) {
                 console.log('[GAME] game already started on map : ' + stateObj.mapName)
@@ -71,16 +61,45 @@ export default class Lobby {
             }
         })
 
-        $('#lobby-map-carousel').on('slide.bs.carousel', (e) => {
-            console.log(e)
+        this.serverConnector.socket.on('lobby-map-change', (e) => {
+            $('#lobby-map-name').text(e.mapName)
             if (e.direction === 'left') {
                 $('#lobby-main-map-carousel').carousel('next')
-                this.serverConnector.socket.emit('lobby-map-change', e)
             } else {
                 $('#lobby-main-map-carousel').carousel('prev')
-                this.serverConnector.socket.emit('lobby-map-change', e)
             }
         })
+
+        const $carousel = $('#lobby-map-carousel')
+        $carousel.on('slide.bs.carousel', (e) => {
+            let active
+
+            if (e.direction === 'left') {
+                $('#lobby-main-map-carousel').carousel('next')
+                if ($('#lobby-map-carousel .active').next().length === 0) {
+                    active = $('#lobby-map-carousel .active').parent().children().first()
+                } else {
+                    active = $('#lobby-map-carousel .active').next()
+                }
+            } else {
+                $('#lobby-main-map-carousel').carousel('prev')
+                if ($('#lobby-map-carousel .active').prev().length === 0) {
+                    active = $('#lobby-map-carousel .active').parent().children().last()
+                } else {
+                    active = $('#lobby-map-carousel .active').prev()
+                }
+            }
+
+            console.log(active)
+            $('#lobby-map-name').text(active.data('mapName'))
+
+            this.serverConnector.socket.emit('lobby-map-change', {
+                direction: e.direction,
+                mapName: active.data('mapName')
+            })
+        })
+
+
 
         // send lobby players to socket
         this.serverConnector.socket.emit('lobby-ready')
@@ -113,6 +132,10 @@ export default class Lobby {
         })
 
         this.serverConnector.socket.emit('lobby_players')
+    }
+
+    async buildMapSelector() {
+        const maps = await fetch('')
     }
 
     hide() {
