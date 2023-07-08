@@ -18,7 +18,7 @@
 
 <div id="lobby" class="fluid-container d-flex">
 
-    <div id="lobby-left" class="col d-flex flex-column justify-content-between">
+    <div id="lobby-left" class="col d-flex flex-column justify-content-start">
 
         <div>
             <div id="lobby-room-name-div" class="row">
@@ -38,23 +38,23 @@
 
                     <form>
                         <!-- map slider -->
-                        <div id="carouselExample" class="carousel slide">
+                        <div id="lobby-map-carousel" class="carousel slide">
                             <div class="carousel-inner">
-                                <div class="carousel-item active">
+                                <div class="carousel-item active" data-map-name="Flora Square">
                                     <img src="../img/map-preview/flora_square.jpg" class="d-block carousel-img" alt="...">
                                 </div>
-                                <div class="carousel-item">
+                                <div class="carousel-item" data-map-name="Jambon de porc">
                                     <img src="../img/map-preview/flora_square.jpg" class="d-block carousel-img" alt="...">
                                 </div>
-                                <div class="carousel-item">
+                                <div class="carousel-item" data-map-name="RaspberryPi">
                                     <img src="../img/map-preview/flora_square.jpg" class="d-block carousel-img" alt="...">
                                 </div>
                             </div>
-                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+                            <button class="carousel-control-prev" type="button" data-bs-target="#lobby-map-carousel" data-bs-slide="prev">
                                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                                 <span class="visually-hidden">Previous</span>
                             </button>
-                            <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+                            <button class="carousel-control-next" type="button" data-bs-target="#lobby-map-carousel" data-bs-slide="next">
                                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                                 <span class="visually-hidden">Next</span>
                             </button>
@@ -92,8 +92,21 @@
                 <li class="color-green">Oui</li>
             </ul>
         </div>
-        <div id="lobby-map-img-div">
-            <img id="lobby-map-img" src="../img/map-preview/flora_square.jpg">
+        <div id="lobby-main-map-img-div">
+            <!-- map slider -->
+            <div id="lobby-main-map-carousel" class="carousel slide">
+                <div class="carousel-inner">
+                    <div class="carousel-item active" >
+                        <img src="../img/map-preview/flora_square.jpg" class="d-block carousel-main-img"  alt="...">
+                    </div>
+                    <div class="carousel-item" >
+                        <img src="../img/map-preview/flora_square.jpg" class="d-block carousel-main-img"  alt="...">
+                    </div>
+                    <div class="carousel-item" >
+                        <img src="../img/map-preview/flora_square.jpg" class="d-block carousel-main-img"  alt="...">
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -187,9 +200,9 @@
 
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
-        crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.7.0.min.js" ></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+
 
 </body>
 </html>

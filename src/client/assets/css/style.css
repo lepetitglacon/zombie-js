@@ -46,7 +46,6 @@ body {
     height: 100%;
 
     filter: sepia(.5);
-
 }
 
 #lobby-map-img-div::after {
@@ -79,7 +78,17 @@ body {
     font-size: 128px;
 }
 #lobby-room-name {
+    margin-top: 20px;
+    margin-left: 20px;
+
     font-size: 64px;
+    font-weight: bolder;
+    font-family: Arial;
+}
+
+#lobby-room-id {
+    margin-left: 20px;
+    margin-bottom: 20px;
 }
 
 #lobby-map-name {
@@ -90,6 +99,17 @@ body {
     text-align: end;
 
     font-size: 64px;
+    font-weight: bolder;
+    font-family: Arial;
+}
+
+#lobby-main-map-carousel {
+
+}
+
+.carousel-main-img {
+    width: 100%;
+    height: 100%;
 }
 
 #lobby-players {
