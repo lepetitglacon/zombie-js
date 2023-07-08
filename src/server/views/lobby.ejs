@@ -58,8 +58,8 @@
             <div class="col">
 
                 <div class="input-group mb-3">
-                    <button class="btn btn-danger" type="button" id="set-username">Set username</button>
-                    <input type="text" class="form-control" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
+                    <button class="btn btn-danger" type="button" id="set-gamename-button">Set username</button>
+                    <input type="text" class="form-control" id="set-gamename" value="<%= user.gamename %>" aria-describedby="button-addon1">
                 </div>
 
             </div>
@@ -214,24 +214,26 @@
 
     refresh()
 
-    // function setUsername() {
-    //     const usernameButton = document.getElementById('set-username-button')
-    //     const username = document.getElementById('set-username')
-    //
-    //     const textConf = localStorage.getItem("ZombieGame")
-    //     if (textConf !== null) {
-    //         const conf = JSON.parse(textConf)
-    //         username.value = conf.username
-    //     }
-    //
-    //     usernameButton.addEventListener('click', () => {
-    //         if (username.value.length > 0) {
-    //             const conf = {username: username.value}
-    //             localStorage.setItem("ZombieGame", JSON.stringify(conf))
-    //         }
-    //     })
-    // }
-    // setUsername()
+    function setUsername() {
+        const usernameButton = document.getElementById('set-gamename-button')
+        const gamename = document.getElementById('set-gamename')
+
+        usernameButton.addEventListener('click', async () => {
+            if (gamename.value.length > 0) {
+                const res = await fetch('/player/username/set', {
+                    method: 'POST',
+                    body: JSON.stringify({gamename: gamename.value}),
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                })
+                const ress = await res.json()
+                console.log(ress)
+
+            }
+        })
+    }
+    setUsername()
 
     // const mapSelect = document.getElementById('create-game-map')
     // function getMaps() {

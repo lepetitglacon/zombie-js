@@ -114,6 +114,7 @@ export default class Game {
         toSend[i] = {}
         toSend[i].socketId = socketHandler.socket.id
         toSend[i].username = socketHandler.user.username
+        toSend[i].gamename = socketHandler.user.gamename
         toSend[i].position = socketHandler.position
         toSend[i].direction = socketHandler.direction
         toSend[i].color = socketHandler.color

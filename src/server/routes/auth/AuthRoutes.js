@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+import express from "express";
 import bodyParser from 'body-parser'
 import passport from "passport";
 import bcrypt from "bcrypt";
@@ -12,7 +13,7 @@ export default class AuthRoutes {
     constructor() {
         dotenv.config()
 
-        ZombieServer.app.use(bodyParser.urlencoded({ extended: true }));
+        ZombieServer.app.use(express.json());
 
         // enable local
         passport.use(new LocalStrategy(async (username, password, done) => {
@@ -42,7 +43,7 @@ export default class AuthRoutes {
         passport.use(new OAuth2Strategy({
                 clientID: process.env.GOOGLE_CLIENT_ID,
                 clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-                callbackURL: "http://82.64.177.251:3000/auth/google/callback"
+                callbackURL: "http://localhost:3000/auth/google/callback"
             },
             async (accessToken, refreshToken, profile, done) => {
                 try {
@@ -52,7 +53,6 @@ export default class AuthRoutes {
                         // User is already registered with Google OAuth
                         console.log(`[AUTH][GOOGLE] user ${profile.emails[0].value} logged in`)
                         return done(null, user);
-
                     }
 
                     // Check if the user is registered locally with the same email
@@ -94,11 +94,11 @@ export default class AuthRoutes {
         /**
          * login
          */
-        ZombieServer.app.post('/login', async (req, res, next) => {
+        ZombieServer.app.post('/login', bodyParser.urlencoded({ extended: false }), async (req, res, next) => {
             const { username, password } = req.body;
 
-            if (username === '' && password === '') {
-                res.redirect('/')
+            if (username === '' || password === '') {
+                return res.redirect('/')
             }
 
             passport.authenticate('local', (err, user, info) => {
@@ -138,10 +138,10 @@ export default class AuthRoutes {
         /**
          * register
          */
-        ZombieServer.app.post('/register', async (req, res) => {
-            const { username, password } = req.body;
+        ZombieServer.app.post('/register', bodyParser.urlencoded({ extended: false }), async (req, res) => {
+            const { username, gamename, password } = req.body;
 
-            console.log(username, password)
+            console.log(username, gamename, password)
 
             if (username !== '' && password !== '') {
                 try {
@@ -153,6 +153,7 @@ export default class AuthRoutes {
                         } else {
                             let hashedPassword = await bcrypt.hash(password, 10)
                             user.password = hashedPassword
+                            user.gamename = gamename
                             await user.save();
                             console.log(`[AUTH][PURE] user ${username} password saved`)
                         }
@@ -162,7 +163,7 @@ export default class AuthRoutes {
 
                     const hashedPassword = await bcrypt.hash(password, 10);
 
-                    user = new User({ username, password: hashedPassword });
+                    user = new User({ username, password: hashedPassword, gamename: gamename });
                     await user.save();
 
                     console.log(`[AUTH][PURE] user ${username} registered`)

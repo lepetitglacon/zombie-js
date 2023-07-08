@@ -144,7 +144,7 @@ export default class Lobby {
 
     createPlayerLi(player, playerUl) {
         const li = document.createElement('li')
-        li.innerText = player.username //player.username
+        li.innerText = player.gamename ?? player.username
         li.id = 'lobby-player-' + player.socketId
         li.classList.add('lobby-player')
 

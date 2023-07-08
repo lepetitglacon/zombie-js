@@ -8,6 +8,7 @@ import GameController from "../controllers/GameController.js";
 import UserController from "../controllers/UserController.js";
 import Game from "../services/game/Game.js";
 import AuthRoutes from "./auth/AuthRoutes.js";
+import LobbyRoutes from "./lobby/LobbyRoutes.js";
 
 
 export default class RouteHandler {
@@ -16,6 +17,7 @@ export default class RouteHandler {
         dotenv.config()
 
         this.authRoutes = new AuthRoutes()
+        this.lobbyRoutes = new LobbyRoutes()
         this.setRoutes()
     }
 
@@ -26,38 +28,6 @@ export default class RouteHandler {
             } else {
                 res.render('home');
             }
-        })
-
-        ZombieServer.app.get('/lobbies', (req, res) => {
-            if (req.isAuthenticated()) {
-                res.render('lobby');
-            } else {
-                res.redirect('/')
-            }
-        })
-
-        ZombieServer.app.get('/lp/refresh', (req, res) => {
-            const games = []
-            let i = 0;
-            for (const [key, val] of ZombieServer.GAMES) {
-                if (val.private === false && val.status === Game.STATUS.PAUSED) {
-                    games[i] = {}
-                    games[i].id = key
-                    games[i].name = val.name ?? 'Untitled'
-                    games[i].map = val.mapName ?? 'No map'
-                    games[i].status = val.status
-                    games[i].players = val.PLAYERS.size
-                    games[i].ping = 25
-                    i++
-                }
-            }
-            res.json(games);
-        })
-
-        ZombieServer.app.get('/lp/maps', (req, res) => {
-            fs.readdir(path.join(ZombieServer.__dirname, '../../src/client/assets/gltf/maps'), (err, data) => {
-                res.json(data);
-            })
         })
 
         // create game
