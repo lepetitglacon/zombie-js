@@ -13,7 +13,7 @@
 <input id="userId" type="hidden" value="<%= user._id %>">
 
 <div id="loader-gif">
-    <img src="../img/loader2.gif">
+    <img src="assets/img/loader2.gif">
 </div>
 
 <div id="lobby" class="fluid-container d-flex">
@@ -47,7 +47,7 @@
                                         if (map.playable) {
                                 %>
 
-                                    <div class="carousel-item active" data-map-name="<%= map.name %>>">
+                                    <div class="carousel-item <%= 'active' %>" data-map-name="<%= map.name %>>">
                                         <img src="assets/img/map-preview/<%= map.preview %>" class="d-block carousel-img" alt="...">
                                     </div>
 
@@ -113,7 +113,7 @@
                     %>
 
                         <div class="carousel-item active">
-                            <img src="assets/img/map-preview/<%= map.preview %>" class="d-block carousel-img" alt="...">
+                            <img src="assets/img/map-preview/<%= map.preview %>" class="d-block carousel-main-img" alt="...">
                         </div>
 
                     <%
@@ -141,11 +141,11 @@
     </div>
 
     <div id="current-weapon-fpsview">
-        <img id="current-weapon-fpsview-img" src="../img/weapons/pistol/fpsview.png">
+        <img id="current-weapon-fpsview-img" src="assets/img/weapons/pistol/fpsview.png">
     </div>
 
     <div id="knife">
-        <img src="../img/weapons/knife/knife.png">
+        <img src="assets/img/weapons/knife/knife.png">
     </div>
 
     <div id="wave"></div>
@@ -176,7 +176,7 @@
     </div>
 
     <div id="crosshair">
-        <img src="../img/crosshair.png">
+        <img src="assets/img/crosshair.png">
 
     </div>
 

@@ -6,7 +6,7 @@ export default class Smg extends Weapon {
         super(props);
 
         this.name = "MP40"
-        this.imgSrc = "../img/weapons/smg/mp40.png"
+        this.imgSrc = "assets/img/weapons/smg/mp40.png"
 
         this.isAutomatic = true
         this.switchTime = 1500 // ms

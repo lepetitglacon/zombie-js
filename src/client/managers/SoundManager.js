@@ -56,11 +56,11 @@ export default class SoundManager {
     }
 
     loadSounds() {
-        this.loadSound('weapon_pistol_shot', 'src/client/assets/sound/gunshot.wav')
-        this.loadSound('weapon_pistol_reload', 'src/client/assets/sound/gunreload.mp3')
-        this.loadSound('weapon_knife_slash', 'src/client/assets/sound/knife.wav')
-        this.loadSound('wave_start', 'src/client/assets/sound/wave/start.wav')
-        this.loadSound('wave_end', 'src/client/assets/sound/wave/end.wav')
+        this.loadSound('weapon_pistol_shot', 'assets/sound/gunshot.wav')
+        this.loadSound('weapon_pistol_reload', 'assets/sound/gunreload.mp3')
+        this.loadSound('weapon_knife_slash', 'assets/sound/knife.wav')
+        this.loadSound('wave_start', 'assets/sound/wave/start.wav')
+        this.loadSound('wave_end', 'assets/sound/wave/end.wav')
 
         // this.loadPositionalSound('weapon_pistol_shot', 'src/client/assets/sound/gunshot.wav')
     }

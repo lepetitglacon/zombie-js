@@ -32,7 +32,7 @@ export default class ServerConnector {
 
         // receive map info
         this.socket.on('map', (mapName) => {
-            this.engine.modelManager.registerModel('map', '../gltf/maps/' + mapName)
+            this.engine.modelManager.registerModel('map', 'assets/gltf/maps/' + mapName)
         })
 
         // send username to socket

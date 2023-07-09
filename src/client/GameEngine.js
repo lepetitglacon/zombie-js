@@ -54,9 +54,9 @@ export default class GameEngine extends EventTarget {
 
         this.soundManager = new SoundManager()
         this.modelManager = new ModelManager()
-        this.modelManager.registerModel('soldier', '../gltf/Soldier.glb')
-        this.modelManager.registerModel('player', '../gltf/player.glb')
-        this.modelManager.registerModel('object-max_ammo', '../gltf/objects/max_ammo.glb')
+        this.modelManager.registerModel('soldier', 'assets/gltf/Soldier.glb')
+        this.modelManager.registerModel('player', 'assets/gltf/player.glb')
+        this.modelManager.registerModel('object-max_ammo', 'assets/gltf/objects/max_ammo.glb')
 
         this.inputManager = new InputManager()
         this.serverConnector = new ServerConnector()
