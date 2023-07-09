@@ -1,11 +1,11 @@
 import * as THREE from "three";
 
 // assets
-import "../../client/assets/sound/gunshot.wav"
-import "../../client/assets/sound/gunreload.mp3"
-import "../../client/assets/sound/knife.wav"
-import "../../client/assets/sound/wave/start.wav"
-import "../../client/assets/sound/wave/end.wav"
+// import "../../client/assets/sound/gunshot.wav"
+// import "../../client/assets/sound/gunreload.mp3"
+// import "../../client/assets/sound/knife.wav"
+// import "../../client/assets/sound/wave/start.wav"
+// import "../../client/assets/sound/wave/end.wav"
 
 export default class SoundManager {
 

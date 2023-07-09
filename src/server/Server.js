@@ -19,9 +19,12 @@ dotenv.config()
 
 export default class Server {
 
+    static __filename = fileURLToPath(import.meta.url);
+    static __dirname = dirname(this.__filename);
+
     constructor(props) {
-        this.__filename = fileURLToPath(import.meta.url);
-        this.__dirname = dirname(this.__filename);
+        // this.__filename = fileURLToPath(import.meta.url);
+        // this.__dirname = dirname(this.__filename);
 
         this.isOnlineMode = props.online ?? false
 
@@ -39,7 +42,7 @@ export default class Server {
         this.app.use('/game', express.static('dist'));
 
         this.app.set('view engine', 'ejs');
-        this.app.set('views', this.__dirname + '/views/');
+        this.app.set('views', Server.__dirname + '/views/');
 
         this.app.use(session({
             name: 'z3d-connect',

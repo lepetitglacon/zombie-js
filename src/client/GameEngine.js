@@ -1,22 +1,22 @@
 // assets
-import "./assets/css/style.css"
-import "./assets/img/zombie-hand.png"
-import "./assets/img/crosshair.png"
-import "./assets/img/enter.png"
-import "./assets/img/loader.gif"
-import "./assets/img/loader2.gif"
-
-import "./assets/img/map-preview/flora_square.jpg"
-
-import "./assets/img/weapons/pistol/fpsview.png"
-import "./assets/img/weapons/smg/mp40.png"
-import "./assets/img/weapons/knife/knife.png"
-
-import "./assets/gltf/Soldier.glb"
-import "./assets/gltf/player.glb"
-import "./assets/gltf/objects/max_ammo.glb"
-
-import "./assets/fonts/HelpMe.ttf"
+import "../server/resources/css/style.css"
+// import "./assets/img/zombie-hand.png"
+// import "./assets/img/crosshair.png"
+// import "./assets/img/enter.png"
+// import "./assets/img/loader.gif"
+// import "./assets/img/loader2.gif"
+//
+// import "./assets/img/map-preview/flora_square.jpg"
+//
+// import "./assets/img/weapons/pistol/fpsview.png"
+// import "./assets/img/weapons/smg/mp40.png"
+// import "./assets/img/weapons/knife/knife.png"
+//
+// import "./assets/gltf/Soldier.glb"
+// import "./assets/gltf/player.glb"
+// import "./assets/gltf/objects/max_ammo.glb"
+//
+// import "./assets/fonts/HelpMe.ttf"
 
 import Game from "./Game.js";
 import ModelManager from "./managers/ModelManager.js";

@@ -4,6 +4,7 @@ import path from "path";
 import fs from "fs";
 import User from "../../database/models/UserModel.js";
 import Game from "../../services/game/Game.js";
+import Server from "../../Server.js";
 
 export default class LobbyRoutes {
 
@@ -48,7 +49,7 @@ export default class LobbyRoutes {
          * Send available maps
          */
         ZombieServer.app.get('/lp/maps', (req, res) => {
-            fs.readdir(path.join(ZombieServer.__dirname, '../../src/client/assets/gltf/maps'), (err, data) => {
+            fs.readdir(path.join(Server.__dirname, './resources/gltf/maps'), (err, data) => {
                 return res.json(data);
             })
         })

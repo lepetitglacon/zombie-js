@@ -43,6 +43,7 @@ export default class ClientConnector {
         this.socket.to(this.roomId).emit('player_connect', {
             socketId: this.socket.id,
             username: this.user.username,
+            gamename: this.user.gamename,
             position: this.position,
             color: this.color,
             points: this.points

@@ -8,7 +8,7 @@ import {VertexNormalsHelper} from "three/addons/helpers/VertexNormalsHelper.js";
 import Door from "../Door/Door.js";
 
 // assets
-import "../../assets/gltf/maps/flora_square.glb"
+// import "../../assets/gltf/maps/flora_square.glb"
 // import "../../assets/img/skyboxes/interstellar_skybox/xpos.png"
 // import "../../assets/img/skyboxes/interstellar_skybox/xneg.png"
 // import "../../assets/img/skyboxes/interstellar_skybox/ypos.png"

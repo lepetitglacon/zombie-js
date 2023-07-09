@@ -9,6 +9,7 @@ import UserController from "../controllers/UserController.js";
 import Game from "../services/game/Game.js";
 import AuthRoutes from "./auth/AuthRoutes.js";
 import LobbyRoutes from "./lobby/LobbyRoutes.js";
+import Server from "../Server.js";
 
 
 export default class RouteHandler {
@@ -88,12 +89,12 @@ export default class RouteHandler {
                         user = 'offline'
                     }
 
-                    ZombieServer.app.set('views', path.join(ZombieServer.__dirname, '../../dist/'));
+                    ZombieServer.app.set('views', path.join(Server.__dirname, '../../dist/'));
                     res.render('index', {
                         game: game,
                         user: user,
                     })
-                    ZombieServer.app.set('views', ZombieServer.__dirname + '\\views\\');
+                    ZombieServer.app.set('views', Server.__dirname + '/views/');
                 } else {
                     res.redirect('/')
                 }

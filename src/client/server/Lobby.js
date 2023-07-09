@@ -135,7 +135,12 @@ export default class Lobby {
     }
 
     async buildMapSelector() {
-        const maps = await fetch('')
+        const res = await fetch('/lp/maps')
+        const maps = await res.json()
+
+        for (const map of maps) {
+
+        }
     }
 
     hide() {

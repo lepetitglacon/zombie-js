@@ -1,7 +1,9 @@
 import WaveHandler from "./wave/WaveHandler.js";
+import Server from "../../Server.js";
 import fs from "fs";
 import ZombieFactory from "../../../common/factory/ZombieFactory.js";
 import NodeThreeExporter from "@injectit/threejs-nodejs-exporters";
+import path from "path";
 
 export default class Game {
 
@@ -177,7 +179,7 @@ export default class Game {
     }
 
     parseMap() {
-        const file = fs.readFileSync('./src/client/assets/gltf/maps/' + this.mapName)
+        const file = fs.readFileSync(path.join(Server.__dirname, './resources/gltf/maps/' + this.mapName))
 
         this.loader.parse('glb', file,
             (gltf) => {
