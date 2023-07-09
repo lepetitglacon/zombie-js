@@ -55,6 +55,17 @@
 
 
         <div class="row">
+
+            <% if(user.isAdmin) { %>
+
+                <div class="col">
+                    <h2>Admin routes</h2>
+                    <a href="/admin/maps">Admin Maps</a>
+                </div>
+
+            <% } %>
+
+
             <div class="col">
 
                 <div class="input-group mb-3">

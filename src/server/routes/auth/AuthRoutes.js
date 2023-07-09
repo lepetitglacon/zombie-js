@@ -141,8 +141,6 @@ export default class AuthRoutes {
         ZombieServer.app.post('/register', bodyParser.urlencoded({ extended: false }), async (req, res) => {
             const { username, gamename, password } = req.body;
 
-            console.log(username, gamename, password)
-
             if (username !== '' && password !== '') {
                 try {
                     let user = await User.findOne({ username })

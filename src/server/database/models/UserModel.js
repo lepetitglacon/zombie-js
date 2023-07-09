@@ -1,11 +1,13 @@
 import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema({
-    username: { type: String, unique: true },
-    gamename: String,
-    password: String,
-    googleId: String,
-    googleToken: String
-});
+        username: { type: String, unique: true },
+        gamename: String,
+        password: String,
+        googleId: String,
+        googleToken: String,
+        isAdmin: Boolean,
+    },
+    { collection : 'users' });
 
 export default mongoose.model('User', userSchema);

@@ -18,6 +18,7 @@ import "../server/resources/css/style.css"
 //
 // import "./assets/fonts/HelpMe.ttf"
 
+
 import Game from "./Game.js";
 import ModelManager from "./managers/ModelManager.js";
 import SoundManager from "./managers/SoundManager.js";

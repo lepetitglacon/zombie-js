@@ -7,7 +7,6 @@ import { dirname } from 'path';
 import {Server as SocketServer} from "socket.io";
 import RouteHandler from "./routes/RouteHandler.js";
 import Game from "./services/game/Game.js";
-import PlayerFactory from "../common/factory/PlayerFactory.js";
 import passport from "passport";
 import session from "express-session";
 
@@ -38,8 +37,10 @@ export default class Server {
         this.GAMES = new Map()
 
         this.app.use(cors())
-        this.app.use(express.static('dist/src/client/assets'));
+        // this.app.use(express.static('dist/src/client/assets'));
+        // this.app.use('/', express.static(Server.__dirname + '/resources'));
         this.app.use('/game', express.static('dist'));
+        this.app.use('/game/assets', express.static(Server.__dirname + '/resources'));
 
         this.app.set('view engine', 'ejs');
         this.app.set('views', Server.__dirname + '/views/');

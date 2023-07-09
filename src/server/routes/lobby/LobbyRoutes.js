@@ -18,7 +18,6 @@ export default class LobbyRoutes {
 
         ZombieServer.app.get('/lobbies', (req, res) => {
             if (req.isAuthenticated()) {
-                console.log(req.session.passport.user)
                 res.render('lobby', {
                     user: req.session.passport.user
                 });
@@ -57,7 +56,6 @@ export default class LobbyRoutes {
         ZombieServer.app.post('/player/username/set', async (req, res) => {
             if (req.isAuthenticated()) {
                 let user = await User.findOne({_id: req.session.passport.user._id})
-                console.log(req.body)
                 if (user && req.body.gamename) {
                     user.gamename = req.body.gamename
                     await user.save()

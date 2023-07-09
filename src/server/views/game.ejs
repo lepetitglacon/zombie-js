@@ -40,15 +40,24 @@
                         <!-- map slider -->
                         <div id="lobby-map-carousel" class="carousel slide">
                             <div class="carousel-inner">
-                                <div class="carousel-item active" data-map-name="Flora Square">
-                                    <img src="../img/map-preview/flora_square.jpg" class="d-block carousel-img" alt="...">
-                                </div>
-                                <div class="carousel-item" data-map-name="Jambon de porc">
-                                    <img src="../img/map-preview/flora_square.jpg" class="d-block carousel-img" alt="...">
-                                </div>
-                                <div class="carousel-item" data-map-name="RaspberryPi">
-                                    <img src="../img/map-preview/flora_square.jpg" class="d-block carousel-img" alt="...">
-                                </div>
+
+                                <%
+                                if (maps.length > 0) {
+                                    for (const map of maps) {
+                                        if (map.playable) {
+                                %>
+
+                                    <div class="carousel-item active" data-map-name="<%= map.name %>>">
+                                        <img src="assets/img/map-preview/<%= map.preview %>" class="d-block carousel-img" alt="...">
+                                    </div>
+
+                                <%
+                                        }
+                                    }
+                                }
+                                %>
+
+
                             </div>
                             <button class="carousel-control-prev" type="button" data-bs-target="#lobby-map-carousel" data-bs-slide="prev">
                                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -96,15 +105,23 @@
             <!-- map slider -->
             <div id="lobby-main-map-carousel" class="carousel slide">
                 <div class="carousel-inner">
-                    <div class="carousel-item active" >
-                        <img src="../img/map-preview/flora_square.jpg" class="d-block carousel-main-img"  alt="...">
-                    </div>
-                    <div class="carousel-item" >
-                        <img src="../img/map-preview/flora_square.jpg" class="d-block carousel-main-img"  alt="...">
-                    </div>
-                    <div class="carousel-item" >
-                        <img src="../img/map-preview/flora_square.jpg" class="d-block carousel-main-img"  alt="...">
-                    </div>
+
+                    <%
+                    if (maps.length > 0) {
+                        for (const map of maps) {
+                            if (map.playable) {
+                    %>
+
+                        <div class="carousel-item active">
+                            <img src="assets/img/map-preview/<%= map.preview %>" class="d-block carousel-img" alt="...">
+                        </div>
+
+                    <%
+                                }
+                            }
+                        }
+                    %>
+
                 </div>
             </div>
         </div>
