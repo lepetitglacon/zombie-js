@@ -31,7 +31,7 @@ export default class Game {
         this.map = undefined
 
         this.loader = new NodeThreeExporter()
-        this.parseMap()
+
 
         this.PLAYERS = new Map()
         this.ZOMBIES = new Map()
@@ -42,6 +42,9 @@ export default class Game {
     }
 
     run() {
+
+        this.parseMap()
+
         this.status = Game.STATUS.RUNNING
 
         console.log('[GAME] game started : ' + this.roomId)

@@ -58,10 +58,12 @@ export default class GameRoutes {
             let user = req.session.passport.user
 
             ZombieServer.app.set('views', path.join(Server.__dirname, '../../dist/'));
+            const maps = await GameMap.find({})
+            console.log('available maps', maps)
             res.render('index', {
                 game: game,
                 user: user,
-                maps: await GameMap.find({})
+                maps: maps
             })
             ZombieServer.app.set('views', Server.__dirname + '/views/');
         })

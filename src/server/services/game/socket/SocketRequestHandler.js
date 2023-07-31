@@ -11,7 +11,6 @@ export default class SocketRequestHandler {
 
         this.roomId = this.socket.handshake.query.roomId;
         this.userId = this.socket.handshake.query.userId;
-        console.log('user ID from client ' + this.userId)
 
         this.getUserFromDB_().then(() => {
             console.log(this.user)

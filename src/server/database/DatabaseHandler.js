@@ -15,5 +15,8 @@ export default class DatabaseHandler {
         }
     }
 
+    async connect() {
+        return this.connector.connect()
+    }
 
 }

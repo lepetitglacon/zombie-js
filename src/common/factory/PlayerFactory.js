@@ -18,12 +18,10 @@ export default class PlayerFactory {
 
     static createClientConnector(player) {
 
-
-        console.log('game players size : ' + player.game.PLAYERS.size)
-        console.log('color : ' + this.playerColors[player.game.PLAYERS.size])
+        // console.log('game players size : ' + player.game.PLAYERS.size)
+        // console.log('color : ' + this.playerColors[player.game.PLAYERS.size])
         player.color = this.playerColors[player.game.PLAYERS.size]
         player.position = this.playerPosition[player.game.PLAYERS.size]
-
 
         return new ClientConnector(player)
     }

@@ -22,8 +22,9 @@ export default class Server {
     static __dirname = dirname(this.__filename);
 
     constructor(props) {
-        // this.__filename = fileURLToPath(import.meta.url);
-        // this.__dirname = dirname(this.__filename);
+        console.log('[SERVER] Starting server')
+
+        this.configuration = props
 
         this.isOnlineMode = props.online ?? false
 
@@ -31,8 +32,6 @@ export default class Server {
         this.app = express()
         this.server = http.createServer(this.app)
         this.io = new SocketServer(this.server);
-
-        this.dbHandler = new DatabaseHandler(props)
 
         this.GAMES = new Map()
 
@@ -70,7 +69,10 @@ export default class Server {
         })
     }
 
-    run() {
+    async run() {
+        this.dbHandler = await new DatabaseHandler(this.configuration)
+        await this.dbHandler.connect()
+
         this.routes = new RouteHandler()
 
         this.getAvailableNetworks_()
