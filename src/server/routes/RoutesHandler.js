@@ -9,7 +9,7 @@ import AdminMapRoutes from "./admin/map/AdminMapRoutes.js";
 import GameRoutes from "./game/GameRoutes.js";
 
 
-export default class RouteHandler {
+export default class RoutesHandler {
 
     constructor() {
         dotenv.config()

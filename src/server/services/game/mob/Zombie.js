@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import Utils from "../../../../common/Utils.js";
-import MovementManager from "../../../../common/MovementManager.js";
+import Utils from "../../../Utils.js";
+import MovementManager from "./MovementManager.js";
 
 export default class Zombie {
 

@@ -8,7 +8,7 @@ const config = {
     height: 1.3,
     depth: .3,
 }
-export default class ClientZombie {
+export default class Zombie {
     constructor(zombie) {
         this.id = zombie.id
 

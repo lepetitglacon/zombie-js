@@ -20,7 +20,7 @@
 
     <div id="lobby-left" class="col d-flex flex-column justify-content-start">
 
-        <div>
+        <div class="row">
             <div id="lobby-room-name-div" class="row">
                 <h2 id="lobby-room-name" class="red"><%= game.name %></h2>
             </div>
@@ -29,11 +29,8 @@
             </div>
         </div>
 
-        <div id="lobby-form" class="container">
-
-            <div class="row">
-
-                <div class="col-1"></div>
+        <div class="row">
+            <div id="lobby-form" class="container">
                 <div class="col">
 
                     <form>
@@ -41,22 +38,17 @@
                         <div id="lobby-map-carousel" class="carousel slide">
                             <div class="carousel-inner">
 
-                                <%
-                                if (maps.length > 0) {
+                                <%if (maps.length > 0) {
                                     for (const map of maps) {
-                                        if (map.playable) {
-                                %>
-
+                                        if (map.playable) {%>
                                     <div class="carousel-item <%= 'active' %>" data-map-name="<%= map.name %>>">
                                         <img src="assets/img/map-preview/<%= map.preview %>" class="d-block carousel-img" alt="...">
                                     </div>
-
-                                <%
-                                        }
+                                    <% }
                                     }
-                                }
-                                %>
-
+                                } else { %>
+                                    <p>No map found</p>
+                                <%}%>
 
                             </div>
                             <button class="carousel-control-prev" type="button" data-bs-target="#lobby-map-carousel" data-bs-slide="prev">
@@ -70,21 +62,24 @@
                         </div>
 
                         <!-- modifier -->
-                        <div class="d-flex justify-content-center mb-5">
-                            <% if(game.owner === user._id || !game.isOnlineMode){ %>
-                                <button id="lobby-start_game" data-url="/game/start/<%= game.roomId %>" type="submit" class="btn btn-red">Start</button>
-                            <% } else{ %>
-                                <button id="lobby-player-ready" data-url="/game/start/<%= game.roomId %>" type="submit" class="btn btn-red">Ready</button>
-                            <% } %>
 
-
-                        </div>
                     </form>
-
                 </div>
-                <div class="col-1"></div>
-
             </div>
+
+            <div class="row">
+                <div class="d-flex justify-content-around mb-5">
+                    <a id="lobby-leave" href="/lobby" class="btn btn-red">Leave</a>
+
+                    <% if(game.owner === user._id || !game.isOnlineMode){ %>
+                        <button id="lobby-start_game" data-url="/game/start/<%= game.roomId %>" type="submit" class="btn btn-red">Start</button>
+                    <% } else{ %>
+                        <button id="lobby-player-ready" data-url="/game/start/<%= game.roomId %>" type="submit" class="btn btn-red">Ready</button>
+                    <% } %>
+                </div>
+            </div>
+
+
         </div>
     </div>
 

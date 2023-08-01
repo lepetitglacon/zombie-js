@@ -1,4 +1,4 @@
-import ZombieFactory from "../../../../common/factory/ZombieFactory.js";
+import ZombieFactory from "../mob/ZombieFactory.js";
 import ObjectSpawner from "./ObjectSpawner.js";
 
 export default class WaveHandler {

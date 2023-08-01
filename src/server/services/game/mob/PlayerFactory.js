@@ -1,4 +1,4 @@
-import ClientConnector from "../../server/services/game/ClientConnector.js";
+import ClientConnector from "../ClientConnector.js";
 import {Vector3} from "three";
 
 export default class PlayerFactory {

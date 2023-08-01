@@ -80,7 +80,6 @@
 
             <div class="row">
                 <div class="col">
-
                     <div class="input-group mb-3">
                         <button class="btn btn-danger" type="button" id="create-game-button">Create room</button>
                         <input id="create-game-title" type="text" class="form-control" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
@@ -90,13 +89,6 @@
                             <input id="create-game-private" class="form-check-input mt-0" type="checkbox" value="" aria-label="Checkbox for following text input">
                         </div>
                     </div>
-
-                    <!--                <label class="form-label" for="create-game-map">Map</label>-->
-                    <!--                <div class="input-group mb-3">-->
-                    <!--                    <select class="form-select" name="create-game-map" id="create-game-map">-->
-                    <!--                        <option value="">Chose a map</option>-->
-                    <!--                    </select>-->
-                    <!--                </div>-->
                 </div>
             </div>
 
@@ -166,14 +158,33 @@
         }
     })
 
-    createGameButton.addEventListener('click', (e) => {
+    /**
+     * Start game request
+     */
+    createGameButton.addEventListener('click', async (e) => {
         e.preventDefault()
-        if (
-            createGameTitle.value !== ''
-        ) {
-            window.location.assign('/game/create/' + createGameTitle.value + '/' + createGamePrivate.checked)
+
+        if (createGameTitle.value === '')
+            return;
+
+        const res = await fetch('/game/create', {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                name: createGameTitle.value,
+                private: createGamePrivate.checked
+            })
+        })
+        const data = await res.json()
+
+        if (data.gameId === undefined) {
+            // TODO flashMessage
+            return
         }
 
+        window.location.assign('/game/' + data.gameId)
     })
 
     function refresh() {

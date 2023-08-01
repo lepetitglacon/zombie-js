@@ -5,7 +5,7 @@ import os from "os"
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import {Server as SocketServer} from "socket.io";
-import RouteHandler from "./routes/RouteHandler.js";
+import RoutesHandler from "./routes/RoutesHandler.js";
 import Game from "./services/game/Game.js";
 import passport from "passport";
 import session from "express-session";
@@ -23,9 +23,7 @@ export default class Server {
 
     constructor(props) {
         console.log('[SERVER] Starting server')
-
         this.configuration = props
-
         this.isOnlineMode = props.online ?? false
 
         this.port = 3000
@@ -34,6 +32,7 @@ export default class Server {
         this.io = new SocketServer(this.server);
 
         this.GAMES = new Map()
+        this.USERS = new Map()
 
         this.app.use(cors())
         // this.app.use(express.static('dist/src/client/assets'));
@@ -73,9 +72,9 @@ export default class Server {
         this.dbHandler = await new DatabaseHandler(this.configuration)
         await this.dbHandler.connect()
 
-        this.routes = new RouteHandler()
+        new RoutesHandler()
 
-        this.getAvailableNetworks_()
+        await this.getAvailableNetworks_()
 
         this.server.listen(this.port, () => {
             console.log()
@@ -87,12 +86,10 @@ export default class Server {
             console.log()
 
             this.io.on('connection', (socket) => {
-
-                const srh = new SocketRequestHandler({
+                new SocketRequestHandler({
                     server: this,
                     socket: socket
                 })
-
             });
         })
     }
@@ -105,10 +102,15 @@ export default class Server {
     createGame(props) {
         let id = this.getRandomId_(10)
 
-        let game = new Game({roomId: id, server: this.io, map: props.map, online: this.isOnlineMode})
-        game.name = props.name
-        game.private = props.private
-        game.owner = props.owner ?? null
+        let game = new Game({
+            name: props.name,
+            private: props.private,
+            owner: props.owner ?? null,
+            map: props.map,
+            roomId: id,
+            server: this.io,
+            online: this.isOnlineMode
+        })
 
         this.GAMES.set(id, game)
 
@@ -133,6 +135,16 @@ export default class Server {
         }
     }
 
+    /**
+     * Delete a game
+     * @param gameId
+     */
+    deleteGame(gameId) {
+        if (this.GAMES.has(gameId)) {
+            this.GAMES.delete(gameId)
+        }
+    }
+
     getRandomId_(length = 10) {
         let result = '';
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -145,7 +157,7 @@ export default class Server {
         return result;
     }
 
-    getAvailableNetworks_() {
+    async getAvailableNetworks_() {
         const nets = os.networkInterfaces();
         this.ipAddresses = new Map();
         for (const name of Object.keys(nets)) {

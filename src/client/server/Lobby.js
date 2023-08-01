@@ -21,6 +21,13 @@ export default class Lobby {
             console.table(['[SOCKET] connected'])
         })
 
+        let btnLeave = document.getElementById('lobby-leave')
+        if (btnLeave !== null) {
+            btnLeave.addEventListener("click", (e) => {
+                this.serverConnector.socket.disconnect()
+            })
+        }
+
         let btn = document.getElementById('lobby-start_game')
         if (btn !== null) {
             let url = btn.dataset.url
@@ -125,7 +132,6 @@ export default class Lobby {
         this.serverConnector.socket.on('player_disconnect', (socketId) => {
             console.log('player disconnected')
             const li = document.getElementById('lobby-player-' + socketId)
-            console.log(li)
             if (li !== null) {
                 li.remove()
             }

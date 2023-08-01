@@ -1,5 +1,5 @@
-import ServerZombie from "../../server/services/game/mob/Zombie.js";
-import ClientZombie from "../../client/mob/ClientZombie.js";
+import ServerZombie from "./Zombie.js";
+import Zombie from "../../../../client/mob/Zombie.js";
 import * as THREE from "three";
 
 export default class ZombieFactory {
@@ -13,7 +13,7 @@ export default class ZombieFactory {
     }
 
     static createClientZombie(zombie) {
-        return new ClientZombie(zombie)
+        return new Zombie(zombie)
     }
 
     static createServerZombie(roomId) {

@@ -27,13 +27,17 @@ export default class ClientConnector {
 
         this.init()
         this.bind()
-        console.log(`[PLAYER][CONNECTED] ${this.socket.id} (${this.user.username}) connected to room ${this.roomId}`)
+        console.log(`[${this.roomId}][PLAYER][CONNECTED] ${this.socket.id} (${this.user.username}) connected to room ${this.roomId}`)
     }
 
     init() {
 
         this.socket.on('connect', () => {
             console.warn('[SOCKET] connected')
+        })
+
+        this.socket.on('disconnect', () => {
+            console.warn('[SOCKET] disconnected')
         })
 
 
@@ -127,9 +131,21 @@ export default class ClientConnector {
         // disconnect
         this.socket.on('disconnect', () => {
             if (this.game.PLAYERS.has(this.socket)) {
+
+                const player = this.game.PLAYERS.get(this.socket)
+
+                console.log(this.game.ownerId)
+                // console.log(player)
+
+                if (this.game.ownerId === player._id) {
+                    ZombieServer.deleteGame(this.game)
+                }
+
                 this.socket.to(this.roomId).emit('player_disconnect', this.socket.id)
                 this.game.PLAYERS.delete(this.socket)
                 console.log(`[DISCONNECT] ${this.socket.id} disconnected`);
+
+
             }
         })
 

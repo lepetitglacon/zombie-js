@@ -12,37 +12,53 @@ export default class GameRoutes {
 
     bind() {
         // create game
-        ZombieServer.app.get('/create/:name/:map/:private', (req, res) => {
+        // ZombieServer.app.get('/create/:name/:map/:private', (req, res) => {
+        //
+        //     if (req.isAuthenticated()) {
+        //         res.redirect(`/game/${ZombieServer.createGame({
+        //                 name: req.params.name,
+        //                 map: req.params.map,
+        //                 private: req.params.private === 'true'
+        //             }
+        //         )}`)
+        //     } else {
+        //         res.redirect('/')
+        //     }
+        // })
 
-            if (req.isAuthenticated()) {
-                res.redirect(`/game/${ZombieServer.createGame({
-                        name: req.params.name,
-                        map: req.params.map,
-                        private: req.params.private === 'true'
-                    }
-                )}`)
-            } else {
-                res.redirect('/')
-            }
-
-        })
-
-        // create game
-        ZombieServer.app.get('/game/create/:name/:private', (req, res) => {
-
+        /**
+         * Create a game
+         */
+        ZombieServer.app.post('/game/create', (req, res) => {
             if (!req.isAuthenticated())
                 return res.redirect('/')
 
-            let owner = req.session.passport.user._id
-            res.redirect(`/game/${ZombieServer.createGame({
-                    name: req.params.name,
-                    owner: owner,
-                    private: req.params.private === 'true'
-                }
-            )}`)
+            let ownerId = req.session.passport.user._id
+
+            const gameId = ZombieServer.createGame({
+                name: req.body.name,
+                ownerId: ownerId,
+                private: req.body.private
+            })
+
+            res.json({
+                gameId: gameId
+            })
         })
 
-        // play game
+        /**
+         * Start an existing game
+         */
+        ZombieServer.app.get('/game/start/:id', (req, res) => {
+            if (!req.isAuthenticated())
+                res.redirect('/')
+
+            res.json({succes: ZombieServer.startGame(req.params.id)})
+        })
+
+        /**
+         * Play on an existing game
+         */
         ZombieServer.app.get('/game/:id', async (req, res) => {
             if (!req.isAuthenticated())
                 return res.redirect('/')
@@ -58,23 +74,12 @@ export default class GameRoutes {
             let user = req.session.passport.user
 
             ZombieServer.app.set('views', path.join(Server.__dirname, '../../dist/'));
-            const maps = await GameMap.find({})
-            console.log('available maps', maps)
             res.render('index', {
                 game: game,
                 user: user,
-                maps: maps
+                maps: await GameMap.find({})
             })
             ZombieServer.app.set('views', Server.__dirname + '/views/');
-        })
-
-        // start game
-        ZombieServer.app.get('/game/start/:id', (req, res) => {
-            if (req.isAuthenticated()) {
-                res.json({succes: ZombieServer.startGame(req.params.id)})
-            } else {
-                res.redirect('/')
-            }
         })
     }
 }

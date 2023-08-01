@@ -1,4 +1,4 @@
-import PlayerFactory from "../../../../common/factory/PlayerFactory.js";
+import PlayerFactory from "../mob/PlayerFactory.js";
 import Game from "../Game.js";
 import UserModel from "../../../database/models/UserModel.js";
 
@@ -12,8 +12,12 @@ export default class SocketRequestHandler {
         this.roomId = this.socket.handshake.query.roomId;
         this.userId = this.socket.handshake.query.userId;
 
+        if (this.server.USERS.has(this.userId))
+            this.socket.disconnect(true)
+
+        this.server.USERS.set(this.userId, )
+
         this.getUserFromDB_().then(() => {
-            console.log(this.user)
             this.handleRequest()
         })
     }

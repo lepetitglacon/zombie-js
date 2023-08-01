@@ -69,7 +69,6 @@ export default class AdminMapRoutes {
             if (!req.isAuthenticated())
                 return res.redirect('/')
 
-            console.log(req.body)
             let response = await GameMap.deleteOne({_id: req.body._id})
             console.log(`[ADMIN][MAP] map ${req.body.mapName} deleted`)
             return res.json(response)

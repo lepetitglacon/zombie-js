@@ -1,7 +1,7 @@
 import WaveHandler from "./wave/WaveHandler.js";
 import Server from "../../Server.js";
 import fs from "fs";
-import ZombieFactory from "../../../common/factory/ZombieFactory.js";
+import ZombieFactory from "./mob/ZombieFactory.js";
 import NodeThreeExporter from "@injectit/threejs-nodejs-exporters";
 import path from "path";
 
@@ -16,9 +16,11 @@ export default class Game {
     constructor(props) {
         this.io = props.server
 
-        this.private = false
+        this.name = props.name
+        this.private = props.private
+        this.mapName = props.map
         this.roomId = props.roomId
-
+        this.ownerId = props.ownerId
         this.isOnlineMode = props.online
 
         this.status = Game.STATUS.PAUSED
@@ -26,8 +28,6 @@ export default class Game {
         this.tickRate = 60
         this.prevTime = Date.now();
 
-        this.name = ''
-        this.mapName = props.map ?? 'flora_square.glb'
         this.map = undefined
 
         this.loader = new NodeThreeExporter()
@@ -58,7 +58,7 @@ export default class Game {
 
             if (this.PLAYERS.size > 0) {
 
-                // update ClientZombie life
+                // update Zombie life
                 for (const [id, zombie] of this.ZOMBIES) {
                     if (zombie.health <= 0) {
                         this.waveHandler.killzombie(id)
@@ -68,7 +68,7 @@ export default class Game {
                 // spawn zombies
                 this.waveHandler.update()
 
-                // update ClientZombie movement
+                // update Zombie movement
                 for (const [key, zombie] of this.ZOMBIES) {
                     zombie.moveToClosestPlayer()
                     zombie.repulseOtherZombies()
