@@ -3,6 +3,7 @@ import Player from "../mob/Player.js";
 import ZombieFactory from "../../server/services/game/mob/ZombieFactory.js";
 import Utils from "../../server/Utils.js";
 import ZombieEvents from "./events/ZombieEvents.js";
+import Zombie from "../mob/Zombie.js";
 
 export default class ServerConnector {
 
@@ -23,7 +24,7 @@ export default class ServerConnector {
         this.socket.on("connect", () => {
             console.log('[SOCKET] connected to room : ' + this.roomId)
 
-            new ZombieEvents(this)
+            this.zombieEvents = new ZombieEvents(this)
 
 
 
@@ -33,6 +34,7 @@ export default class ServerConnector {
 
     init() {
         this.engine = window.ZombieGame
+        this.zombieEvents.init()
 
         // receive map info
         this.socket.on('map', (mapName) => {
@@ -92,7 +94,7 @@ export default class ServerConnector {
                 console.log('[ZOMBIES] Zombies already spawned ', zombies)
                 for (const i in zombies) {
                     if (!this.engine.game.ZOMBIES.get(zombies[i].id)) {
-                        this.engine.game.ZOMBIES.set(zombies[i].id, ZombieFactory.createClientZombie(zombies[i]))
+                        this.engine.game.ZOMBIES.set(zombies[i].id, new Zombie(zombies[i]))
                     }
                 }
             })

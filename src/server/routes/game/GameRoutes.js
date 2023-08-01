@@ -11,20 +11,6 @@ export default class GameRoutes {
     }
 
     bind() {
-        // create game
-        // ZombieServer.app.get('/create/:name/:map/:private', (req, res) => {
-        //
-        //     if (req.isAuthenticated()) {
-        //         res.redirect(`/game/${ZombieServer.createGame({
-        //                 name: req.params.name,
-        //                 map: req.params.map,
-        //                 private: req.params.private === 'true'
-        //             }
-        //         )}`)
-        //     } else {
-        //         res.redirect('/')
-        //     }
-        // })
 
         /**
          * Create a game
@@ -49,11 +35,15 @@ export default class GameRoutes {
         /**
          * Start an existing game
          */
-        ZombieServer.app.get('/game/start/:id', (req, res) => {
+        ZombieServer.app.post('/game/start', (req, res) => {
             if (!req.isAuthenticated())
-                res.redirect('/')
+                return res.redirect('/')
 
-            res.json({succes: ZombieServer.startGame(req.params.id)})
+            const succes = ZombieServer.startGame({
+                gameId: req.body.gameId,
+                mapName: req.body.mapName
+            })
+            return res.json({succes: succes})
         })
 
         /**

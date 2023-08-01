@@ -41,7 +41,7 @@
                                 <%if (maps.length > 0) {
                                     for (const map of maps) {
                                         if (map.playable) {%>
-                                    <div class="carousel-item <%= 'active' %>" data-map-name="<%= map.name %>>">
+                                    <div class="carousel-item <%= 'active' %>" data-map-name="<%= map.name %>" data-map-filename="<%= map.filename %>">
                                         <img src="assets/img/map-preview/<%= map.preview %>" class="d-block carousel-img" alt="...">
                                     </div>
                                     <% }
@@ -70,12 +70,12 @@
             <div class="row">
                 <div class="d-flex justify-content-around mb-5">
                     <a id="lobby-leave" href="/lobby" class="btn btn-red">Leave</a>
-
-                    <% if(game.owner === user._id || !game.isOnlineMode){ %>
-                        <button id="lobby-start_game" data-url="/game/start/<%= game.roomId %>" type="submit" class="btn btn-red">Start</button>
-                    <% } else{ %>
-                        <button id="lobby-player-ready" data-url="/game/start/<%= game.roomId %>" type="submit" class="btn btn-red">Ready</button>
-                    <% } %>
+                    <button
+                            id="lobby-<% if(game.ownerId === user._id){ %>start_game<% } else{ %>player-ready<% } %>"
+                            data-game-id="<%= game.roomId %>"
+                            type="submit"
+                            class="btn btn-red">
+                        <% if(game.ownerId === user._id){ %>Start<% } else{ %>Ready<% } %></button>
                 </div>
             </div>
 

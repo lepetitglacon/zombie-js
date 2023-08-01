@@ -1,16 +1,19 @@
 import * as THREE from "three";
+import Zombie from "../../mob/Zombie.js";
 
 export default class ZombieEvents {
 
     constructor(serverConnector) {
         this.serverConnector = serverConnector
+    }
 
+    init() {
         // get players position (update game state)
         this.serverConnector.socket.on('zombies_positions', (zombieList) => {
             for (const i in zombieList) {
                 const z = zombieList[i]
                 if (this.serverConnector.engine.game.ZOMBIES.has(z.id)) {
-                    const zombie = this.engine.game.ZOMBIES.get(z.id)
+                    const zombie = this.serverConnector.engine.game.ZOMBIES.get(z.id)
                     zombie.mesh.position.set(z.position.x, z.position.y, z.position.z)
                     let angle = Math.atan2(z.direction.z, z.direction.x)
                     zombie.mesh.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -angle - -(Math.PI / 2))
@@ -19,7 +22,7 @@ export default class ZombieEvents {
                         zombie.gltf.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -angle - -(Math.PI / 2))
                     }
                 } else {
-                    this.engine.game.ZOMBIES.set(z.id, ZombieFactory.createClientZombie(z))
+                    this.serverConnector.engine.game.ZOMBIES.set(z.id, new Zombie(z))
                 }
 
             }

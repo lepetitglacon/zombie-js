@@ -105,7 +105,7 @@ export default class Server {
         let game = new Game({
             name: props.name,
             private: props.private,
-            owner: props.owner ?? null,
+            ownerId: props.ownerId ?? null,
             map: props.map,
             roomId: id,
             server: this.io,
@@ -120,12 +120,14 @@ export default class Server {
 
     /**
      * Starts the game if exists
-     * @param gameId
      * @returns {boolean}
+     * @param props
      */
-    startGame(gameId) {
-        if (this.GAMES.has(gameId)) {
-            const game = this.GAMES.get(gameId)
+    startGame(props) {
+        if (this.GAMES.has(props.gameId)) {
+            const game = this.GAMES.get(props.gameId)
+            game.mapName = props.mapName
+
             if (game.status !== Game.STATUS.RUNNING) {
                 game.run()
             }

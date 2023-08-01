@@ -13,7 +13,7 @@ export default class ZombieFactory {
     }
 
     static createClientZombie(zombie) {
-        return new Zombie(zombie)
+        return
     }
 
     static createServerZombie(roomId) {

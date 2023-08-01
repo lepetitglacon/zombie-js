@@ -30,10 +30,26 @@ export default class Lobby {
 
         let btn = document.getElementById('lobby-start_game')
         if (btn !== null) {
-            let url = btn.dataset.url
-            btn.addEventListener("click", (e) => {
+            btn.addEventListener("click", async (e) => {
                 e.preventDefault()
-                fetch(url)
+
+                let gameId = btn.dataset.gameId
+                let mapName = $('#lobby-map-carousel .active')[0].dataset.mapFilename
+
+                console.log(mapName)
+
+                const res = await fetch('/game/start', {
+                    method: 'POST',
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        gameId: gameId,
+                        mapName: mapName
+                    })
+                })
+                const data = await res.json()
+                console.log(data)
             })
         }
 
