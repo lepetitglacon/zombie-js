@@ -32,7 +32,6 @@ export default class Game {
 
         this.loader = new NodeThreeExporter()
 
-
         this.PLAYERS = new Map()
         this.ZOMBIES = new Map()
         this.DOORS = new Map()

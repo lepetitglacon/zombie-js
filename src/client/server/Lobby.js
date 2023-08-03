@@ -15,7 +15,6 @@ export default class Lobby {
         this.loader.hide()
 
         this.setPlayers()
-        this.buildMapSelector()
 
         this.serverConnector.socket.on('connect', () => {
             console.table(['[SOCKET] connected'])
@@ -49,7 +48,6 @@ export default class Lobby {
                     })
                 })
                 const data = await res.json()
-                console.log(data)
             })
         }
 
@@ -132,53 +130,15 @@ export default class Lobby {
         const playerUl = document.getElementById('lobby-players-list')
         playerUl.innerHTML = ''
 
-        this.serverConnector.socket.on('get_players', (players) => {
-            console.log('[LOBBY] player already connected : ', players)
-            for (const player of players) {
-                this.createPlayerLi(player, playerUl)
-            }
-        })
 
-        this.serverConnector.socket.on('player_connect', (player) => {
-            console.log('[LOBBY] player connected : ' + player.socketId)
-            this.createPlayerLi(player, playerUl)
-
-        })
-
-        this.serverConnector.socket.on('player_disconnect', (socketId) => {
-            console.log('player disconnected')
-            const li = document.getElementById('lobby-player-' + socketId)
-            if (li !== null) {
-                li.remove()
-            }
-        })
 
         this.serverConnector.socket.emit('lobby_players')
-    }
-
-    async buildMapSelector() {
-        const res = await fetch('/lp/maps')
-        const maps = await res.json()
-
-        for (const map of maps) {
-
-        }
     }
 
     hide() {
         document.getElementById('lobby').classList.toggle('d-none')
     }
 
-    createPlayerLi(player, playerUl) {
-        const li = document.createElement('li')
-        li.innerText = player.gamename ?? player.username
-        li.id = 'lobby-player-' + player.socketId
-        li.classList.add('lobby-player')
 
-        let hexa = player.color.toString(16).toUpperCase();
-        li.style.color = '#' + hexa
-
-        playerUl.append(li)
-    }
 
 }

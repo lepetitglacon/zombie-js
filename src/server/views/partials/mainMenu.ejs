@@ -1,3 +1,44 @@
-<div>
-    <h1>MAIN MENU</h1>
+<style>
+
+    #main-menu li{
+        text-decoration: none;
+        list-style: none;
+
+        font-weight: bold;
+        font-size: 48px;
+
+
+    }
+    #main-menu a{
+        text-decoration: none;
+        list-style: none;
+        color: #eee;
+
+        transition: .2s ease-out;
+    }
+    #main-menu a:hover {
+        color: #880000;
+    }
+</style>
+
+<div id="main-menu">
+
+    <ul>
+        <li><a href="/">My profile</a></li>
+        <li><a href="/">Leaderboard</a></li>
+    </ul>
+
+    <% if(user.isAdmin) { %>
+        <p>Admin</p>
+        <ul>
+            <li><a href="/admin/maps">Manage maps</a></li>
+        </ul>
+    <% } %>
+
+    <ul>
+        <li><a href="/">Settings</a></li>
+        <li><a href="/">Logout</a></li>
+    </ul>
+
+
 </div>

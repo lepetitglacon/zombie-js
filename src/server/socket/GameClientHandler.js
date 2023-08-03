@@ -1,7 +1,7 @@
 import * as THREE from "three"
 
 
-export default class ClientConnector {
+export default class GameClientHandler {
 
     constructor(props) {
         this.socket = props.socket
@@ -25,21 +25,35 @@ export default class ClientConnector {
         this.points = 0
         this.allPoints = 0
 
+        console.log(`[${this.roomId}][PLAYER][CONNECTING] ${this.socket.id} (${this.user.username})`)
         this.init()
+        this.prepareLobby()
         this.bind()
-        console.log(`[${this.roomId}][PLAYER][CONNECTED] ${this.socket.id} (${this.user.username}) connected to room ${this.roomId}`)
+    }
+
+    prepareLobby() {
+        this.socket.join('/lobby/' + this.roomId)
+        this.socket.emit('get_players', this.game.preparePlayersToEmit(1))
+
+        this.socket.on('lobby-ready', (isReady) => {
+            console.log('received ready event')
+            // send lobby players to socket
+            this.socket.emit('get_players', this.game.preparePlayersToEmit(1))
+        })
+
+        this.socket.on('lobby-map-change', (e) => {
+            this.socket.broadcast.emit('lobby-map-change', e)
+        })
+
+        this.socket.on('lobby-chat', (e) => {
+            this.socket.broadcast.emit('lobby-map-change', e)
+        })
     }
 
     init() {
-
         this.socket.on('connect', () => {
-            console.warn('[SOCKET] connected')
+            console.log(`[${this.roomId}][PLAYER][CONNECTED] ${this.socket.id} (${this.user.username})`)
         })
-
-        this.socket.on('disconnect', () => {
-            console.warn('[SOCKET] disconnected')
-        })
-
 
         this.socket.join(this.roomId)
 
@@ -52,34 +66,6 @@ export default class ClientConnector {
             color: this.color,
             points: this.points
         })
-
-        this.socket.on('game-state', () => {
-            this.socket.emit('game-state', {
-                state: this.game.status,
-                map: this.game.mapName,
-            })
-        })
-
-        this.socket.on('lobby-ready', () => {
-            // send lobby players to socket
-            this.socket.emit('get_players', this.game.preparePlayersToEmit(1))
-        })
-
-        /**
-         * On player is ready in lobby
-         */
-        this.socket.on('lobby-player-ready', () => {
-            // TODO set player as ready to start game
-        })
-
-        /**
-         * On owner changes map
-         */
-        this.socket.on('lobby-map-change', (e) => {
-            this.socket.broadcast.emit('lobby-map-change', e)
-        })
-
-
 
         /**
          * On game ready
@@ -132,20 +118,9 @@ export default class ClientConnector {
         this.socket.on('disconnect', () => {
             if (this.game.PLAYERS.has(this.socket)) {
 
-                const player = this.game.PLAYERS.get(this.socket)
-
-                console.log(this.game.ownerId)
-                // console.log(player)
-
-                if (this.game.ownerId === player._id) {
-                    ZombieServer.deleteGame(this.game)
-                }
-
                 this.socket.to(this.roomId).emit('player_disconnect', this.socket.id)
                 this.game.PLAYERS.delete(this.socket)
-                console.log(`[DISCONNECT] ${this.socket.id} disconnected`);
-
-
+                console.log(`[${this.roomId}][PLAYER][DISCONNECTED] ${this.socket.id} (${this.user.username})`)
             }
         })
 

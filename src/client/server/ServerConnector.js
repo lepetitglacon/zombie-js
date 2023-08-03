@@ -16,7 +16,6 @@ export default class ServerConnector {
         },
     });
 
-
     constructor() {
         this.roomId = ServerConnector.roomId
         this.socket = ServerConnector.socket
@@ -25,8 +24,6 @@ export default class ServerConnector {
             console.log('[SOCKET] connected to room : ' + this.roomId)
 
             this.zombieEvents = new ZombieEvents(this)
-
-
 
 
         })

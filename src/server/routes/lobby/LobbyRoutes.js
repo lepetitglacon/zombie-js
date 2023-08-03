@@ -5,6 +5,7 @@ import fs from "fs";
 import User from "../../database/models/UserModel.js";
 import Game from "../../services/game/Game.js";
 import Server from "../../Server.js";
+import GameModel, {GameState} from "../../database/models/GameModel.js";
 
 export default class LobbyRoutes {
 
@@ -18,7 +19,7 @@ export default class LobbyRoutes {
 
         ZombieServer.app.get('/lobbies', (req, res) => {
             if (req.isAuthenticated()) {
-                res.render('lobby', {
+                res.render('lobbies', {
                     user: req.session.passport.user
                 });
             } else {
@@ -26,21 +27,8 @@ export default class LobbyRoutes {
             }
         })
 
-        ZombieServer.app.get('/lp/refresh', (req, res) => {
-            const games = []
-            let i = 0;
-            for (const [key, val] of ZombieServer.GAMES) {
-                if (val.private === false && val.status === Game.STATUS.PAUSED) {
-                    games[i] = {}
-                    games[i].id = key
-                    games[i].name = val.name ?? 'Untitled'
-                    games[i].map = val.mapName ?? 'No map'
-                    games[i].status = val.status
-                    games[i].players = val.PLAYERS.size
-                    games[i].ping = 25
-                    i++
-                }
-            }
+        ZombieServer.app.get('/lp/refresh', async (req, res) => {
+            const games = await GameModel.find({'state': GameState.LOBBY })
             res.json(games);
         })
 

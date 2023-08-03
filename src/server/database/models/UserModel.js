@@ -1,12 +1,16 @@
 import mongoose from 'mongoose';
 
-const userSchema = new mongoose.Schema({
+export const userSchema = new mongoose.Schema({
         username: { type: String, unique: true },
         gamename: String,
         password: String,
         googleId: String,
         googleToken: String,
         isAdmin: Boolean,
+        color: {
+                type: String,
+                default: 'FFFFFF'
+        }
     },
     { collection : 'users' });
 

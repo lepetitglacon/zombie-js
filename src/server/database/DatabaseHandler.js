@@ -3,8 +3,6 @@ import MongoConnector from "./connectors/MongoConnector.js";
 export default class DatabaseHandler {
 
     constructor(props) {
-
-
         switch (props.database.name) {
             case 'mongo':
                 this.connector = new MongoConnector(props)
