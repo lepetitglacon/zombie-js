@@ -21,6 +21,7 @@ export default class GameRoutes {
          * Create a game
          */
         ZombieServer.app.post('/api/game/create', async (req, res) => {
+            console.log(req.user)
             if (!req.isAuthenticated())
                 return res.json({success: false, message: 'Not authenticated'})
 

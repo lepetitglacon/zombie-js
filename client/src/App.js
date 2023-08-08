@@ -1,8 +1,9 @@
 import './App.css';
 
 import {useContext, useEffect, useState} from "react";
-import {Routes, Route, useNavigate} from "react-router-dom";
-import Cookies  from "js-cookie";
+import {Routes, Route, useNavigate, useLocation, useParams, useSearchParams} from "react-router-dom";
+
+import AuthContext from "./context/AuthContext";
 
 import MainMenu from "./components/menu/MainMenu";
 import MainLobby from "./components/mainlobby/MainLobby";
@@ -13,13 +14,39 @@ import Auth from "./components/auth/Auth";
 import Login from "./components/auth/login/Login";
 import Signin from "./components/auth/signin/Signin";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
-import axios from "axios";
-import LogoutButton from "./components/auth/logout/LogoutButton";
-import AuthContext from "./context/AuthContext";
 
 function App() {
 
-    const {user} = useContext(AuthContext)
+    const {user, setUser} = useContext(AuthContext)
+
+    const location = useLocation()
+    const navigate = useNavigate()
+    let [searchParams, setSearchParams] = useSearchParams();
+
+    useEffect(() => {
+        if (searchParams.has('login')) {
+            if (searchParams.get('login') === 'google') {
+                const getUserFromSession = async () => {
+                    if (!user) {
+                        try {
+                            const res = await fetch('http://localhost:39000/api/user/session', {
+                                credentials: 'include',
+                                withCredentials: true
+                            })
+                            const data = await res.json()
+                            console.log(data.user)
+                            setUser(data.user)
+                            navigate('/')
+                        } catch (e) {
+                            console.log('fetch err', e)
+                            setUser(null)
+                        }
+                    }
+                }
+                getUserFromSession()
+            }
+        }
+    }, [location])
 
     return (
         <div className="App">
@@ -28,24 +55,24 @@ function App() {
 
                 <Routes>
                     <Route path="/" element={
-                        <ProtectedRoute >
+                        <ProtectedRoute user={user} >
                             <MainLobby/>
                         </ProtectedRoute>
                     }/>
 
                     <Route path="/game/:id" element={
-                        <ProtectedRoute >
+                        <ProtectedRoute user={user} >
                             <Game/>
                         </ProtectedRoute>
                     }/>
 
                     <Route path="/me" element={
-                        <ProtectedRoute >
+                        <ProtectedRoute user={user} >
                             <Profile/>
                         </ProtectedRoute>
                     }/>
                     <Route path="/leaderboard" element={
-                        <ProtectedRoute >
+                        <ProtectedRoute user={user} >
                             <Leaderboard/>
                         </ProtectedRoute>
                     }/>
@@ -58,6 +85,9 @@ function App() {
                         }/>
                         <Route path="/auth/signin" element={
                             <Signin/>
+                        }/>
+                        <Route path="/auth/google/callback" element={
+                            <div>hello</div>
                         }/>
                     </Route>
                 </Routes>

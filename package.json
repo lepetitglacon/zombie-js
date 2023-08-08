@@ -29,6 +29,7 @@
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.5.0",
     "http-proxy-middleware": "^2.0.6",
+    "jsonwebtoken": "^9.0.1",
     "mongodb": "^5.6.0",
     "mongoose": "^7.3.0",
     "multer": "^1.4.5-lts.1",

@@ -4,41 +4,42 @@ import bodyParser from 'body-parser'
 import passport from "passport";
 import bcrypt from "bcrypt";
 import {OAuth2Strategy} from "passport-google-oauth";
-import {Strategy as LocalStrategy} from 'passport-local'
+import LocalStrategy from 'passport-local'
 
 import User from "../../database/models/UserModel.js";
 import Server from "../../Server.js";
 import UserModel from "../../database/models/UserModel.js";
+import jwt from "jsonwebtoken";
 
 export default class AuthRoutes {
 
-    constructor() {
+    constructor(props) {
         dotenv.config()
+        this.server = props.server
 
-        ZombieServer.app.use(express.json());
+        this.server.app.use(express.json());
 
-        ZombieServer.passport.serializeUser(function(user, done) {
+        this.server.passport.serializeUser(function(user, done) {
+            console.log('serialize user ' + user._id)
             done(null, user._id);
         });
-        ZombieServer.passport.deserializeUser(async (userId, done) => {
+        this.server.passport.deserializeUser(async (userId, done) => {
+            console.log('deserialize user ' + userId)
             const user = await UserModel.findById(userId)
             done(null, user);
         });
 
         // enable local
-        passport.use(new LocalStrategy(async (username, password, done) => {
+        this.server.passport.use(new LocalStrategy(async (username, password, done) => {
             try {
                 const user = await User.findOne({ username });
-
                 if (!user) {
                     console.log(`[AUTH][PURE] user ${username} not found`)
                     return done(null, false, { message: 'Invalid username.' });
                 }
-
                 const passwordMatch = await bcrypt.compare(password, user.password);
-
                 if (passwordMatch) {
-                    console.log(`[AUTH][PURE] user ${username} password matches`)
+                    console.log(`[AUTH][PURE] user ${username} password matches, authenticated`)
                     return done(null, user);
                 } else {
                     console.log(`[AUTH][PURE] user ${username} invalid password`)
@@ -50,7 +51,7 @@ export default class AuthRoutes {
         }));
 
         // enable Google Oauth
-        passport.use(new OAuth2Strategy({
+        this.server.passport.use(new OAuth2Strategy({
                 clientID: process.env.GOOGLE_CLIENT_ID,
                 clientSecret: process.env.GOOGLE_CLIENT_SECRET,
                 callbackURL: `http://localhost:${Server.__port}/auth/google/callback`
@@ -74,8 +75,6 @@ export default class AuthRoutes {
                         user.googleToken = accessToken;
                         await user.save();
                         console.log(`[AUTH][GOOGLE] user ${profile.emails[0].value} merged account`)
-
-
                         return done(null, user);
                     }
 
@@ -112,32 +111,56 @@ export default class AuthRoutes {
          */
         ZombieServer.app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/login-failed' }),
             (req, res) => {
-                return res.redirect('http://localhost:3000/')
+                return res.redirect('http://localhost:3000/auth?login=google')
             }
         );
+
+        // ZombieServer.app.post('/login', passport.authenticate('local', { failureRedirect: '/login-failed' }),
+        //     (req, res) => {
+        //
+        //     })
 
         /**
          * login
          */
-        ZombieServer.app.post('/login', bodyParser.urlencoded({ extended: false }), async (req, res, next) => {
+        ZombieServer.app.post('/login',
+            bodyParser.urlencoded({ extended: false }), async (req, res, next) => {
+
             const { username, password } = req.body;
+            console.log(`[AUTH] Login attempt from ${username}`)
 
             if (username === '' || password === '') {
-                return res.redirect('/')
+                return res.json({
+                    success: false,
+                    message: 'missing username or password'
+                })
             }
 
             passport.authenticate('local', (err, user, info) => {
                 if (err) {
+                    console.log(err)
                     return next(err);
                 }
-                if (!user)
-                    return res.redirect('/');
+                if (!user) {
+                    return res.json({
+                        success: false,
+                        message: 'user not found'
+                    })
+                }
 
-                req.logIn(user, (err) => {
+                const token = jwt.sign(user._id.toString(), 'z3d-secret')
+                res.cookie('z3d-connect', token)
+
+                req.login(user, (err) => {
                     if (err) {
+                        console.log(err)
                         return next(err);
                     }
-                    return res.redirect('/lobbies');
+                    return res.json({
+                        success: true,
+                        message: 'authenticated',
+                        user: user
+                    })
                 });
             })(req, res, next);
         })
@@ -195,6 +218,7 @@ export default class AuthRoutes {
         })
 
         ZombieServer.app.get('/api/user/session', (req, res) => {
+
             if (req.isAuthenticated()) {
                 res.json({user: req.user});
             } else {

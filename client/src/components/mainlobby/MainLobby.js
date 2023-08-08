@@ -26,8 +26,8 @@ function MainLobby() {
         getGamesFromServer(controller)
 
         return () => {
-            controller.abort()
-            console.log('axios stopped')
+            // controller.abort()
+            // console.log('axios stopped')
         }
     }, [])
 
@@ -54,7 +54,8 @@ function MainLobby() {
                 name: createGameInput.current.value,
                 private: false
             }),
-            credentials: 'include'
+            credentials: 'include',
+            withCredentials: true,
         })
         const data = await res.json()
         console.log(data)

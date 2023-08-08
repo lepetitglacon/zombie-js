@@ -1,16 +1,17 @@
 import dotenv from 'dotenv'
 import passport from "passport";
 import cors from "cors";
-import session from "express-session";
 
+import express from "express";
+import session from "express-session";
+import cookieParser from "cookie-parser";
+
+import Server from "../Server.js";
 import AuthRoutes from "./auth/AuthRoutes.js";
 import LobbyRoutes from "./lobby/LobbyRoutes.js";
 import AdminMapRoutes from "./admin/map/AdminMapRoutes.js";
 import GameRoutes from "./game/GameRoutes.js";
 import MapRoutes from "./api/map/MapRoutes.js";
-import cookieParser from "cookie-parser";
-import express from "express";
-import Server from "../Server.js";
 
 export default class RoutesHandler {
 
