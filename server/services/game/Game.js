@@ -120,6 +120,7 @@ export default class Game extends EventTarget {
                     this.io.to(this.gameId.toString()).emit('game-counter')
                     this.gameStartTimer = setTimeout(() => {
                         // TODO start game
+                        console.log(`[${this.gameId}] starting the game with ${this.PLAYERS.size} on map ${this.map}`)
                         this.io.to(this.gameId.toString()).emit('game-start')
                     }, 10000)
                 }

@@ -16,6 +16,9 @@ export default class SocketRequestHandler {
 
         this.socket.join(this.game.gameId.toString())
 
+        if (this.user._id.toString() === this.game.owner._id.toString()) {
+            this.socket.emit('owner', true)
+        }
         this.socket.emit('players', this.user)
         this.io.to(this.game.gameId.toString()).emit('player-connect', this.user)
 

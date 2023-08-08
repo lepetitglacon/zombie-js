@@ -1,12 +1,10 @@
 import './lobby.css'
 
 import {useContext, useEffect, useRef, useState} from "react";
-import { useParams } from 'react-router-dom'
 
 import axios from "axios";
 import moment from "moment";
 
-import Socket from "../../../socket/Socket";
 import ENV from "../../../ENV";
 import AuthContext from "../../../context/AuthContext";
 
@@ -16,6 +14,7 @@ function Lobby({socket}) {
 
     const [maps, setMaps] = useState([])
     const [currentMap, setCurrentMap] = useState()
+    const [isOwner, setIsOwner] = useState()
     const [countdown, setCountdown] = useState(null)
     const [countdownTimer, setCountdownTimer] = useState([])
     const [ready, setReady] = useState(true)
@@ -27,15 +26,26 @@ function Lobby({socket}) {
     const readyButton = useRef()
 
     useEffect(() => {
+
+
         const fetchMaps = async () => {
-            const res = await axios.get(ENV.SERVER_HOST + 'api/availableMaps', {
-                withCredentials: true
-            })
-            if (res.data.success) {
-                setMaps(res.data.maps)
+            try {
+                const res = await axios.get(ENV.SERVER_HOST + 'api/availableMaps', {
+                    withCredentials: true
+                })
+                if (res.data.success) {
+                    setMaps(res.data.maps)
+                }
+            } catch (e) {
+                console.error(e)
             }
         }
         fetchMaps()
+
+        return () => {
+            // TODO cancel le fetch
+
+        }
     }, [])
 
     useEffect(() => {
@@ -46,13 +56,16 @@ function Lobby({socket}) {
         socket.on('player-disconnect', onPlayerDisconnect)
         socket.on('game-counter', onGameCounter)
         socket.on('stop-game-counter', onStopGameCounter)
+        socket.on('owner', onOwner)
         return () => {
+            console.log('clear listeners')
             socket.off('messages', onMessages)
             socket.off('message', onMessage)
             socket.off('player-connect', onPlayerConnect)
             socket.off('player-disconnect', onPlayerDisconnect)
             socket.off('game-counter', onGameCounter)
             socket.off('stop-game-counter', onStopGameCounter)
+            socket.off('owner', onOwner)
         }
     }, [])
 
@@ -135,6 +148,10 @@ function Lobby({socket}) {
         setCountdown(null)
         clearInterval(countdownTimer)
     }
+    function onOwner(isOwner) {
+        console.log('you are owner'); // true
+        setIsOwner(isOwner)
+    }
 
     return (
         <div>
@@ -143,32 +160,36 @@ function Lobby({socket}) {
             <div className="row">
 
                 <div className="col">
-                    <div>
-                        <h3>Maps</h3>
 
-                        <div id="carouselExampleSlidesOnly" className="carousel slide" data-bs-ride="carousel">
-                            <div className="carousel-inner">
+                    {isOwner &&
+                        <div>
+                            <h3>Maps</h3>
 
-                                {maps.map((map, i) => {
-                                    return  <div key={map._id} className={i === 0 ? 'carousel-item active' : 'carousel-item'}>
-                                        <img src={ENV.SERVER_HOST + 'assets/img/map-preview/' + map.preview}
-                                             className="d-block img-preview" alt="..."/>
-                                    </div>
-                                })}
+                            <div id="carouselExampleSlidesOnly" className="carousel slide" data-bs-ride="carousel">
+                                <div className="carousel-inner">
 
+                                    {maps.map((map, i) => {
+                                        return  <div key={map._id} className={i === 0 ? 'carousel-item active' : 'carousel-item'}>
+                                            <img src={ENV.SERVER_HOST + 'assets/img/map-preview/' + map.preview}
+                                                 className="d-block img-preview" alt="..."/>
+                                        </div>
+                                    })}
+
+                                </div>
+                                <button className="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls"
+                                        data-bs-slide="prev">
+                                    <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span className="visually-hidden">Previous</span>
+                                </button>
+                                <button className="carousel-control-next" type="button" data-bs-target="#carouselExampleControls"
+                                        data-bs-slide="next">
+                                    <span className="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span className="visually-hidden">Next</span>
+                                </button>
                             </div>
-                            <button className="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls"
-                                    data-bs-slide="prev">
-                                <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-                                <span className="visually-hidden">Previous</span>
-                            </button>
-                            <button className="carousel-control-next" type="button" data-bs-target="#carouselExampleControls"
-                                    data-bs-slide="next">
-                                <span className="carousel-control-next-icon" aria-hidden="true"></span>
-                                <span className="visually-hidden">Next</span>
-                            </button>
                         </div>
-                    </div>
+                    }
+
 
                     <div>
                         <label className={!ready ? "btn btn-primary ready" : "btn btn-primary"} htmlFor="btn-check">Ready</label>

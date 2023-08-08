@@ -21,24 +21,30 @@ function MainLobby() {
     const createGameInput = useRef(null)
 
     useEffect(() => {
-        handleRefreshMap()
+        let controller = new AbortController();
+
+        getGamesFromServer(controller)
+
+        return () => {
+            controller.abort()
+            console.log('axios stopped')
+        }
     }, [])
 
-    async function getGamesFromServer() {
+    async function getGamesFromServer(controller) {
         setLoading(true)
-        const res = await fetch('http://localhost:39000/lp/refresh')
-        const data = await res.json()
-        setGames(data)
+        try {
+            const res = await fetch('http://localhost:39000/lp/refresh', {signal: controller.signal})
+            const data = await res.json()
+            setGames(data)
+        } catch (e) {
+            console.error(e)
+        }
+        setLastRefreshTime(Date.now())
         setLoading(false)
     }
 
-    const handleRefreshMap = () => {
-        getGamesFromServer()
-        setLastRefreshTime(Date.now())
-    }
-
     const handleCreateGame = async () => {
-
         const res = await fetch(ENV.SERVER_HOST + 'api/game/create', {
             method: 'POST',
             headers: {
@@ -137,7 +143,7 @@ function MainLobby() {
                         <div className="row">
                             <div className="col d-flex justify-content-between">
                                 <h2>Public games</h2>
-                                <button ref={refreshBtnRef} onClick={handleRefreshMap} className="btn btn-secondary m-1" >{loading && <LoadingSpinner/>}Refresh</button>
+                                <button ref={refreshBtnRef} onClick={getGamesFromServer} className="btn btn-secondary m-1" >{loading && <LoadingSpinner/>}Refresh</button>
                             </div>
                         </div>
 
