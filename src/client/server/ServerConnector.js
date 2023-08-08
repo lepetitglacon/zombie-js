@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import Player from "../mob/Player.js";
-import ZombieFactory from "../../server/services/game/mob/ZombieFactory.js";
-import Utils from "../../server/Utils.js";
+import ZombieFactory from "../../../server/services/game/mob/ZombieFactory.js";
+import Utils from "../../../server/Utils.js";
 import ZombieEvents from "./events/ZombieEvents.js";
 import Zombie from "../mob/Zombie.js";
 

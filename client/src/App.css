@@ -1,0 +1,18 @@
+.App {
+
+}
+
+body {
+    background: #121212;
+    color: #fff;
+
+    height: 100vh;
+}
+
+.active a {
+    color: #eee;
+}
+
+.sr-only {
+    display: none;
+}

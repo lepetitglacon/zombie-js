@@ -1,5 +1,5 @@
 // assets
-import "../server/resources/css/style.css"
+import "../../server/resources/css/style.css"
 // import "./assets/img/zombie-hand.png"
 // import "./assets/img/crosshair.png"
 // import "./assets/img/enter.png"

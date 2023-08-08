@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import * as CANNON from "cannon-es";
-import Utils from "../../../server/Utils.js";
+import Utils from "../../../../server/Utils.js";
 
 export default class Wall {
 

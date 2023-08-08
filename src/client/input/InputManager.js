@@ -1,5 +1,5 @@
 import GameEngine from "../GameEngine.js";
-import Utils from "../../server/Utils.js";
+import Utils from "../../../server/Utils.js";
 
 export default class InputManager {
 

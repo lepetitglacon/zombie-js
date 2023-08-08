@@ -1,4 +1,4 @@
-import Server from "./server/Server.js";
+import Server from "../server/Server.js";
 
 global.ZombieServer = new Server({
     online: true,

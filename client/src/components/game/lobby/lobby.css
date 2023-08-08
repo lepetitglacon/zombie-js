@@ -1,0 +1,39 @@
+.chat-username {
+    margin-right: 10px;
+    font-weight: 800;
+}
+
+.chat-date {
+    margin-right: 10px;
+    font-size: 12px;
+}
+
+#chat {
+    overflow-y: scroll;
+    max-height: 25vh;
+
+    display: flex;
+    flex-direction: column;
+}
+
+#chat li {
+    list-style: none;
+
+}
+
+.img-preview {
+    /*max-width: 500px;*/
+    aspect-ratio: 16/9;
+
+    width: 50%;
+    margin: auto;
+}
+
+.ready {
+}
+.ready:before {
+    content: '✓';
+    color: #880000;
+    font-size: 20px;
+    width: 150px;
+}
