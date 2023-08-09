@@ -8,8 +8,9 @@ import moment from "moment";
 
 import ENV from "../../../ENV";
 import AuthContext from "../../../context/AuthContext";
+import {GAMESTATE} from "../Game";
 
-function Lobby({socket}) {
+function Lobby({socket, setGameState}) {
 
     const {user} = useContext(AuthContext)
 
@@ -41,6 +42,7 @@ function Lobby({socket}) {
         socket.on('owner', onOwner)
         socket.on('set-map', onSetMap)
         socket.on('game-deleted', onGameDeleted)
+        socket.on('game-start', onGameStart)
         return () => {
             console.log('clear listeners')
             socket.off('messages', onMessages)
@@ -53,6 +55,7 @@ function Lobby({socket}) {
             socket.off('owner', onOwner)
             socket.off('set-map', onSetMap)
             socket.off('game-deleted', onGameDeleted)
+            socket.off('game-start', onGameStart)
         }
     }, [])
 
@@ -201,6 +204,9 @@ function Lobby({socket}) {
     }
     function onGameDeleted() {
         navigate('/')
+    }
+    function onGameStart() {
+        setGameState(GAMESTATE.RUNNING)
     }
 
     return (

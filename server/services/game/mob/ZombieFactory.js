@@ -1,5 +1,4 @@
 import ServerZombie from "./Zombie.js";
-import Zombie from "../../../../src/client/mob/Zombie.js";
 import * as THREE from "three";
 
 export default class ZombieFactory {

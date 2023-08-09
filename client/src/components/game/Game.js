@@ -1,11 +1,11 @@
 import {useContext, useEffect, useState} from "react";
 import {useParams, Link} from 'react-router-dom'
 import Lobby from "./lobby/Lobby";
-import * as Z3DGame from "./game/Game";
+import Z3DGame from "./game/Z3DGame";
 import Socket from "../../socket/Socket";
 import AuthContext from "../../context/AuthContext";
 
-const GAMESTATE = {
+export const GAMESTATE = {
     LOBBY: 'lobby',
     RUNNING: 'running',
     COMPLETED: 'completed',
@@ -44,8 +44,8 @@ function Game() {
         <>
 
             {gameState === GAMESTATE.LOBBY
-                ? <Lobby socket={socket}/>
-                : <Z3DGame/>
+                ? <Lobby socket={socket} setGameState={setGameState}/>
+                : <Z3DGame socket={socket} setGameState={setGameState}/>
             }
 
 
