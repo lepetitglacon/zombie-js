@@ -16,6 +16,7 @@ ul li {
     font-size: 12px;
 }
 .chat-container {
+    height: 300px;
     max-height: 300px; /* Set the maximum height as needed */
     overflow-y: auto;
 }
@@ -31,14 +32,6 @@ ul li {
     overflow: hidden;
 }
 
-.img-preview {
-    /*max-width: 500px;*/
-    aspect-ratio: 16/9;
-
-    width: 50%;
-    margin: auto;
-}
-
 .ready {
 }
 .ready:before {
@@ -46,4 +39,43 @@ ul li {
     color: #880000;
     font-size: 20px;
     width: 150px;
+}
+
+.map-item {
+    background: #333;
+
+    width: 50%;
+    padding: 10px;
+    border-bottom: 2px solid #ccc;
+
+    cursor: pointer;
+    font-size: 24px;
+    font-weight: 700;
+
+    transition: .2s;
+}
+.map-item:hover, .active  {
+    background: #880000;
+}
+
+#current-map {
+    position: relative;
+}
+
+#current-map img {
+    position: absolute;
+    z-index: -1;
+    max-height: 100vh;
+    object-fit: cover;
+    overflow: hidden;
+    left: 0;
+}
+
+#current-map-name {
+    position: absolute;
+    right: 0;
+    margin: 20px;
+
+    font-size: 64px;
+    font-weight: 700;
 }

@@ -5,6 +5,7 @@ import ZombieFactory from "./mob/ZombieFactory.js";
 import NodeThreeExporter from "@injectit/threejs-nodejs-exporters";
 import path from "path";
 import SocketRequestHandler from "../../socket/SocketRequestHandler.js";
+import GameMapModel from "../../database/models/GameMapModel.js";
 
 export default class Game extends EventTarget {
 
@@ -76,6 +77,10 @@ export default class Game extends EventTarget {
                     this.gameStartTimer = null
                 }
             }
+        })
+        this.addEventListener('set-map', async (e) => {
+            this.map = await GameMapModel.findById(e.mapId)
+            console.log(`[${this.gameId}] map set to ${this.map.name}`)
         })
     }
 

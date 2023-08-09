@@ -41,7 +41,7 @@ function Game() {
 
 
     return (
-        <div>
+        <>
 
             {gameState === GAMESTATE.LOBBY
                 ? <Lobby socket={socket}/>
@@ -50,7 +50,7 @@ function Game() {
 
 
 
-        </div>
+        </>
     );
 }
 

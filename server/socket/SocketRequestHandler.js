@@ -2,6 +2,7 @@ import UserModel from "../database/models/UserModel.js";
 import GameModel, {GameState} from "../database/models/GameModel.js";
 import LobbyClientHandler from "./LobbyClientHandler.js";
 import MessageModel from "../database/models/MessageModel.js";
+import GameMapModel from "../database/models/GameMapModel.js";
 
 export default class SocketRequestHandler {
 
@@ -51,6 +52,10 @@ export default class SocketRequestHandler {
                 this.socket.emit('owner', true)
                 this.isOwner = true
             }
+
+            if (this.game.map) {
+                this.socket.emit('set-map', {mapId: this.game.map._id})
+            }
         })
 
         this.socket.on('message', async (e) => {
@@ -72,6 +77,15 @@ export default class SocketRequestHandler {
             console.log(e)
             this.ready = e.ready
             this.game.dispatchEvent(new Event('player-ready'))
+        })
+
+        this.socket.on('map', async (e) => {
+            console.log(e)
+            this.socket.to(this.game.gameId).emit('set-map', e)
+
+            const ev = new Event('set-map')
+            ev.mapId = e.mapId
+            this.game.dispatchEvent(ev)
         })
     }
 
