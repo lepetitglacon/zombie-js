@@ -1,10 +1,10 @@
 import './lobby.css'
 
 import {useContext, useEffect, useRef, useState} from "react";
+import {useNavigate} from "react-router-dom";
 
 import axios from "axios";
 import moment from "moment";
-import * as bootstrap from "bootstrap";
 
 import ENV from "../../../ENV";
 import AuthContext from "../../../context/AuthContext";
@@ -12,6 +12,8 @@ import AuthContext from "../../../context/AuthContext";
 function Lobby({socket}) {
 
     const {user} = useContext(AuthContext)
+
+    const navigate = useNavigate()
 
     const [maps, setMaps] = useState([])
     const [currentMap, setCurrentMap] = useState()
@@ -38,6 +40,7 @@ function Lobby({socket}) {
         socket.on('stop-game-counter', onStopGameCounter)
         socket.on('owner', onOwner)
         socket.on('set-map', onSetMap)
+        socket.on('game-deleted', onGameDeleted)
         return () => {
             console.log('clear listeners')
             socket.off('messages', onMessages)
@@ -49,6 +52,7 @@ function Lobby({socket}) {
             socket.off('stop-game-counter', onStopGameCounter)
             socket.off('owner', onOwner)
             socket.off('set-map', onSetMap)
+            socket.off('game-deleted', onGameDeleted)
         }
     }, [])
 
@@ -194,6 +198,9 @@ function Lobby({socket}) {
             })
             setCurrentMap(newMap[0])
         }
+    }
+    function onGameDeleted() {
+        navigate('/')
     }
 
     return (

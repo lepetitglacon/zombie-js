@@ -31,6 +31,8 @@ export default class SocketRequestHandler {
             this.game.PLAYERS.delete(this.user._id.toString())
 
             if (this.isOwner) {
+                this.io.to(this.game.gameId).emit('game-deleted')
+
                 const ev = new Event('delete-game')
                 ev.gameId = this.game.gameId
                 ev.test = 'test'
