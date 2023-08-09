@@ -14,20 +14,17 @@ function MainMenu() {
         {id: 3, title: 'Settings', link: '/settings'},
     ])
 
-
     const handleClick = (e, id) => {
         let btns = [...buttons]
-
         btns.forEach(btn => {
             btn.active = btn.id === id;
         })
-
         setButtons(btns)
     }
 
     return (
 
-        <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+        <nav className="navbar navbar-expand navbar-dark bg-dark">
             <div className="container-fluid">
                 <a className="navbar-brand" href="#">Navbar</a>
                 <button className="navbar-toggler" type="button" data-bs-toggle="collapse"

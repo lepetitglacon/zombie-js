@@ -4,7 +4,7 @@ import GameMapModel from "../database/models/GameMapModel.js";
 import Game from "../services/game/Game.js";
 import {Vector3} from "three";
 
-export default class GameController {
+export default class gameManager extends EventTarget{
 
     static playerColors = [
         0x999999, // white
@@ -20,8 +20,29 @@ export default class GameController {
     ]
 
     constructor(props) {
+        super()
         this.server = props.server
         this.GAMES = new Map()
+
+        this.bind()
+    }
+
+    bind() {
+        this.addEventListener('delete-game', async (e) => {
+            if (this.GAMES.has(e.gameId)) {
+                delete this.GAMES.get(e.gameId)
+                this.GAMES.delete(e.gameId)
+
+                await GameModel.findByIdAndUpdate(
+                    e.gameId,
+                    {
+                        state: GameState.ARCHIVED,
+                        archiveDate: Date.now()
+                    }
+                )
+                console.log(`[GAME] ${e.gameId} deleted`)
+            }
+        })
     }
 
     async init() {
@@ -29,13 +50,13 @@ export default class GameController {
         for (const gameToStart of gamesToStartFromDB) {
             this.GAMES.set(gameToStart._id.toString(), this.createGameInstance_(gameToStart))
         }
+        console.log(`[SERVER][GAMES] games created from DB`, this.GAMES)
     }
 
     /**
      * Lobby
      */
     async create(props) {
-
         const owner = await UserModel.findById(props.ownerId)
         if (!owner) {
             throw new Error('[GAME][CREATION] Cannot find owner')
@@ -48,63 +69,44 @@ export default class GameController {
         }
 
         console.log('[GAME] created [' + newGameFromDB._id + ']')
-
         const gameInstance = this.createGameInstance_(newGameFromDB)
 
         this.GAMES.set(newGameFromDB._id.toString(), gameInstance)
         return newGameFromDB._id.toString()
     }
 
-    /**
-     * Starts a game with a map
-     * @param props
-     * @returns {Promise<boolean>}
-     */
-    async start(props) {
-        const gameMap = await GameMapModel.findOne({'_id': props.mapId})
-    }
-
-    /**
-     * Lobby
-     */
-    delete() {
-
-    }
-
-    find(gameId) {
-        if (this.GAMES.has(gameId)) {
-            return this.GAMES.get(gameId)
-        }
-    }
-
     async connect(socket) {
-        const game = this.find(socket.handshake.query.gameId)
-        if (!game) return
-        if (game.PLAYERS.size >= 4) return socket.disconnect()
+        const game = this.findExistingGameFromId_(socket.handshake.query.gameId)
+        if (!game) {
+            console.log('[SOCKET][PRE] Game not found')
+            return socket.disconnect()
+        }
+        if (game.PLAYERS.size >= 4) {
+            console.log('[SOCKET][PRE] Game full')
+            return socket.disconnect()
+        }
         const user = await UserModel.findById(
             socket.handshake.query.userId,
             ['_id', 'gamename', 'color']
         )
-        if (!user) return
+        if (!user) {
+            console.log('[SOCKET][PRE] User not found')
+            return socket.disconnect()
+        }
         game.createSocketRequestHandler(socket, user)
     }
 
-    async join(game, user) {
-        if (!game.players.has(user._id.toString())) {
-
-            // set properties for user
-            user.color = GameController.playerColors[game.players.size - 1]
-            game.players.set(user._id, user)
+    /**
+     *
+     * @param gameId
+     * @returns {Game|null}
+     * @private
+     */
+    findExistingGameFromId_(gameId) {
+        if (this.GAMES.has(gameId)) {
+            return this.GAMES.get(gameId)
         }
-        return game.save()
-    }
-
-    async leave(game, user) {
-        if (game.players.has(user._id.toString())) {
-            game.players.delete(user._id.toString())
-        }
-
-        return game.save()
+        return null
     }
 
     async createDBGame_(props, populate = false) {
@@ -116,6 +118,12 @@ export default class GameController {
         }).save()
     }
 
+    /**
+     *
+     * @param gameToStart
+     * @returns {Game}
+     * @private
+     */
     createGameInstance_(gameToStart) {
         return new Game({
             gameId: gameToStart._id.toString(),
@@ -125,6 +133,7 @@ export default class GameController {
             online: gameToStart.online,
             io: this.server.io,
             server: this.server,
+            gameManager: this
         })
     }
 }

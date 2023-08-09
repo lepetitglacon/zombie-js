@@ -1,7 +1,7 @@
 import Server from "../../Server.js";
 import GameMap from "../../database/models/GameMapModel.js";
 import path from "path";
-import GameController from "../../controllers/GameController.js";
+import gameManager from "../../controllers/GameManager.js";
 import GameModel from "../../database/models/GameModel.js";
 
 export default class GameRoutes {
@@ -13,21 +13,17 @@ export default class GameRoutes {
     }
 
     bind() {
-        this.gameController = new GameController({
-            server: this.server
-        })
 
         /**
          * Create a game
          */
         ZombieServer.app.post('/api/game/create', async (req, res) => {
-            console.log(req.user)
             if (!req.isAuthenticated())
                 return res.json({success: false, message: 'Not authenticated'})
 
             const ownerId = req.session.passport.user
 
-            const gameId = await this.gameController.create({
+            const gameId = await this.server.gameManager.create({
                 name: req.body.name,
                 ownerId: ownerId,
                 private: req.body.private

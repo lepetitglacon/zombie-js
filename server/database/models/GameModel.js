@@ -6,6 +6,7 @@ export const GameState = {
     LOBBY: 'LOBBY',
     RUNNING: 'RUNNING',
     COMPLETED: 'COMPLETED',
+    ARCHIVED: 'ARCHIVED',
 }
 
 export const gameSchema = new mongoose.Schema({

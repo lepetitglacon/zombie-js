@@ -68,7 +68,7 @@ function MainLobby() {
     }
 
     return (
-        <div id="landing-page" className="container-fluid">
+        <div id="landing-page" className="container-fluid h-100">
 
             <div className="row d-flex h-100">
 
@@ -87,21 +87,21 @@ function MainLobby() {
                         {/*%- include('partials/mainMenu', {user: user}) %>*/}
                     </div>
 
-                    <div className="row">
+                    <div className="row d-flex flex-start">
 
                         <div className="col">
-
                             <h2>Last update</h2>
-                            <img src="/img/logo.png"/>
+                            <div className="d-flex flex-column">
+                                <img src="http://localhost:39000/assets/img/128.png" width="200"/>
                                 <a href="https://google.fr">See more</a>
-
+                            </div>
                         </div>
                         <div className="col">
-
                             <h2>Patch note</h2>
-                            <img src="/img/logo.png"/>
+                            <div className="d-flex flex-column">
+                                <img src="http://localhost:39000/assets/img/128.png" width="200"/>
                                 <a href="https://google.fr">See more</a>
-
+                            </div>
                         </div>
 
                     </div>
@@ -161,15 +161,22 @@ function MainLobby() {
                                     </thead>
                                     <tbody id="public-games-tbody">
 
-                                    {games.map(game => {
-                                        return(
-                                            <tr key={game._id}>
-                                                <td>{game.name}</td>
-                                                <td>{game.players.size ?? 0}</td>
-                                                <td><Link to={'/game/' + game._id} className="btn btn-danger">Join</Link></td>
+                                    {
+                                        games.length > 0
+                                            ? games.map(game => {
+                                                    return (
+                                                        <tr key={game._id}>
+                                                            <td>{game.name}</td>
+                                                            <td>{game.players.size ?? 0}</td>
+                                                            <td><Link to={'/game/' + game._id} className="btn btn-danger">Join</Link></td>
+                                                        </tr>
+                                                    )
+                                                })
+                                            :
+                                            <tr>
+                                                <td colSpan="3">No public games available, create one using the button above</td>
                                             </tr>
-                                        )
-                                    })}
+                                    }
 
                                     </tbody>
                                 </table>

@@ -21,13 +21,11 @@ function Lobby({socket}) {
     const [users, setUsers] = useState([])
     const [messages, setMessages] = useState([])
 
+    const chatContainerRef = useRef()
     const chatTextareaRef = useRef()
-    const chatUl = useRef()
     const readyButton = useRef()
 
     useEffect(() => {
-
-
         const fetchMaps = async () => {
             try {
                 const res = await axios.get(ENV.SERVER_HOST + 'api/availableMaps', {
@@ -41,10 +39,8 @@ function Lobby({socket}) {
             }
         }
         fetchMaps()
-
         return () => {
-            // TODO cancel le fetch
-
+            // TODO cancel fetch
         }
     }, [])
 
@@ -52,6 +48,7 @@ function Lobby({socket}) {
         socket.emit('init')
         socket.on('messages', onMessages)
         socket.on('message', onMessage)
+        socket.on('players', onPlayers)
         socket.on('player-connect', onPlayerConnect)
         socket.on('player-disconnect', onPlayerDisconnect)
         socket.on('game-counter', onGameCounter)
@@ -61,6 +58,7 @@ function Lobby({socket}) {
             console.log('clear listeners')
             socket.off('messages', onMessages)
             socket.off('message', onMessage)
+            socket.off('players', onPlayers)
             socket.off('player-connect', onPlayerConnect)
             socket.off('player-disconnect', onPlayerDisconnect)
             socket.off('game-counter', onGameCounter)
@@ -70,7 +68,7 @@ function Lobby({socket}) {
     }, [])
 
     useEffect(() => {
-        chatUl.current.scroll({ top: chatUl.current.scrollHeight, behavior: 'smooth' });
+        chatContainerRef.current.scroll({ top: chatContainerRef.current.scrollHeight, behavior: 'smooth' });
     }, [messages])
 
     useEffect(() => {
@@ -98,7 +96,11 @@ function Lobby({socket}) {
             message: message,
             date: Date.now(),
         })
-        chatTextareaRef.current.value = ''
+
+        // reset textarea
+        chatTextareaRef.current.selectionStart = 0;
+        chatTextareaRef.current.selectionEnd = 0;
+        chatTextareaRef.current.value = null
         console.log('msg emitted')
     }
 
@@ -108,6 +110,18 @@ function Lobby({socket}) {
         socket.emit('player-ready', {
             ready: ready
         })
+    }
+
+    const handleChatInput = () => {
+        chatTextareaRef.current.style.height = "auto"
+        chatTextareaRef.current.style.height = `${chatTextareaRef.current.scrollHeight}px`
+    }
+
+    const handleChatKeys = (e) => {
+        if (e.code === "Enter" || e.code === "NumpadEnter") {
+            e.preventDefault()
+            handleSendMessage()
+        }
     }
 
     function onMessages(messages) {
@@ -126,18 +140,11 @@ function Lobby({socket}) {
     }
     function onPlayerConnect(player) {
         console.log('player connected'); // true
-        const userInArray = users.filter((user) => {
-            return user._id.toString() !== player._id.toString()
-        })
-        setUsers([...userInArray, player])
-        console.log(users)
+        setUsers(users => [...users, player])
     }
     function onPlayerDisconnect(player) {
-        console.log('player disconnected'); // true
-        const filteredUsers = users.filter((user) => {
-            return user._id.toString() !== player._id.toString()
-        })
-        setUsers(filteredUsers)
+        console.log('player disconnected', player); // true
+        setUsers(users => users.filter(user => user._id.toString() !== player._id.toString()))
     }
     function onGameCounter() {
         console.log('start countdown'); // true
@@ -154,7 +161,7 @@ function Lobby({socket}) {
     }
 
     return (
-        <div>
+        <div className="container-fluid h-100">
             <h2>Lobby</h2>
 
             <div className="row">
@@ -210,11 +217,11 @@ function Lobby({socket}) {
 
                 <div className="col">
                     <div>
-                        <h3>Players</h3>
+                        <h3>Players <span>{users.length}/4</span></h3>
                         <ul>
                             {
                                 users.map((user) => {
-                                    return <li key={user._id} data-id={user._id}>{user.gamename}</li>
+                                    return <li key={user._id.toString()} data-id={user._id}>{user.gamename}</li>
                                 })
                             }
                         </ul>
@@ -222,19 +229,31 @@ function Lobby({socket}) {
 
                     <div>
                         <h3>Chat</h3>
-                        <ul ref={chatUl} id="chat">
-                            {messages.map(message => {
-                                return <li key={message._id}>
-                                        <span className="chat-date">
-                                            [{moment(message.dateReceived).format('kk:mm:ss')}]
-                                        </span>
-                                    <span className="chat-username">{message.user.gamename}</span>
-                                    <span className="chat-text">{message.text}</span>
-                                </li>
-                            })}
-                        </ul>
-                        <textarea ref={chatTextareaRef}></textarea>
-                        <input type="submit" onClick={handleSendMessage} value="Send"></input>
+                        <div ref={chatContainerRef} className="chat-container">
+                            <ul  id="chat">
+                                {messages.map(message => {
+                                    return <li key={message._id}>
+                                            <span className="chat-date">
+                                                [{moment(message.dateReceived).format('kk:mm:ss')}]
+                                            </span>
+                                        <span className="chat-username">{message.user.gamename}</span>
+                                        <span className="chat-text">{message.text}</span>
+                                    </li>
+                                })}
+                            </ul>
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="chat-textarea" className="form-label sr-only">Example textarea</label>
+                            <textarea ref={chatTextareaRef}
+                                      id="chat-textarea"
+                                      className="form-control"
+                                      rows="1"
+                                      placeholder="Press enter to send"
+                                      onInput={handleChatInput}
+                                      onKeyDown={handleChatKeys}
+                            >
+                            </textarea>
+                        </div>
                     </div>
                 </div>
             </div>

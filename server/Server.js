@@ -9,7 +9,7 @@ import RoutesHandler from "./routes/RoutesHandler.js";
 import dotenv from 'dotenv'
 import SocketRequestHandler from "./socket/SocketRequestHandler.js";
 import DatabaseHandler from "./database/DatabaseHandler.js";
-import GameController from "./controllers/GameController.js";
+import gameManager from "./controllers/GameManager.js";
 
 export default class Server {
 
@@ -42,7 +42,7 @@ export default class Server {
 
         this.dbHandler = new DatabaseHandler(this.configuration)
 
-        this.gameManager = new GameController({server: this})
+        this.gameManager = new gameManager({server: this})
         this.USERS = new Map()
     }
 

@@ -1,16 +1,25 @@
 
 import ENV from "../../../ENV";
 import { Link } from "react-router-dom";
+import {useContext} from "react";
+import AuthContext from "../../../context/AuthContext";
 
 
-function logoutButton() {
+function LogoutButton() {
+
+    const {user} = useContext(AuthContext)
 
     return (
         <div>
-            <Link to={ENV.SERVER_HOST + 'api/user/logout'}>Logout</Link>
+            <div>
+                {user.gamename}
+            </div>
+            <div>
+                <Link to={ENV.SERVER_HOST + 'api/user/logout'}>Logout</Link>
+            </div>
         </div>
     )
 
 }
 
-export default logoutButton
+export default LogoutButton

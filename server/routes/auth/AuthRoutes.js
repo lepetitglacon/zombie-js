@@ -20,11 +20,9 @@ export default class AuthRoutes {
         this.server.app.use(express.json());
 
         this.server.passport.serializeUser(function(user, done) {
-            console.log('serialize user ' + user._id)
             done(null, user._id);
         });
         this.server.passport.deserializeUser(async (userId, done) => {
-            console.log('deserialize user ' + userId)
             const user = await UserModel.findById(userId)
             done(null, user);
         });
@@ -114,11 +112,6 @@ export default class AuthRoutes {
                 return res.redirect('http://localhost:3000/auth?login=google')
             }
         );
-
-        // ZombieServer.app.post('/login', passport.authenticate('local', { failureRedirect: '/login-failed' }),
-        //     (req, res) => {
-        //
-        //     })
 
         /**
          * login

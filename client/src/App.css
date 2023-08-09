@@ -1,5 +1,19 @@
 .App {
+    height: 100vh;
+    margin: 0;
+    padding: 0;
 
+    display: flex;
+    flex-direction: column;
+
+}
+
+* {
+    /*border: solid 1px red;*/
+}
+
+#landing-page {
+    max-width: 100vw;
 }
 
 body {

@@ -4,9 +4,6 @@ import fs from "fs";
 import ZombieFactory from "./mob/ZombieFactory.js";
 import NodeThreeExporter from "@injectit/threejs-nodejs-exporters";
 import path from "path";
-import GameModel from "../../database/models/GameModel.js";
-import UserModel from "../../database/models/UserModel.js";
-import MessageModel from "../../database/models/MessageModel.js";
 import SocketRequestHandler from "../../socket/SocketRequestHandler.js";
 
 export default class Game extends EventTarget {
@@ -21,6 +18,7 @@ export default class Game extends EventTarget {
         super()
         this.server = props.server
         this.io = props.io
+        this.gameManager = props.gameManager
 
         this.gameId = props.gameId
         this.name = props.name
@@ -49,9 +47,37 @@ export default class Game extends EventTarget {
         // this.waveHandler = new WaveHandler({game: this})
 
         this.bind()
+
     }
 
+    bind() {
+        this.addEventListener('player-ready', () => {
+            let startOrContinueTimer = true
+            for (const [id, socketHandler] of this.PLAYERS) {
+                if (!socketHandler.ready) {
+                    startOrContinueTimer = false
+                }
+            }
+            console.log('start countdown', startOrContinueTimer)
+            if (startOrContinueTimer) {
+                if (!this.gameStartTimer) {
 
+                    this.io.to(this.gameId.toString()).emit('game-counter')
+                    this.gameStartTimer = setTimeout(() => {
+                        // TODO start game
+                        console.log(`[${this.gameId}] starting the game with ${this.PLAYERS.size} players on map ${this.map}`)
+                        this.io.to(this.gameId.toString()).emit('game-start')
+                    }, 10000)
+                }
+            } else {
+                this.io.to(this.gameId.toString()).emit('stop-game-counter')
+                if (this.gameStartTimer) {
+                    clearTimeout(this.gameStartTimer)
+                    this.gameStartTimer = null
+                }
+            }
+        })
+    }
 
     run() {
 
@@ -103,35 +129,6 @@ export default class Game extends EventTarget {
 
             }
         }, 1 / this.tickRate * 1000)
-    }
-
-    bind() {
-        this.addEventListener('player-ready', () => {
-            let startOrContinueTimer = true
-            for (const [id, socketHandler] of this.PLAYERS) {
-                if (!socketHandler.ready) {
-                    startOrContinueTimer = false
-                }
-            }
-            console.log('start countdown', startOrContinueTimer)
-            if (startOrContinueTimer) {
-                if (!this.gameStartTimer) {
-
-                    this.io.to(this.gameId.toString()).emit('game-counter')
-                    this.gameStartTimer = setTimeout(() => {
-                        // TODO start game
-                        console.log(`[${this.gameId}] starting the game with ${this.PLAYERS.size} players on map ${this.map}`)
-                        this.io.to(this.gameId.toString()).emit('game-start')
-                    }, 10000)
-                }
-            } else {
-                this.io.to(this.gameId.toString()).emit('stop-game-counter')
-                if (this.gameStartTimer) {
-                    clearTimeout(this.gameStartTimer)
-                    this.gameStartTimer = null
-                }
-            }
-        })
     }
 
     preparePlayersToEmit(all) {

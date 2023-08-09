@@ -3,11 +3,6 @@
     /*src: url("/fonts/HelpMe.ttf");*/
 }
 
-#landing-page {
-    width: 100vw;
-    height: 100vh;
-}
-
 .column {
     flex-direction: column;
 }

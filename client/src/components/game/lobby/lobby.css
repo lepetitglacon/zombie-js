@@ -1,3 +1,11 @@
+ul {
+    margin: 0;
+    padding: 0;
+}
+ul li {
+    list-style: none;
+}
+
 .chat-username {
     margin-right: 10px;
     font-weight: 800;
@@ -7,18 +15,20 @@
     margin-right: 10px;
     font-size: 12px;
 }
-
+.chat-container {
+    max-height: 300px; /* Set the maximum height as needed */
+    overflow-y: auto;
+}
 #chat {
-    overflow-y: scroll;
-    max-height: 25vh;
-
     display: flex;
     flex-direction: column;
 }
 
-#chat li {
-    list-style: none;
+#chat-textarea {
+    margin-top: 10px;
 
+    resize: none;
+    overflow: hidden;
 }
 
 .img-preview {

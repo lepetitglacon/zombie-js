@@ -34,7 +34,8 @@ function Game() {
         socket.on('connect', () => console.log('connected'))
         socket.on('disconnect', (reason) => console.log(`disconnected for reason "${reason}"`))
         return () => {
-
+            socket.off('connect')
+            socket.off('disconnect')
         }
     })
 
