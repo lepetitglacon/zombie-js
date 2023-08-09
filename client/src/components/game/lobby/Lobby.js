@@ -9,10 +9,12 @@ import moment from "moment";
 import ENV from "../../../ENV";
 import AuthContext from "../../../context/AuthContext";
 import {GAMESTATE} from "../Game";
+import GameContext from "../../../context/GameContext";
 
-function Lobby({socket, setGameState}) {
+function Lobby({socket}) {
 
     const {user} = useContext(AuthContext)
+    const {gameState, setGameState} = useContext(GameContext)
 
     const navigate = useNavigate()
 
@@ -206,7 +208,7 @@ function Lobby({socket, setGameState}) {
         navigate('/')
     }
     function onGameStart() {
-        setGameState(GAMESTATE.RUNNING)
+        setGameState(GAMESTATE.LOADING)
     }
 
     return (

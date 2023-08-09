@@ -54,7 +54,7 @@ ul li {
 
     transition: .2s;
 }
-.map-item:hover, .active  {
+.map-item:hover, .maps-container .active  {
     background: #880000;
 }
 

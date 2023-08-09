@@ -4,21 +4,24 @@ import Lobby from "./lobby/Lobby";
 import Z3DGame from "./game/Z3DGame";
 import Socket from "../../socket/Socket";
 import AuthContext from "../../context/AuthContext";
+import useGameState from "../../hooks/useGameState";
 
 export const GAMESTATE = {
-    LOBBY: 'lobby',
-    RUNNING: 'running',
-    COMPLETED: 'completed',
+    LOBBY: 'LOBBY',
+    LOADING: 'LOADING',
+    RUNNING: 'RUNNING',
+    COMPLETED: 'COMPLETED',
 }
 
 function Game() {
 
     const {user} = useContext(AuthContext)
+    const {gameState, setGameState} = useGameState()
 
     const gameId = useParams()['id']
     let socket = Socket(gameId, user._id.toString())
 
-    const [gameState, setGameState] = useState(GAMESTATE.LOBBY)
+
     const [maps, setMaps] = useState()
     const [currentMap, setCurrentMap] = useState()
     const [users, setUsers] = useState()
