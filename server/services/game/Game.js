@@ -6,6 +6,7 @@ import NodeThreeExporter from "@injectit/threejs-nodejs-exporters";
 import path from "path";
 import SocketRequestHandler from "../../socket/SocketRequestHandler.js";
 import GameMapModel from "../../database/models/GameMapModel.js";
+import GameModel from "../../database/models/GameModel.js";
 
 export default class Game extends EventTarget {
 
@@ -36,26 +37,141 @@ export default class Game extends EventTarget {
 
         this.PLAYERS = new Map()
 
-        // this.status = Game.STATUS.PAUSED
-        //
-        // this.tickRate = 60
-        // this.prevTime = Date.now();
-        //
-        // this.map = undefined
-        //
-        // this.loader = new NodeThreeExporter()
-        //
-        //
-        // this.ZOMBIES = new Map()
-        // this.DOORS = new Map()
-        //
-        // this.waveHandler = new WaveHandler({game: this})
+        this.status = Game.STATUS.PAUSED
+        this.tickRate = 60
+        this.prevTime = Date.now();
 
         this.bind()
+    }
+
+    async init() {
+        // Init the actual game
+        this.GLTFLoader = new NodeThreeExporter()
+        await this.parseMap_()
+        console.log('should do this after parsing map')
+
+
+
+        this.waveHandler = new WaveHandler({game: this})
+
+        console.log('[GAME] game initialized : ' + this.gameId)
+    }
+
+    run() {
+        // Start the gameloop
+        this.status = Game.STATUS.RUNNING
+        this.io.to(this.gameId).emit('game-start')
+
+        setInterval(() => {
+            this.update()
+        }, 1 / this.tickRate * 1000)
+    }
+
+    update() {
+        const time = Date.now();
+        const delta = (time - this.prevTime) / 1000;
+
+        if (this.PLAYERS.size > 0) {
+
+            // spawn zombies
+            this.waveHandler.update()
+
+            // update Zombie movement
+            // for (const [key, zombie] of this.ZOMBIES) {
+            //     zombie.moveToClosestPlayer()
+            //     zombie.repulseOtherZombies()
+            //     zombie.movementManager.update()
+            // }
+
+            // emit players position to other players
+            // if (this.ZOMBIES.size > 0) {
+            //     const p = this.prepareZombiesToEmit()
+            //     if (p.length > 0) {
+            //         this.io.to(this.roomId).emit('zombies_positions', p)
+            //     }
+            // }
+
+            // emit players position to other players
+            // const p = this.preparePlayersToEmit()
+            // if (p.length > 0) {
+            //     this.io.to(this.roomId).emit('players_position', p)
+            // }
+
+        }
+    }
+
+    parseMap_() {
+        const file = fs.readFileSync(Server.__dirname + '/resources/gltf/maps/' + this.map.filename)
+        this.GLTFLoader.parse('glb', file,
+            (gltf) => {
+                for (const mesh of gltf.scene.children) {
+                    switch (mesh.userData.type) {
+                        case 'Ground':
+                            break;
+                        case 'Building':
+                            break;
+                        case 'Spawner':
+                            // ZombieFactory.spawners.push(mesh.position)
+                            break;
+                        case 'Door':
+                            // mesh.price = 50
+                            // mesh.isOpen = false
+                            // this.DOORS.set(mesh.name, mesh)
+                            break;
+                        default:
+                            console.warn('[MAP] Unrecognized node')
+                            break;
+                    }
+                }
+                console.info(`[${this.gameId}][MAP] Map ${this.map.name} (${this.map.filename}) has been loaded`)
+            },
+            (err) => {
+                console.log(err)
+            })
+    }
+
+    canStart_() {
+
+        let gameLoaded = true
+        for (const [id, player] of this.PLAYERS) {
+            if (!player.clientGameLoaded) {
+                gameLoaded = false
+            }
+        }
+
+        if (gameLoaded && this.status !== Game.STATUS.RUNNING) {
+            this.status = Game.STATUS.RUNNING
+            this.run()
+        } else {
+            console.log('allready RUNNING')
+        }
+
+
 
     }
 
+    createSocketRequestHandler(socket, user) {
+        const srh = new SocketRequestHandler({
+            game: this,
+            server: this.server,
+            socket: socket,
+            user: user
+        })
+        this.PLAYERS.set(user._id.toString(), srh)
+        console.log(`Added player ${user._id} to game ${this.gameId}`)
+    }
+
     bind() {
+        this.addEventListener('player-connect', () => {
+
+        })
+        this.addEventListener('player-disconnect', (e) => {
+            this.PLAYERS.delete(e.playerId)
+        })
+        this.addEventListener('player-client-game-loaded', (e) => {
+            console.log('client loaded the game')
+            this.canStart_()
+        })
         this.addEventListener('player-ready', () => {
             let startOrContinueTimer = true
             for (const [id, socketHandler] of this.PLAYERS) {
@@ -70,10 +186,18 @@ export default class Game extends EventTarget {
                     this.io.to(this.gameId.toString()).emit('game-counter', {
                         timeInSec: Game.CONF.timeToStartAGameInSec
                     })
-                    this.gameStartTimer = setTimeout(() => {
+                    this.gameStartTimer = setTimeout(async () => {
                         // TODO start game
-                        console.log(`[${this.gameId}] starting the game with ${this.PLAYERS.size} players on map ${this.map.name}`)
-                        this.io.to(this.gameId.toString()).emit('game-start')
+                        console.log(`-------------`)
+                        console.log(`[${this.gameId}] Starting the game with ${this.PLAYERS.size} players on map ${this.map.name}`)
+                        console.log(`-------------`)
+
+                        const game = await GameModel.findById(this.gameId)
+                        game.allowedPlayers = [...this.PLAYERS.keys()]
+                        await game.save()
+
+                        this.init()
+                        this.io.to(this.gameId.toString()).emit('game-start') // init game on client
                     }, Game.CONF.timeToStartAGameInSec * 1000)
                 }
             } else {
@@ -88,190 +212,5 @@ export default class Game extends EventTarget {
             this.map = await GameMapModel.findById(e.mapId)
             console.log(`[${this.gameId}] map set to ${this.map.name}`)
         })
-    }
-
-    run() {
-
-        this.parseMap()
-
-        this.status = Game.STATUS.RUNNING
-
-        console.log('[GAME] game started : ' + this.roomId)
-        this.io.to(this.roomId).emit('game_load', {mapName: this.mapName})
-
-        // Signin loop
-        setInterval(() => {
-
-            const time = Date.now();
-            const delta = (time - this.prevTime) / 1000;
-
-            if (this.PLAYERS.size > 0) {
-
-                // update Zombie life
-                for (const [id, zombie] of this.ZOMBIES) {
-                    if (zombie.health <= 0) {
-                        this.waveHandler.killzombie(id)
-                    }
-                }
-
-                // spawn zombies
-                this.waveHandler.update()
-
-                // update Zombie movement
-                for (const [key, zombie] of this.ZOMBIES) {
-                    zombie.moveToClosestPlayer()
-                    zombie.repulseOtherZombies()
-                    zombie.movementManager.update()
-                }
-
-                // emit players position to other players
-                if (this.ZOMBIES.size > 0) {
-                    const p = this.prepareZombiesToEmit()
-                    if (p.length > 0) {
-                        this.io.to(this.roomId).emit('zombies_positions', p)
-                    }
-                }
-
-                // emit players position to other players
-                const p = this.preparePlayersToEmit()
-                if (p.length > 0) {
-                    this.io.to(this.roomId).emit('players_position', p)
-                }
-
-            }
-        }, 1 / this.tickRate * 1000)
-    }
-
-    preparePlayersToEmit(all) {
-        let toSend = []
-        let i = 0
-        for (const [socket, socketHandler] of this.PLAYERS) {
-            if (all !== undefined) {
-                this.fillPlayerInfo(toSend, socketHandler, i)
-                i++
-            } else {
-                if (!socketHandler.position.equals(socketHandler.lastPosition)) {
-                    this.fillPlayerInfo(toSend, socketHandler, i)
-                    i++
-                }
-            }
-
-        }
-        return toSend
-    }
-
-    fillPlayerInfo(toSend, socketHandler, i) {
-        toSend[i] = {}
-        toSend[i].socketId = socketHandler.socket.id
-        toSend[i].username = socketHandler.user.username
-        toSend[i].gamename = socketHandler.user.gamename
-        toSend[i].position = socketHandler.position
-        toSend[i].direction = socketHandler.direction
-        toSend[i].color = socketHandler.color
-        socketHandler.lastPosition.copy(socketHandler.position)
-    }
-
-    prepareLobbyPlayersToEmit() {
-        let toSend = []
-        let i = 0
-        for (const [socket, socketHandler] of this.PLAYERS) {
-            if (!socketHandler.position.equals(socketHandler.lastPosition)) {
-                toSend[i] = {}
-                toSend[i].socketId = socketHandler.socket.id
-                toSend[i].username = socketHandler.username
-                toSend[i].color = socketHandler.color
-                i++
-            }
-
-        }
-        return toSend
-    }
-
-    prepareZombiesToEmit(all) {
-        let toSend = []
-        let i = 0
-        for (const [id, zombie] of this.ZOMBIES) {
-            if (all !== undefined) {
-                this.fillZombieInfo(toSend, zombie, i)
-                i++
-            } else {
-                if (!zombie.position.equals(zombie.lastPosition)) {
-                    this.fillZombieInfo(toSend, zombie, i)
-                    i++
-                }
-            }
-
-        }
-
-        return toSend
-    }
-
-    fillZombieInfo(toSend, zombie, i) {
-        toSend[i] = {}
-        toSend[i].id = zombie.id
-        toSend[i].position = zombie.position
-        toSend[i].direction = zombie.direction
-        toSend[i].color = zombie.color
-        zombie.lastPosition.copy(zombie.position)
-    }
-
-    preparePoints() {
-        const points = []
-        for (const [socket, player] of this.PLAYERS) {
-            points.push({
-                player: socket.id,
-                playerName: player.username ?? '',
-                points: player.points
-            })
-        }
-        return points
-    }
-
-    parseMap() {
-        const file = fs.readFileSync(path.join(Server.__dirname, './resources/gltf/maps/' + this.mapName))
-
-        this.loader.parse('glb', file,
-            (gltf) => {
-
-                for (const mesh of gltf.scene.children) {
-                    switch (mesh.userData.type) {
-                        case 'Ground':
-                            break;
-
-                        case 'Building':
-                            break;
-
-                        case 'Spawner':
-                            ZombieFactory.spawners.push(mesh.position)
-                            break;
-
-                        case 'Door':
-                            mesh.price = 50
-                            mesh.isOpen = false
-                            this.DOORS.set(mesh.name, mesh)
-                            break;
-
-                        default:
-                            console.warn('[MAP] Unrecognized node')
-                            break;
-                    }
-                }
-                console.info('[MAP] Map ' + this.mapName + ' has been loaded')
-
-            },
-            (err) => {
-                console.log(err)
-            })
-    }
-
-    createSocketRequestHandler(socket, user) {
-        const srh = new SocketRequestHandler({
-            game: this,
-            server: this.server,
-            socket: socket,
-            user: user
-        })
-        this.PLAYERS.set(user._id.toString(), srh)
-        console.log(`Added player ${user._id} to game ${this.gameId}`)
     }
 }

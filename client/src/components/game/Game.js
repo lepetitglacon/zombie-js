@@ -17,7 +17,7 @@ export const GAMESTATE = {
 function Game() {
 
     const {user} = useContext(AuthContext)
-    const {gameState, setGameState} = useGameState()
+    const {clientState, setClientState} = useGameState()
 
     const gameId = useParams()['id']
     let socket = Socket(gameId, user._id.toString())
@@ -49,7 +49,7 @@ function Game() {
     return (
         <>
 
-            {gameState === GAMESTATE.LOBBY || gameState === GAMESTATE.NOGAME
+            {clientState === GAMESTATE.LOBBY || clientState === GAMESTATE.NOGAME
                 ? <Lobby socket={socket}/>
                 : <Z3DGame socket={socket}/>
             }

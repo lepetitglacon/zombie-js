@@ -5,9 +5,9 @@ const GameContext = createContext({})
 
 export const GameProvider = ({children}) => {
 
-    const [gameState, setGameState] = useState(GAMESTATE.NOGAME)
+    const [clientState, setClientState] = useState(GAMESTATE.NOGAME)
 
-    return <GameContext.Provider value={{ gameState, setGameState }}>
+    return <GameContext.Provider value={{ clientState: clientState, setClientState: setClientState }}>
         {children}
     </GameContext.Provider>
 }

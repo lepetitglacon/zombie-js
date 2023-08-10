@@ -20,7 +20,7 @@ import Settings from "./components/settings/Settings";
 function App() {
 
     const {user, setUser} = useContext(AuthContext)
-    const {gameState} = useContext(GameContext)
+    const {clientState} = useContext(GameContext)
 
     const location = useLocation()
     const navigate = useNavigate()
@@ -62,8 +62,8 @@ function App() {
 
             {
                 user &&
-                (gameState !== GAMESTATE.LOADING &&
-                gameState !== GAMESTATE.RUNNING)  &&
+                (clientState !== GAMESTATE.LOADING &&
+                clientState !== GAMESTATE.RUNNING)  &&
                 <MainMenu/>
             }
 

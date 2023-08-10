@@ -6,6 +6,7 @@ export default class WaveHandler {
     constructor(props) {
         this.game = props.game
 
+        this.ZOMBIES = new Map()
         this.objectSpawner = new ObjectSpawner()
 
         this.wave = 0
@@ -31,6 +32,13 @@ export default class WaveHandler {
     }
 
     update() {
+
+        // update Zombie life
+        for (const [id, zombie] of this.ZOMBIES) {
+            if (zombie.health <= 0) {
+                this.killzombie(id)
+            }
+        }
 
         if (this.shouldUpdateWave()) {
             this.updateWave()
@@ -58,7 +66,7 @@ export default class WaveHandler {
 
         this.pauseBetweenWaveStartTime = Date.now()
 
-        this.game.io.to(this.game.roomId).emit('wave_update', {wave: this.wave})
+        this.game.io.to(this.game.gameId).emit('wave_update', {wave: this.wave})
         console.debug('[WAVEHANDLER] wave ' + this.wave)
     }
 
@@ -72,12 +80,12 @@ export default class WaveHandler {
 
     shouldSpawnZombie() {
         return this.zombieSpawnRateTime + this.zombieSpawnRate < Date.now() &&
-            this.game.ZOMBIES.size < this.maxZombiesAlive &&
+            this.ZOMBIES.size < this.maxZombiesAlive &&
             this.spawnedZombies < this.waveConfig[this.wave]
     }
 
     spawnZombie() {
-        this.game.ZOMBIES.set(ZombieFactory.id, ZombieFactory.createServerZombie(this.game.roomId))
+        this.ZOMBIES.set(ZombieFactory.id, ZombieFactory.createServerZombie(this.game.gameId))
         console.debug('[WAVEHANDLER] spawned zombie ' + this.spawnedZombies)
 
         this.spawnedZombies++
@@ -92,7 +100,7 @@ export default class WaveHandler {
             id: id,
             objects: this.objectSpawner.spawnObject()
         })
-        this.game.ZOMBIES.delete(id)
+        this.ZOMBIES.delete(id)
         this.killedZombies++
     }
 

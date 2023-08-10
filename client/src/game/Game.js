@@ -1,4 +1,4 @@
-import ThreeWorld from "./map/world/GraphicsWorld.js";
+import ThreeWorld from "./map/ThreeWorld.js";
 import WeaponHandler from "./weapon/WeaponHandler.js";
 import {Box3} from "three";
 import ControllablePlayer from "./mob/ControllablePlayer.js";

@@ -1,36 +1,19 @@
 import * as THREE from "three";
-import * as CANNON from "cannon-es";
-import CannonDebugRenderer from "cannon-es-debugger";
-import PointerLockControls from "../../input/PointerLockControls.js";
-import GameEngine from "../../GameEngine.js";
+import PointerLockControls from "../input/PointerLockControls.js";
+import GameEngine from "../GameEngine.js";
 import {Box3} from "three";
 import {VertexNormalsHelper} from "three/addons/helpers/VertexNormalsHelper.js";
-import Door from "../Door/Door.js";
+import Door from "./Door/Door.js";
 
-// assets
-// import "../../assets/gltf/maps/flora_square.glb"
-// import "../../assets/img/skyboxes/interstellar_skybox/xpos.png"
-// import "../../assets/img/skyboxes/interstellar_skybox/xneg.png"
-// import "../../assets/img/skyboxes/interstellar_skybox/ypos.png"
-// import "../../assets/img/skyboxes/interstellar_skybox/yneg.png"
-// import "../../assets/img/skyboxes/interstellar_skybox/zpos.png"
-// import "../../assets/img/skyboxes/interstellar_skybox/zneg.png"
-
-export default class GraphicsWorld {
+export default class ThreeWorld {
 
     constructor() {
         this.WALLS = new Map()
         this.DOORS = new Map()
 
-        this.world = new CANNON.World({
-            gravity: new CANNON.Vec3(0, -9.82, 0), // m/s²
-        })
-
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color( 0x222222 );
         this.scene.fog = new THREE.FogExp2( 0xefd1b5, 0.0025 );
-
-        this.cannonDebugRenderer = new CannonDebugRenderer(this.scene, this.world)
 
         this.camera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 0.1, 1000 );
 

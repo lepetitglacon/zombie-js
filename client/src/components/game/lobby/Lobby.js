@@ -14,7 +14,7 @@ import GameContext from "../../../context/GameContext";
 function Lobby({socket}) {
 
     const {user} = useContext(AuthContext)
-    const {gameState, setGameState} = useContext(GameContext)
+    const {clientState, setClientState} = useContext(GameContext)
 
     const navigate = useNavigate()
 
@@ -209,7 +209,7 @@ function Lobby({socket}) {
         navigate('/')
     }
     function onGameStart() {
-        setGameState(GAMESTATE.LOADING)
+        setClientState(GAMESTATE.LOADING)
     }
 
     return (

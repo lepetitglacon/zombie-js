@@ -1,28 +1,65 @@
-import {useContext, useEffect, useRef} from "react";
+import {useContext, useEffect, useRef, useState} from "react";
 import GameEngine from "../../../game/GameEngine";
 import GameContext from "../../../context/GameContext";
 import {GAMESTATE} from "../Game";
+import {useParams} from "react-router-dom";
+import LoadingSpinner from "../../utils/LoadingSpinner";
+
+export const GameStates = {
+    LOADING: 'LOADING',
+    MENU: 'MENU',
+    OPTION: 'OPTION',
+    GAME: 'GAME',
+    CHAT: 'CHAT',
+}
+
+export const LoadingStates = {
+    CONNECT: 'Connecting to server',
+    ASSETS: 'Loading assets',
+    INIT: 'Initializing'
+}
 
 function Z3DGame({socket}) {
 
-    const {gameState, setGameState} = useContext(GameContext)
+    const {clientState, setClientState} = useContext(GameContext)
+    const gameId = useParams()['id']
+
+    const [loadingState, setLoadingState] = useState(LoadingStates.CONNECT)
+    const [gameState, setGameState] = useState(GameStates.LOADING)
+
+    const threeDivRef = useRef()
+
 
     useEffect(() => {
-        let gameEngine = new GameEngine({socket})
+        let gameEngine = new GameEngine({socket, gameId, setGameState, setLoadingState, threeDivRef})
 
         return () => {
             gameEngine = null
-            setGameState(GAMESTATE.NOGAME)
+            setClientState(GAMESTATE.NOGAME)
         }
     }, [])
 
-
+    useEffect(() => {
+        console.log(gameState)
+    }, [gameState])
 
     return (
         <div>
-            <h1>GAMING</h1>
-            <img src="https://img.redbull.com/images/c_crop,x_1926,y_0,h_3769,w_2827/c_fill,w_400,h_540/q_auto:low,f_auto/redbullcom/2023/3/22/pjjsk4mejcei48nl7sfd/alderiate-red-bull-challengers-league-of-legends" alt=""/>
-            <div></div>
+            {gameState === GameStates.LOADING
+                ? (
+                    <div className="d-flex justify-content-center align-items-center fullscreen">
+                        <div className="d-flex flex-column align-items-center text-center">
+                        <LoadingSpinner/>
+                        <p>{loadingState}</p>
+                        </div>
+                    </div>
+                )
+                : (
+                    <div ref={threeDivRef}>
+                    </div>
+                )
+            }
+
         </div>
     );
 }

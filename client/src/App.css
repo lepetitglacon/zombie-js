@@ -30,3 +30,8 @@ body {
 .sr-only {
     display: none;
 }
+
+.fullscreen {
+    width: 100vw;
+    height: 100vh;
+}
