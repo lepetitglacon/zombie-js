@@ -7,15 +7,26 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from "react-router-dom";
 import {AuthProvider} from "./context/AuthContext";
 import {GameProvider} from "./context/GameContext";
+import {VolumeProvider} from "./context/AudioContext";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <BrowserRouter>
+
         <AuthProvider>
-            <GameProvider>
-                <App/>
-            </GameProvider>
+            <VolumeProvider>
+                <GameProvider>
+
+
+
+                    <App/>
+
+
+
+                </GameProvider>
+            </VolumeProvider>
         </AuthProvider>
+
     </BrowserRouter>
 );
 

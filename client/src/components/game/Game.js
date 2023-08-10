@@ -7,6 +7,7 @@ import AuthContext from "../../context/AuthContext";
 import useGameState from "../../hooks/useGameState";
 
 export const GAMESTATE = {
+    NOGAME: 'NOGAME',
     LOBBY: 'LOBBY',
     LOADING: 'LOADING',
     RUNNING: 'RUNNING',
@@ -31,27 +32,27 @@ function Game() {
         return () => {
             socket.disconnect()
         }
-    })
+    }, [])
 
     useEffect(() => {
-        socket.on('connect', () => console.log('connected'))
-        socket.on('disconnect', (reason) => console.log(`disconnected for reason "${reason}"`))
+        socket.on('connect', () => console.log('[SOCKET] connected'))
+        socket.on('custom-disconnect', (reason) => console.log(`[SOCKET] disconnected for reason "${reason}"`))
+        socket.on('disconnect', (reason) => console.log(`[SOCKET] disconnected`))
         return () => {
+            console.log('[game] deleting socket events')
             socket.off('connect')
+            socket.off('custom-disconnect')
             socket.off('disconnect')
         }
-    })
-
+    }, [])
 
     return (
         <>
 
-            {gameState === GAMESTATE.LOBBY
-                ? <Lobby socket={socket} setGameState={setGameState}/>
-                : <Z3DGame socket={socket} setGameState={setGameState}/>
+            {gameState === GAMESTATE.LOBBY || gameState === GAMESTATE.NOGAME
+                ? <Lobby socket={socket}/>
+                : <Z3DGame socket={socket}/>
             }
-
-
 
         </>
     );

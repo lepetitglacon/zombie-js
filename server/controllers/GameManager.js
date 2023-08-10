@@ -79,10 +79,12 @@ export default class gameManager extends EventTarget{
         const game = this.findExistingGameFromId_(socket.handshake.query.gameId)
         if (!game) {
             console.log('[SOCKET][PRE] Game not found')
+            socket.emit('custom-disconnect', {reason: 'Game not found'})
             return socket.disconnect()
         }
         if (game.PLAYERS.size >= 4) {
             console.log('[SOCKET][PRE] Game full')
+            socket.emit('custom-disconnect', {reason: 'Game full'})
             return socket.disconnect()
         }
         const user = await UserModel.findById(
@@ -91,6 +93,7 @@ export default class gameManager extends EventTarget{
         )
         if (!user) {
             console.log('[SOCKET][PRE] User not found')
+            socket.emit('custom-disconnect', {reason: 'User not found'})
             return socket.disconnect()
         }
         game.createSocketRequestHandler(socket, user)

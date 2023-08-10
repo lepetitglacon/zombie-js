@@ -182,9 +182,9 @@ function Lobby({socket}) {
         console.log('player disconnected', player); // true
         setUsers(users => users.filter(user => user._id.toString() !== player._id.toString()))
     }
-    function onGameCounter() {
+    function onGameCounter(e) {
         console.log('start countdown'); // true
-        setCountdown(10)
+        setCountdown(e.timeInSec)
     }
     function onStopGameCounter() {
         console.log('stop countdown'); // true
@@ -197,6 +197,7 @@ function Lobby({socket}) {
     }
     function onSetMap(e) {
         console.log('set map'); // true
+        console.log(maps)
         if (maps) {
             const newMap = maps.filter(map => {
                 return map._id === e.mapId
@@ -234,6 +235,10 @@ function Lobby({socket}) {
                                             >{map.name}</li>
                                         )
                                     })}
+
+                                    <li className='map-item'>...</li>
+                                    <li className='map-item'>...</li>
+                                    <li className='map-item'>...</li>
                                 </ul>
                             </div>
                         </div>

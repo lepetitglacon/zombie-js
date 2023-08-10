@@ -1,14 +1,17 @@
 import './mainlobby.css'
 
-import {useEffect, useRef, useState} from "react";
+import {useContext, useEffect, useRef, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import Cookies from "js-cookie";
 
 import LoadingSpinner from "../utils/LoadingSpinner";
 import ENV from "../../ENV";
+import {useVolume} from "../../context/AudioContext";
 
 
 function MainLobby() {
+
+    const {play} = useVolume()
 
     const refreshCooldown = 5000
 
@@ -28,6 +31,14 @@ function MainLobby() {
         return () => {
             // controller.abort()
             // console.log('axios stopped')
+        }
+    }, [])
+
+    useEffect(() => {
+        play()
+
+        return () => {
+
         }
     }, [])
 

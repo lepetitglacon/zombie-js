@@ -1,11 +1,16 @@
+import './mainmenu.css'
+
 import {useContext, useState} from "react";
 import {Link} from "react-router-dom";
 import AuthContext from "../../context/AuthContext";
 import LogoutButton from "../auth/logout/LogoutButton";
+import ENV from "../../ENV";
+import {useVolume} from "../../context/AudioContext";
 
 function MainMenu() {
 
     const {user} = useContext(AuthContext)
+    const {toggleMute} = useVolume()
 
     const [buttons, setButtons] = useState([
         {id: 0, title: 'Lobby', link: '/'},
@@ -49,7 +54,26 @@ function MainMenu() {
                     </ul>
                 </div>
 
-                {user && <LogoutButton/>}
+                <div className="right d-flex">
+
+                    <div id="audio-mute-button-container"
+                        className="d-flex justify-content-center align-items-center"
+                         onClick={() => toggleMute()}
+                    >
+                        <img id="audio-mute-button" src={ENV.SERVER_HOST + 'assets/img/icons/mute.png'} width="24"/>
+                    </div>
+
+                    {user && <LogoutButton/>}
+                    {/*<input*/}
+                    {/*    type="range"*/}
+                    {/*    min="0"*/}
+                    {/*    max="1"*/}
+                    {/*    step="0.01"*/}
+                    {/*    value={}*/}
+                    {/*    onChange={}*/}
+                    {/*/>*/}
+
+                </div>
 
             </div>
         </nav>

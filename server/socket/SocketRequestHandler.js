@@ -89,6 +89,10 @@ export default class SocketRequestHandler {
             ev.mapId = e.mapId
             this.game.dispatchEvent(ev)
         })
+
+        this.socket.on('ping', async (e) => {
+            this.socket.emit('ping', {delay: Date.now() - e.timestamp})
+        })
     }
 
     async getMessages() {

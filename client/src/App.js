@@ -4,20 +4,23 @@ import {useContext, useEffect, useState} from "react";
 import {Routes, Route, useNavigate, useLocation, useParams, useSearchParams} from "react-router-dom";
 
 import AuthContext from "./context/AuthContext";
+import GameContext from "./context/GameContext";
 
 import MainMenu from "./components/menu/MainMenu";
 import MainLobby from "./components/mainlobby/MainLobby";
-import Game from "./components/game/Game";
+import Game, {GAMESTATE} from "./components/game/Game";
 import Profile from "./components/profile/Profile";
 import Leaderboard from "./components/leaderboard/Leaderboard";
 import Auth from "./components/auth/Auth";
 import Login from "./components/auth/login/Login";
 import Signin from "./components/auth/signin/Signin";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import Settings from "./components/settings/Settings";
 
 function App() {
 
     const {user, setUser} = useContext(AuthContext)
+    const {gameState} = useContext(GameContext)
 
     const location = useLocation()
     const navigate = useNavigate()
@@ -48,10 +51,21 @@ function App() {
         }
     }, [location])
 
+    useEffect(() => {
+        if (user) {
+
+        }
+    }, [])
+
     return (
         <div className="App">
 
-            {user && <MainMenu/>}
+            {
+                user &&
+                (gameState !== GAMESTATE.LOADING &&
+                gameState !== GAMESTATE.RUNNING)  &&
+                <MainMenu/>
+            }
 
                 <Routes>
                     <Route path="/" element={
@@ -74,6 +88,12 @@ function App() {
                     <Route path="/leaderboard" element={
                         <ProtectedRoute user={user} >
                             <Leaderboard/>
+                        </ProtectedRoute>
+                    }/>
+
+                    <Route path="/settings" element={
+                        <ProtectedRoute user={user} >
+                            <Settings/>
                         </ProtectedRoute>
                     }/>
 

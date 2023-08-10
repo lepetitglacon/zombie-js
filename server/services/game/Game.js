@@ -15,6 +15,10 @@ export default class Game extends EventTarget {
         TERMINATED: 2,
     }
 
+    static CONF = {
+        timeToStartAGameInSec: 1.5
+    }
+
     constructor(props) {
         super()
         this.server = props.server
@@ -63,12 +67,14 @@ export default class Game extends EventTarget {
             if (startOrContinueTimer) {
                 if (!this.gameStartTimer) {
 
-                    this.io.to(this.gameId.toString()).emit('game-counter')
+                    this.io.to(this.gameId.toString()).emit('game-counter', {
+                        timeInSec: Game.CONF.timeToStartAGameInSec
+                    })
                     this.gameStartTimer = setTimeout(() => {
                         // TODO start game
                         console.log(`[${this.gameId}] starting the game with ${this.PLAYERS.size} players on map ${this.map.name}`)
                         this.io.to(this.gameId.toString()).emit('game-start')
-                    }, 10000)
+                    }, Game.CONF.timeToStartAGameInSec * 1000)
                 }
             } else {
                 this.io.to(this.gameId.toString()).emit('stop-game-counter')

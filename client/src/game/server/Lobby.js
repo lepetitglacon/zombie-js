@@ -35,7 +35,7 @@ export default class Lobby {
     //             e.preventDefault()
     //
     //             let gameId = btn.dataset.gameId
-    //             let mapName = $('#lobby-map-carousel .active')[0].dataset.mapFilename
+    //             let mapName = ('#lobby-map-carousel .active')[0].dataset.mapFilename
     //
     //             console.log(mapName)
     //
@@ -85,36 +85,36 @@ export default class Lobby {
     //     })
     //
     //     this.serverConnector.socket.on('lobby-map-change', (e) => {
-    //         $('#lobby-map-name').text(e.mapName)
+    //         ('#lobby-map-name').text(e.mapName)
     //         if (e.direction === 'left') {
-    //             $('#lobby-main-map-carousel').carousel('next')
+    //             ('#lobby-main-map-carousel').carousel('next')
     //         } else {
-    //             $('#lobby-main-map-carousel').carousel('prev')
+    //             ('#lobby-main-map-carousel').carousel('prev')
     //         }
     //     })
     //
-    //     const $carousel = $('#lobby-map-carousel')
-    //     $carousel.on('slide.bs.carousel', (e) => {
+    //     const carousel = ('#lobby-map-carousel')
+    //     carousel.on('slide.bs.carousel', (e) => {
     //         let active
     //
     //         if (e.direction === 'left') {
-    //             $('#lobby-main-map-carousel').carousel('next')
-    //             if ($('#lobby-map-carousel .active').next().length === 0) {
-    //                 active = $('#lobby-map-carousel .active').parent().children().first()
+    //             ('#lobby-main-map-carousel').carousel('next')
+    //             if (('#lobby-map-carousel .active').next().length === 0) {
+    //                 active = ('#lobby-map-carousel .active').parent().children().first()
     //             } else {
-    //                 active = $('#lobby-map-carousel .active').next()
+    //                 active = ('#lobby-map-carousel .active').next()
     //             }
     //         } else {
-    //             $('#lobby-main-map-carousel').carousel('prev')
-    //             if ($('#lobby-map-carousel .active').prev().length === 0) {
-    //                 active = $('#lobby-map-carousel .active').parent().children().last()
+    //             ('#lobby-main-map-carousel').carousel('prev')
+    //             if (('#lobby-map-carousel .active').prev().length === 0) {
+    //                 active = ('#lobby-map-carousel .active').parent().children().last()
     //             } else {
-    //                 active = $('#lobby-map-carousel .active').prev()
+    //                 active = ('#lobby-map-carousel .active').prev()
     //             }
     //         }
     //
     //         console.log(active.data('mapName'))
-    //         $('#lobby-map-name').text(active.data('mapName'))
+    //         ('#lobby-map-name').text(active.data('mapName'))
     //
     //         this.serverConnector.socket.emit('lobby-map-change', {
     //             direction: e.direction,
