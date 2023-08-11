@@ -198,7 +198,7 @@ function onMouseMove(event) {
     const movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
     const movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
 
-    window.ZombieGame.game.weaponHandler.pointer.set(event.clientX, event.clientY)
+    // window.ZombieGame.game.weaponHandler.pointer.set(event.clientX, event.clientY)
 
     const camera = this.camera;
     this._euler.setFromQuaternion(camera.quaternion);

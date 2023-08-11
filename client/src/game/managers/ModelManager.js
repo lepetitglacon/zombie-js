@@ -16,7 +16,7 @@ export default class ModelManager {
 
     async download() {
         for (const [name, path] of this.registeredModels) {
-            const model = await this.downloadModel(name, path)
+            const model = await this.downloadModel_(name, path)
             const ext = ModelManager.getExtFromPath(path)
 
             switch (ext) {
@@ -40,23 +40,12 @@ export default class ModelManager {
     }
 
     /**
-     * register a model to be loaded
-     * @param name
-     * @param path
-     */
-    registerModel(name, path) {
-        console.log('[ASSET] Registered asset : ' + name)
-        this.registeredModels.set(name, path)
-    }
-
-    /**
      * downloads the model
      * @param name
      * @param path
      */
-    downloadModel(name, path) {
+    downloadModel_(name, path) {
         const ext = ModelManager.getExtFromPath(path)
-
         switch (ext) {
             case 'fbx':
                 return this.fbxLoader.loadAsync(
@@ -72,9 +61,20 @@ export default class ModelManager {
 
                     }
                 );
-
         }
     }
+
+    /**
+     * register a model to be loaded
+     * @param name
+     * @param path
+     */
+    registerModel(name, path) {
+        console.log('[ASSET] Registered asset : ' + name)
+        this.registeredModels.set(name, path)
+    }
+
+
 
     /**
      * return the OG model

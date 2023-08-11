@@ -23,6 +23,7 @@ export default class ThreeWorld {
             0.1,
             1000
         );
+        this.camera.position.y = 5
 
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize( window.innerWidth, window.innerHeight );
@@ -39,29 +40,36 @@ export default class ThreeWorld {
         this.directionalLight.castShadow = true; // default false
         this.scene.add( this.directionalLight );
 
-        // 3D map from blender
-        // this.gltf = this.engine.modelManager.getModel('map')
-        // this.scene.add(this.gltf)
+        this.renderer.render( this.scene, this.camera );
+    }
+
+    update() {
+        console.log('running')
 
         this.renderer.render( this.scene, this.camera );
     }
 
-    init() {
-        this.engine = window.ZombieGame
-        this.engine.gui.addFolder('controls')
-        this.engine.gui.addToFolder('controls', this.camera.position, 'x', -1000, 1000)
-        this.engine.gui.addToFolder('controls', this.camera.position, 'y', -1000, 1000)
-        this.engine.gui.addToFolder('controls', this.camera.position, 'z', -1000, 1000)
+    async init() {
+
+
+        // this.engine.gui.addFolder('controls')
+        // this.engine.gui.addToFolder('controls', this.camera.position, 'x', -1000, 1000)
+        // this.engine.gui.addToFolder('controls', this.camera.position, 'y', -1000, 1000)
+        // this.engine.gui.addToFolder('controls', this.camera.position, 'z', -1000, 1000)
 
         this.controls = new PointerLockControls( this.camera, this.renderer.domElement, this.engine );
         this.controls.pointerSpeed = .27
 
         this.bind()
 
-        this.parseMap()
+        // 3D map from blender
+        this.gltf = this.engine.modelManager.getModel('map')
+        console.log(this.gltf)
+        this.scene.add(this.gltf)
+        await this.parseMap()
     }
 
-    parseMap() {
+    async parseMap() {
         for (const i in this.gltf.children) {
             const obj = this.gltf.children[i]
             const type = obj.userData.type ?? ''
@@ -77,25 +85,25 @@ export default class ThreeWorld {
 
                 case 'Building':
 
-                    obj.geometry.computeBoundingBox()
-
-                    aabb = new Box3()
-                    aabb.setFromObject(obj)
-                    this.WALLS.set(obj.name, aabb)
-
-                    aabbHelper = new THREE.Box3Helper( aabb, 0xff0000 );
-                    this.scene.add( aabbHelper );
-
-                    normalHelper = new VertexNormalsHelper( obj, 1, 0xffffff );
-                    this.scene.add( normalHelper );
+                    // obj.geometry.computeBoundingBox()
+                    //
+                    // aabb = new Box3()
+                    // aabb.setFromObject(obj)
+                    // this.WALLS.set(obj.name, aabb)
+                    //
+                    // aabbHelper = new THREE.Box3Helper( aabb, 0xff0000 );
+                    // this.scene.add( aabbHelper );
+                    //
+                    // normalHelper = new VertexNormalsHelper( obj, 1, 0xffffff );
+                    // this.scene.add( normalHelper );
 
                     break;
 
                 case 'Door':
-                    const door = new Door(obj)
-
-                    this.DOORS.set(obj.name, door)
-                    this.WALLS.set(obj.name, door.aabb)
+                    // const door = new Door(obj)
+                    //
+                    // this.DOORS.set(obj.name, door)
+                    // this.WALLS.set(obj.name, door.aabb)
 
                     break;
 
@@ -105,24 +113,24 @@ export default class ThreeWorld {
                     break;
             }
         }
-        this.engine.serverConnector.socket.emit('map_loaded_doors')
+        // this.engine.serverConnector.socket.emit('map_loaded_doors')
     }
 
     bind() {
         this.controls.addEventListener( 'lock', (e) => {
-            this.engine.state = GameEngine.STATE.GAME
+            // this.engine.state = GameEngine.STATE.GAME
 
             // if (window.ZombieGame.menu.isOpen()) {
             //     window.ZombieGame.menu.close()
             // }
         });
         this.controls.addEventListener( 'unlock', (e) => {
-            if (this.engine.chat.isOpen) {
-
-            } else {
-                // need this to open the menu on escape key
-                this.engine.menu.open()
-            }
+            // if (this.engine.chat.isOpen) {
+            //
+            // } else {
+            //     // need this to open the menu on escape key
+            //     this.engine.menu.open()
+            // }
         });
 
         window.addEventListener( 'resize', () => {
@@ -142,6 +150,8 @@ export default class ThreeWorld {
             console.log('bye')
         });
     }
+
+
 
     setRendererElement(node) {
         console.log('in three div', this.threeDivRef)

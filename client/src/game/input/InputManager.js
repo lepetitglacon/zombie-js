@@ -1,9 +1,10 @@
 import GameEngine from "../GameEngine.js";
-import Utils from "../../../server/Utils.js";
 
 export default class InputManager {
 
-    constructor() {
+    constructor({engine}) {
+        this.engine = engine
+
         this.moveForward = false;
         this.moveBackward = false;
         this.moveLeft = false;
@@ -17,11 +18,15 @@ export default class InputManager {
 
         this.lastEscapeOrTab = Date.now();
         this.lastEscapeOrTabRate = 100;
+
+        this.bind()
     }
 
-    init() {
-        this.engine = window.ZombieGame
-        
+    update() {
+        // TODO update inputs
+    }
+
+    bind() {
         document.addEventListener( 'keydown', (e) => {
             // console.log(e)
 
@@ -46,84 +51,84 @@ export default class InputManager {
                     this.moveRight = true;
                     break;
 
-                case 'KeyR':
-                    this.engine.game.weaponHandler.reload()
-                    break;
-
-                case 'KeyX':
-                    // toggle debug objects
-                    this.engine.debug = !this.engine.debug
-                    this.engine.game.three.scene.traverse((e) => {
-                        switch (e.constructor.name) {
-                            case 'Box3Helper':
-                            case 'VertexNormalsHelper':
-                            case 'ArrowHelper':
-                                e.visible = this.engine.debug
-                                break;
-                        }
-                    })
-                    break;
-
-                case 'KeyF':
-                    let door = this.engine.actionGui.door
-                    if (door !== null) {
-                        door.buy()
-                    }
-                    break;
-
-                case 'ShiftLeft':
-                    this.isRunning = true
-                    break;
-
-                case 'Space':
-                    if (
-                        !this.engine.chat.isOpen &&
-                        this.canJump
-                    ) {
-                        this.engine.game.player.velocity.y += 50;
-                        this.canJump = false
-                    }
-                    break;
-                case 'Enter':
-                case 'NumpadEnter':
-                    if (this.engine.chat.isActive()) {
-                        //sending chat
-                        if (!this.engine.chat.isEmpty()) {
-                            // console.log('sending chat')
-
-                            this.engine.serverConnector.socket.emit('chat', this.engine.chat.input.value)
-                            Utils.addMessageToChat(this.engine.chat, this.engine.chat.input.value, this.engine.serverConnector.socket.id)
-
-                            this.engine.chat.reset()
-                            this.engine.chat.close()
-                        }
-                        else {
-                            // console.log('closing chat')
-                            this.engine.chat.reset()
-                            this.engine.chat.close()
-                        }
-                    } else {
-                        // console.log('opening chat')
-                        this.engine.chat.open()
-                    }
-                    break;
-
-                case 'Escape':
-                    this.engine.menu.close()
-                    break;
-
-                case 'Tab':
-                    e.preventDefault()
-                    if (this.lastEscapeOrTab + this.lastEscapeOrTabRate < Date.now()) {
-                        this.engine.menu.toggle()
-                    }
-                    break;
-
-                case 'AltLeft':
-                    // Knife
-                    e.preventDefault()
-                    this.engine.game.weaponHandler.knife.shoot()
-                    break;
+                // case 'KeyR':
+                //     this.engine.game.weaponHandler.reload()
+                //     break;
+                //
+                // case 'KeyX':
+                //     // toggle debug objects
+                //     this.engine.debug = !this.engine.debug
+                //     this.engine.game.three.scene.traverse((e) => {
+                //         switch (e.constructor.name) {
+                //             case 'Box3Helper':
+                //             case 'VertexNormalsHelper':
+                //             case 'ArrowHelper':
+                //                 e.visible = this.engine.debug
+                //                 break;
+                //         }
+                //     })
+                //     break;
+                //
+                // case 'KeyF':
+                //     let door = this.engine.actionGui.door
+                //     if (door !== null) {
+                //         door.buy()
+                //     }
+                //     break;
+                //
+                // case 'ShiftLeft':
+                //     this.isRunning = true
+                //     break;
+                //
+                // case 'Space':
+                //     if (
+                //         !this.engine.chat.isOpen &&
+                //         this.canJump
+                //     ) {
+                //         this.engine.game.player.velocity.y += 50;
+                //         this.canJump = false
+                //     }
+                //     break;
+                // case 'Enter':
+                // case 'NumpadEnter':
+                //     if (this.engine.chat.isActive()) {
+                //         //sending chat
+                //         if (!this.engine.chat.isEmpty()) {
+                //             // console.log('sending chat')
+                //
+                //             this.engine.serverConnector.socket.emit('chat', this.engine.chat.input.value)
+                //             Utils.addMessageToChat(this.engine.chat, this.engine.chat.input.value, this.engine.serverConnector.socket.id)
+                //
+                //             this.engine.chat.reset()
+                //             this.engine.chat.close()
+                //         }
+                //         else {
+                //             // console.log('closing chat')
+                //             this.engine.chat.reset()
+                //             this.engine.chat.close()
+                //         }
+                //     } else {
+                //         // console.log('opening chat')
+                //         this.engine.chat.open()
+                //     }
+                //     break;
+                //
+                // case 'Escape':
+                //     this.engine.menu.close()
+                //     break;
+                //
+                // case 'Tab':
+                //     e.preventDefault()
+                //     if (this.lastEscapeOrTab + this.lastEscapeOrTabRate < Date.now()) {
+                //         this.engine.menu.toggle()
+                //     }
+                //     break;
+                //
+                // case 'AltLeft':
+                //     // Knife
+                //     e.preventDefault()
+                //     this.engine.game.weaponHandler.knife.shoot()
+                //     break;
             }
         });
 
@@ -151,139 +156,139 @@ export default class InputManager {
             }
         })
 
-        document.addEventListener('mousedown', (e) => {
+        // document.addEventListener('mousedown', (e) => {
+        //
+        //     switch (this.engine.state) {
+        //
+        //         case GameEngine.STATE.GAME:
+        //             if (this.engine.game.three.controls.isLocked) {
+        //
+        //                 // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button
+        //                 if (e.button === 0) {
+        //                     this.isClicking = true
+        //                 }
+        //
+        //             } else {
+        //
+        //                 // hide option menu
+        //                 if (this.engine.menu.isOpen()) {
+        //                     this.engine.menu.close()
+        //                 }
+        //
+        //                 // hide chat
+        //                 if (this.isChatOpen && !this.engine.chatInput.classList.contains('hidden')) {
+        //                     this.engine.chatInput.classList.toggle('hidden')
+        //                     this.engine.chatInput.value = ''
+        //                     this.isChatOpen = false
+        //                 }
+        //
+        //                 this.engine.game.three.controls.lock()
+        //             }
+        //             break;
+        //
+        //         case GameEngine.STATE.MENU:
+        //
+        //             break;
+        //     }
+        // })
 
-            switch (this.engine.state) {
+        // document.addEventListener('wheel', (e) => {
+        //
+        //     switch (this.engine.state) {
+        //
+        //         case GameEngine.STATE.GAME:
+        //             if (this.engine.game.three.controls.isLocked) {
+        //                 this.engine.game.weaponHandler.dispatchEvent(new Event('switch', e))
+        //             } else {
+        //
+        //                 // hide option menu
+        //                 if (this.engine.menu.isOpen()) {
+        //                     this.engine.menu.close()
+        //                 }
+        //
+        //                 // hide chat
+        //                 if (this.isChatOpen && !this.engine.chatInput.classList.contains('hidden')) {
+        //                     this.engine.chatInput.classList.toggle('hidden')
+        //                     this.engine.chatInput.value = ''
+        //                     this.isChatOpen = false
+        //                 }
+        //
+        //                 this.engine.game.three.controls.lock()
+        //             }
+        //             break;
+        //     }
+        // })
 
-                case GameEngine.STATE.GAME:
-                    if (this.engine.game.three.controls.isLocked) {
-
-                        // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button
-                        if (e.button === 0) {
-                            this.isClicking = true
-                        }
-
-                    } else {
-
-                        // hide option menu
-                        if (this.engine.menu.isOpen()) {
-                            this.engine.menu.close()
-                        }
-
-                        // hide chat
-                        if (this.isChatOpen && !this.engine.chatInput.classList.contains('hidden')) {
-                            this.engine.chatInput.classList.toggle('hidden')
-                            this.engine.chatInput.value = ''
-                            this.isChatOpen = false
-                        }
-
-                        this.engine.game.three.controls.lock()
-                    }
-                    break;
-
-                case GameEngine.STATE.MENU:
-
-                    break;
-            }
-        })
-
-        document.addEventListener('wheel', (e) => {
-
-            switch (this.engine.state) {
-
-                case GameEngine.STATE.GAME:
-                    if (this.engine.game.three.controls.isLocked) {
-                        this.engine.game.weaponHandler.dispatchEvent(new Event('switch', e))
-                    } else {
-
-                        // hide option menu
-                        if (this.engine.menu.isOpen()) {
-                            this.engine.menu.close()
-                        }
-
-                        // hide chat
-                        if (this.isChatOpen && !this.engine.chatInput.classList.contains('hidden')) {
-                            this.engine.chatInput.classList.toggle('hidden')
-                            this.engine.chatInput.value = ''
-                            this.isChatOpen = false
-                        }
-
-                        this.engine.game.three.controls.lock()
-                    }
-                    break;
-            }
-        })
-
-        document.addEventListener('mouseup', (e) => {
-
-            switch (this.engine.state) {
-
-                case GameEngine.STATE.GAME:
-                    if (this.engine.game.three.controls.isLocked) {
-
-                        // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button
-                        if (e.button === 0) {
-                            this.isClicking = false
-                        }
-
-                    } else {
-
-                        // hide option menu
-                        if (this.engine.menu.isOpen()) {
-                            this.engine.menu.close()
-                        }
-
-                        // hide chat
-                        if (this.isChatOpen && !this.engine.chatInput.classList.contains('hidden')) {
-                            this.engine.chatInput.classList.toggle('hidden')
-                            this.engine.chatInput.value = ''
-                            this.isChatOpen = false
-                        }
-
-                        this.engine.game.three.controls.lock()
-                    }
-                    break;
-
-                case GameEngine.STATE.MENU:
-
-                    break;
-            }
-        })
+        // document.addEventListener('mouseup', (e) => {
+        //
+        //     switch (this.engine.state) {
+        //
+        //         case GameEngine.STATE.GAME:
+        //             if (this.engine.game.three.controls.isLocked) {
+        //
+        //                 // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button
+        //                 if (e.button === 0) {
+        //                     this.isClicking = false
+        //                 }
+        //
+        //             } else {
+        //
+        //                 // hide option menu
+        //                 if (this.engine.menu.isOpen()) {
+        //                     this.engine.menu.close()
+        //                 }
+        //
+        //                 // hide chat
+        //                 if (this.isChatOpen && !this.engine.chatInput.classList.contains('hidden')) {
+        //                     this.engine.chatInput.classList.toggle('hidden')
+        //                     this.engine.chatInput.value = ''
+        //                     this.isChatOpen = false
+        //                 }
+        //
+        //                 this.engine.game.three.controls.lock()
+        //             }
+        //             break;
+        //
+        //         case GameEngine.STATE.MENU:
+        //
+        //             break;
+        //     }
+        // })
 
         document.addEventListener('click', (e) => {
-
-            switch (this.engine.state) {
-
-                case GameEngine.STATE.GAME:
-                    if (this.engine.game.three.controls.isLocked) {
-
-                        // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button
-                        if (e.button === 0) {
-                            this.engine.game.weaponHandler.shoot()
-                        }
-
-                    } else {
-
-                        // hide option menu
-                        if (this.engine.menu.isOpen()) {
-                            this.engine.menu.close()
-                        }
-
-                        // hide chat
-                        if (this.isChatOpen && !this.engine.chatInput.classList.contains('hidden')) {
-                            this.engine.chatInput.classList.toggle('hidden')
-                            this.engine.chatInput.value = ''
-                            this.isChatOpen = false
-                        }
-
-                        this.engine.game.three.controls.lock()
-                    }
-                    break;
-
-                case GameEngine.STATE.MENU:
-
-                    break;
-            }
+            this.engine.three.controls.lock()
+        //     switch (this.engine.state) {
+        //
+        //         case GameEngine.STATE.GAME:
+        //             if (this.engine.game.three.controls.isLocked) {
+        //
+        //                 // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button
+        //                 if (e.button === 0) {
+        //                     this.engine.game.weaponHandler.shoot()
+        //                 }
+        //
+        //             } else {
+        //
+        //                 // hide option menu
+        //                 if (this.engine.menu.isOpen()) {
+        //                     this.engine.menu.close()
+        //                 }
+        //
+        //                 // hide chat
+        //                 if (this.isChatOpen && !this.engine.chatInput.classList.contains('hidden')) {
+        //                     this.engine.chatInput.classList.toggle('hidden')
+        //                     this.engine.chatInput.value = ''
+        //                     this.isChatOpen = false
+        //                 }
+        //
+        //                 this.engine.game.three.controls.lock()
+        //             }
+        //             break;
+        //
+        //         case GameEngine.STATE.MENU:
+        //
+        //             break;
+        //     }
         })
     }
 
