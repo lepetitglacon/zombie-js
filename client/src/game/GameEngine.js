@@ -1,7 +1,7 @@
 import {GameStates, LoadingStates} from "../components/game/game/Z3DGame";
 
 import SocketHandler from "./server/SocketHandler";
-// import ThreeWorld from "./map/ThreeWorld";
+import ThreeWorld from "./map/ThreeWorld";
 // import InputManager from "./input/InputManager";
 import SoundManager from "./managers/SoundManager";
 import ModelManager from "./managers/ModelManager";
@@ -11,7 +11,7 @@ export default class GameEngine extends EventTarget {
 
 
 
-    constructor({socket, gameId, setGameState, setLoadingState, threeDivRef}) {
+    constructor({socket, gameId, setGameState, setLoadingState}) {
         super();
         this.setGameState = setGameState
         this.setLoadingState = setLoadingState
@@ -22,12 +22,16 @@ export default class GameEngine extends EventTarget {
         this.modelManager = new ModelManager({engine: this})
 
         // this.inputManager = new InputManager({engine: this})
-        //
-        // this.three = new ThreeWorld({engine: this, threeDivRef})
-        //
+
+        this.three = new ThreeWorld({engine: this})
+
         // this.weaponManager = new WeaponHandler()
 
         this.bind()
+    }
+
+    setRendererElement(node) {
+        this.three.setRendererElement(node)
     }
 
     bind() {

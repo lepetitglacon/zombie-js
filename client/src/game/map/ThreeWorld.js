@@ -7,23 +7,28 @@ import Door from "./Door/Door.js";
 
 export default class ThreeWorld {
 
-    constructor() {
+    constructor({engine}) {
+        this.engine = engine
+
         this.WALLS = new Map()
         this.DOORS = new Map()
 
         this.scene = new THREE.Scene();
-        this.scene.background = new THREE.Color( 0x222222 );
+        this.scene.background = new THREE.Color( 0xFFFFFF );
         this.scene.fog = new THREE.FogExp2( 0xefd1b5, 0.0025 );
 
-        this.camera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 0.1, 1000 );
-
-        this.createPlayer()
+        this.camera = new THREE.PerspectiveCamera(
+            90,
+            window.innerWidth / window.innerHeight,
+            0.1,
+            1000
+        );
 
         this.renderer = new THREE.WebGLRenderer();
+        this.renderer.setSize( window.innerWidth, window.innerHeight );
+
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-        this.renderer.setSize( window.innerWidth, window.innerHeight );
-        document.body.appendChild( this.renderer.domElement );
 
         this.ambientLight = new THREE.AmbientLight( 0x666666 ); // soft white light
         this.scene.add( this.ambientLight );
@@ -35,32 +40,10 @@ export default class ThreeWorld {
         this.scene.add( this.directionalLight );
 
         // 3D map from blender
-        this.gltf = window.ZombieGame.modelManager.getModel('map')
-        this.scene.add(this.gltf)
+        // this.gltf = this.engine.modelManager.getModel('map')
+        // this.scene.add(this.gltf)
 
-        // skybox
-        // let materialArray = [];
-        // let texture_ft = new THREE.TextureLoader().load( '../img/skyboxes/interstellar_skybox/xpos.png');
-        // let texture_bk = new THREE.TextureLoader().load( '../img/skyboxes/interstellar_skybox/xneg.png');
-        // let texture_up = new THREE.TextureLoader().load( '../img/skyboxes/interstellar_skybox/xpos.png');
-        // let texture_dn = new THREE.TextureLoader().load( '../img/skyboxes/interstellar_skybox/xneg.png');
-        // let texture_rt = new THREE.TextureLoader().load( '../img/skyboxes/interstellar_skybox/xpos.png');
-        // let texture_lf = new THREE.TextureLoader().load( '../img/skyboxes/interstellar_skybox/xneg.png');
-        //
-        // materialArray.push(new THREE.MeshBasicMaterial( { map: texture_ft }));
-        // materialArray.push(new THREE.MeshBasicMaterial( { map: texture_bk }));
-        // materialArray.push(new THREE.MeshBasicMaterial( { map: texture_up }));
-        // materialArray.push(new THREE.MeshBasicMaterial( { map: texture_dn }));
-        // materialArray.push(new THREE.MeshBasicMaterial( { map: texture_rt }));
-        // materialArray.push(new THREE.MeshBasicMaterial( { map: texture_lf }));
-        //
-        // for (let i = 0; i < 6; i++)
-        //     materialArray[i].side = THREE.BackSide;
-        //
-        // let skyboxGeo = new THREE.BoxGeometry( 10000, 10000, 10000);
-        // let skybox = new THREE.Mesh( skyboxGeo, materialArray );
-        // this.scene.add( skybox );
-
+        this.renderer.render( this.scene, this.camera );
     }
 
     init() {
@@ -125,10 +108,6 @@ export default class ThreeWorld {
         this.engine.serverConnector.socket.emit('map_loaded_doors')
     }
 
-    createPlayer() {
-
-    }
-
     bind() {
         this.controls.addEventListener( 'lock', (e) => {
             this.engine.state = GameEngine.STATE.GAME
@@ -164,57 +143,8 @@ export default class ThreeWorld {
         });
     }
 
-    drawObb(obb, color = 0xffffff, matrix) {
-        const material = new THREE.LineBasicMaterial( { color: color } );
-        const points = [];
-
-        const x = obb.center.x - obb.halfSize.x
-        const y = obb.center.y - obb.halfSize.y
-        const z = obb.center.z - obb.halfSize.z
-
-        const width = obb.halfSize.x * 2
-        const height = obb.halfSize.y * 2
-        const depth = obb.halfSize.z * 2
-
-        const p1 = new THREE.Vector3(x, y, z)
-        const p2 = new THREE.Vector3(x, y, z + depth)
-        const p3 = new THREE.Vector3(x + width, y, z + depth)
-        const p4 = new THREE.Vector3(x + width, y, z)
-        const p5 = new THREE.Vector3(x, y, z)
-
-        const p6 = new THREE.Vector3(x, y + height, z)
-        const p7 = new THREE.Vector3(x, y + height, z + depth)
-        const p8 = new THREE.Vector3(x + width, y + height, z + depth)
-        const p9 = new THREE.Vector3(x + width, y + height, z)
-        const p10 = new THREE.Vector3(x, y + height, z)
-
-        const p11 = new THREE.Vector3(x, y, z + depth)
-        const p12 = new THREE.Vector3(x, y + height, z + depth)
-        const p13 = new THREE.Vector3(x + width, y, z + depth)
-        const p14 = new THREE.Vector3(x + width, y + height, z + depth)
-        const p15 = new THREE.Vector3(x + width, y, z)
-        const p16 = new THREE.Vector3(x + width, y + height, z)
-
-        points.push(p1)
-        points.push(p2)
-        points.push(p3)
-        points.push(p4)
-        points.push(p5)
-        points.push(p6)
-        points.push(p7)
-        points.push(p8)
-        points.push(p9)
-        points.push(p10)
-        points.push(p11)
-        points.push(p12)
-        points.push(p13)
-        points.push(p14)
-        points.push(p15)
-        points.push(p16)
-
-        const geometry = new THREE.BufferGeometry().setFromPoints( points );
-        const line = new THREE.Line( geometry, material );
-        line.material.linewidth = 2
-        this.scene.add( line );
+    setRendererElement(node) {
+        console.log('in three div', this.threeDivRef)
+        node.appendChild( this.renderer.domElement )
     }
 }

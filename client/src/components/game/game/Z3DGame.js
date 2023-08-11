@@ -1,4 +1,4 @@
-import {useContext, useEffect, useRef, useState} from "react";
+import {useCallback, useContext, useEffect, useRef, useState} from "react";
 import GameEngine from "../../../game/GameEngine";
 import GameContext from "../../../context/GameContext";
 import {GAMESTATE} from "../Game";
@@ -22,20 +22,24 @@ export const LoadingStates = {
 function Z3DGame({socket}) {
 
     const {clientState, setClientState} = useContext(GameContext)
+
     const gameId = useParams()['id']
 
     const [loadingState, setLoadingState] = useState(LoadingStates.CONNECT)
     const [gameState, setGameState] = useState(GameStates.LOADING)
+    const [gameEngine, setGameEngine] = useState(null)
 
-    const threeDivRef = useRef()
-
+    const setThreeDivRef = useCallback(node => {
+        if (node) {
+            gameEngine.setRendererElement(node)
+        }
+    }, [gameEngine])
 
     useEffect(() => {
-        let gameEngine = new GameEngine({socket, gameId, setGameState, setLoadingState, threeDivRef})
-
+        setGameEngine(new GameEngine({socket, gameId, setGameState, setLoadingState}))
         return () => {
-            gameEngine = null
-            setClientState(GAMESTATE.NOGAME)
+            setGameEngine(null)
+            setClientState(state => GAMESTATE.NOGAME)
         }
     }, [])
 
@@ -55,8 +59,7 @@ function Z3DGame({socket}) {
                     </div>
                 )
                 : (
-                    <div ref={threeDivRef}>
-                    </div>
+                    <div id="three-container" ref={setThreeDivRef}></div>
                 )
             }
 
