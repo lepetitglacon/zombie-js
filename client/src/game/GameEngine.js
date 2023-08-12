@@ -30,7 +30,7 @@ export default class GameEngine extends EventTarget {
     }
 
     run(t = 0) {
-        requestAnimationFrame(() => this.run() );
+        this.requestAnimationFrame = requestAnimationFrame(() => this.run() );
 
         this.inputManager.update()
         this.three.update()
@@ -69,5 +69,11 @@ export default class GameEngine extends EventTarget {
             this.setGameState(GameStates.GAME)
             this.run()
         })
+    }
+
+    cleanup() {
+        cancelAnimationFrame(this.requestAnimationFrame)
+        this.three.cleanup()
+        this.inputManager.cleanup()
     }
 }

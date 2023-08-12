@@ -74,8 +74,6 @@ export default class ModelManager {
         this.registeredModels.set(name, path)
     }
 
-
-
     /**
      * return the OG model
      * @param name

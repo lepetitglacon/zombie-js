@@ -19,7 +19,7 @@ export const LoadingStates = {
     INIT: 'Initializing'
 }
 
-function Z3DGame({socket}) {
+function Z3DGame({socket, gameEngine, setGameEngine}) {
 
     const {clientState, setClientState} = useContext(GameContext)
 
@@ -27,7 +27,6 @@ function Z3DGame({socket}) {
 
     const [loadingState, setLoadingState] = useState(LoadingStates.CONNECT)
     const [gameState, setGameState] = useState(GameStates.LOADING)
-    const [gameEngine, setGameEngine] = useState(null)
 
     const setThreeDivRef = useCallback(node => {
         if (node) {
@@ -36,16 +35,15 @@ function Z3DGame({socket}) {
     }, [gameEngine])
 
     useEffect(() => {
-        setGameEngine(new GameEngine({socket, gameId, setGameState, setLoadingState}))
+        console.clear()
+        const setEngine = async () => {
+            await setGameEngine(new GameEngine({socket, gameId, setGameState, setLoadingState}))
+        }
+        setEngine()
         return () => {
-            setGameEngine(null)
-            setClientState(state => GAMESTATE.NOGAME)
+            console.log('[GAME] children cleanup')
         }
     }, [])
-
-    useEffect(() => {
-        console.log(gameState)
-    }, [gameState])
 
     return (
         <div>

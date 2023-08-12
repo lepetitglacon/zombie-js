@@ -22,10 +22,7 @@ function Game() {
     const gameId = useParams()['id']
     let socket = Socket(gameId, user._id.toString())
 
-
-    const [maps, setMaps] = useState()
-    const [currentMap, setCurrentMap] = useState()
-    const [users, setUsers] = useState()
+    const [gameEngine, setGameEngine] = useState(null)
 
     useEffect(() => {
         socket.connect()
@@ -39,19 +36,33 @@ function Game() {
         socket.on('custom-disconnect', (reason) => console.log(`[SOCKET] disconnected for reason "${reason}"`))
         socket.on('disconnect', (reason) => console.log(`[SOCKET] disconnected`))
         return () => {
-            console.log('[game] deleting socket events')
+            console.log('[GAME] deleting socket events')
             socket.off('connect')
             socket.off('custom-disconnect')
             socket.off('disconnect')
         }
     }, [])
 
+    useEffect(() => {
+        return () => {
+            console.log('[GAME] cleanup Game')
+            console.log('[GAME] deleting gameEngine')
+
+            if (gameEngine) {
+                setClientState(GAMESTATE.NOGAME)
+                gameEngine.cleanup()
+                setGameEngine(null)
+                console.log('[GAME] gameEngine deleted')
+            }
+        }
+    }, [gameEngine])
+
     return (
         <>
 
             {clientState === GAMESTATE.LOBBY || clientState === GAMESTATE.NOGAME
                 ? <Lobby socket={socket}/>
-                : <Z3DGame socket={socket}/>
+                : <Z3DGame socket={socket} gameEngine={gameEngine} setGameEngine={setGameEngine} />
             }
 
         </>

@@ -116,6 +116,13 @@ export default class ThreeWorld {
         // this.engine.serverConnector.socket.emit('map_loaded_doors')
     }
 
+
+
+    setRendererElement(node) {
+        console.log('in three div', this.threeDivRef)
+        node.appendChild( this.renderer.domElement )
+    }
+
     bind() {
         this.controls.addEventListener( 'lock', (e) => {
             // this.engine.state = GameEngine.STATE.GAME
@@ -133,28 +140,24 @@ export default class ThreeWorld {
             // }
         });
 
-        window.addEventListener( 'resize', () => {
-            this.camera.aspect = window.innerWidth / window.innerHeight;
-            this.camera.updateProjectionMatrix();
-            this.renderer.setSize( window.innerWidth, window.innerHeight );
-        });
-
-        /**
-         * Save player config in localstorage
-         */
-        window.addEventListener('beforeunload', function (e) {
-            // e.preventDefault();
-
-            console.log('saved config in localStorage')
-            // TODO
-            console.log('bye')
-        });
+        window.addEventListener( 'resize', this.onResize);
+        window.addEventListener('beforeunload', this.onBeforeUnload);
     }
 
+    cleanup() {
+        // this.controls.removeEventListener( 'lock')
+        // this.controls.removeEventListener( 'unlock')
+        window.removeEventListener( 'resize', this.onResize);
+        window.removeEventListener('beforeunload', this.onBeforeUnload);
+    }
 
+    onResize(e) {
+        this.camera.aspect = window.innerWidth / window.innerHeight;
+        this.camera.updateProjectionMatrix();
+        this.renderer.setSize( window.innerWidth, window.innerHeight );
+    }
 
-    setRendererElement(node) {
-        console.log('in three div', this.threeDivRef)
-        node.appendChild( this.renderer.domElement )
+    onBeforeUnload() {
+        // TODO
     }
 }
