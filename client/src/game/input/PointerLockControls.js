@@ -8,7 +8,7 @@ const _PI_2 = Math.PI / 2;
 
 export default class PointerLockControls extends EventDispatcher {
 
-    constructor(camera, domElement, engine) {
+    constructor({camera, domElement, engine, player}) {
         super();
 
         this._euler = new Euler(0, 0, 0, 'YXZ');
@@ -16,9 +16,12 @@ export default class PointerLockControls extends EventDispatcher {
         this._lastPosition = new Vector3();
         this._worldDirection = new Vector3()
 
+        this.zeroVector = new Vector3()
+
         this.camera = camera;
         this.domElement = domElement;
         this.engine = engine;
+        this.player = player;
 
         this.isLocked = false;
 
@@ -37,74 +40,52 @@ export default class PointerLockControls extends EventDispatcher {
 
     }
 
-    /**
-     * gives next position for collision testing
-     * @param distance
-     * @param times
-     * @returns {*}
-     */
-    testMoveForward(distance, times = 1) {
-        const camera = this.camera;
-        const vec = this._direction.clone()
-        vec.setFromMatrixColumn(camera.matrix, 0);
-        vec.crossVectors(camera.up, vec);
-        const pos = camera.position.clone()
-        return pos.addScaledVector(vec, distance * times);
+    update(delta) {
+        this.updatePlayerVelocity(delta)
+        this.movePlayerCamera(this.player.velocity.clone().multiplyScalar(delta))
+        this.getDirection()
     }
 
-    /**
-     *
-     * @param distance
-     * @param times
-     */
-    testMoveRight(distance, times = 1) {
-        const camera = this.camera;
-        const vec = this._direction.clone()
-        vec.setFromMatrixColumn(camera.matrix, 0);
-        const pos = camera.position.clone()
-        return pos.addScaledVector(vec, distance * times);
+    updatePlayerVelocity(delta) {
+        // stopping forces
+        this.player.velocity.x -= this.player.velocity.x * 10 * delta;
+        this.player.velocity.z -= this.player.velocity.z * 10 * delta;
+        this.player.velocity.y -= 10 * (this.player.mass) * delta;
+
+        // normalized direction of the keys pressed
+        this.player.feetDirection.z = Number( this.engine.inputManager.moveForward ) - Number( this.engine.inputManager.moveBackward );
+        this.player.feetDirection.x = Number( this.engine.inputManager.moveRight ) - Number( this.engine.inputManager.moveLeft );
+        this.player.feetDirection.normalize();
+
+        // set velocities in absolute direction
+        if ( this.engine.inputManager.moveForward || this.engine.inputManager.moveBackward ) {
+            this.player.velocity.z += this.player.feetDirection.z * this.player.speed * delta;
+        }
+        if ( this.engine.inputManager.moveLeft || this.engine.inputManager.moveRight ) {
+            this.player.velocity.x += this.player.feetDirection.x * this.player.speed * delta;
+        }
+
+        // handle running
+        if (this.engine.inputManager.isRunning) {
+            if (this.player.velocity.z > 0) {
+                this.player.velocity.z *= this.player.runningSpeedBoost
+            }
+        }
+
+        // gravity
+        this.camera.position.y += ( this.player.velocity.y * delta );
+
+        // not falling through ground / jump
+        if ( this.camera.position.y < 1.8 ) {
+            this.engine.inputManager.canJump = true // TODO event()
+            this.player.velocity.y = 0;
+            this.camera.position.y = 1.8;
+        }
     }
 
-    moveForward(distance) {
-        const camera = this.camera;
-        this._direction.setFromMatrixColumn(camera.matrix, 0);
-        this._direction.crossVectors(camera.up, this._direction);
-        camera.position.addScaledVector(this._direction, distance);
-    }
-
-    moveRight(distance) {
-        const camera = this.camera;
-        this._direction.setFromMatrixColumn(camera.matrix, 0);
-        camera.position.addScaledVector(this._direction, distance);
-    }
-
-    /**
-     *
-     * @param velocity
-     * @param times
-     * @returns {{times: number, position: Vector3}}
-     */
-    testMove(velocity, times = 1) {
-        const camera = this.camera;
-        const pos = this.camera.position.clone();
-        const dir = this._direction.clone();
-
-        // set x velocity facing the camera
-        dir.setFromMatrixColumn(camera.matrix, 0);
-        pos.addScaledVector(dir, velocity.x);
-
-        // set z velocity facing the camera
-        dir.crossVectors(camera.up, dir);
-        pos.addScaledVector(dir, velocity.z);
-
-        return {position: pos, times: times};
-    }
-
-    move(velocity) {
+    movePlayerCamera(velocity) {
         const camera = this.camera;
         const newPosition = this.camera.position.clone();
-        const wallNormal = new Vector3();
-        const slideFactor = .2;
 
         // set x velocity facing the camera
         this._direction.setFromMatrixColumn(camera.matrix, 0);
@@ -124,32 +105,32 @@ export default class PointerLockControls extends EventDispatcher {
 
         camera.position.copy(newPosition)
 
-        let hitbox = new Box3()
-        hitbox.setFromCenterAndSize(newPosition, new Vector3(.5, 1.8, .5))
-
-        let collisions = [];
+        // let hitbox = new Box3()
+        // hitbox.setFromCenterAndSize(newPosition, new Vector3(.5, 1.8, .5))
+        // let collisions = [];
 
         // BUILDINGS
-        for (const [name, aabb] of this.engine.game.three.WALLS) {
-            if (aabb.intersectsBox(hitbox)) {
-                collisions.push(aabb)
-            }
-        }
+        // for (const [name, aabb] of this.engine.game.three.WALLS) {
+        //     if (aabb.intersectsBox(hitbox)) {
+        //         collisions.push(aabb)
+        //     }
+        // }
 
-        if (collisions.length === 0) {
-            camera.position.copy(newPosition);
-        } else {
-            if (collisions.length === 2) {
-                // block camera on wall
-                camera.position.copy(this._lastPosition)
-            } else {
-                let aabb = collisions[0]
+        // if (collisions.length === 0) {
+        //     camera.position.copy(newPosition);
+        // } else {
+        //     if (collisions.length === 2) {
+        //         // block camera on wall
+        //         camera.position.copy(this._lastPosition)
+        //     } else {
+        //         let aabb = collisions[0]
+        //
+        //         // TODO slider le perso sur la normal du mur
+        //
+        //         camera.position.copy(this._lastPosition)
+        //     }
+        // }
 
-                // TODO slider le perso sur la normal du mur
-
-                camera.position.copy(this._lastPosition)
-            }
-        }
         this._lastPosition.copy(camera.position);
     }
 
@@ -165,7 +146,7 @@ export default class PointerLockControls extends EventDispatcher {
         this.domElement.ownerDocument.removeEventListener('pointerlockerror', this._onPointerlockError);
     }
 
-    dispose() {
+    cleanup() {
         this.disconnect();
     }
 
@@ -179,12 +160,8 @@ export default class PointerLockControls extends EventDispatcher {
         this.domElement.ownerDocument.exitPointerLock();
     }
 
-    getObject() { // retaining this method for backward compatibility
-        return this.camera;
-    }
-
     getDirection(v) {
-        return v.set(0, 0, -1).applyQuaternion(this.camera.quaternion);
+        return v?.set(0, 0, -1).applyQuaternion(this.camera.quaternion) ?? this.zeroVector;
     }
 
 }
@@ -192,42 +169,31 @@ export default class PointerLockControls extends EventDispatcher {
 // event listeners
 
 function onMouseMove(event) {
-
     if (this.isLocked === false) return;
 
     const movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
     const movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
 
+    // TODO make it work again
     // window.ZombieGame.game.weaponHandler.pointer.set(event.clientX, event.clientY)
 
     const camera = this.camera;
     this._euler.setFromQuaternion(camera.quaternion);
-
     this._euler.y -= movementX * 0.002 * this.pointerSpeed;
     this._euler.x -= movementY * 0.002 * this.pointerSpeed;
-
     this._euler.x = Math.max(_PI_2 - this.maxPolarAngle, Math.min(_PI_2 - this.minPolarAngle, this._euler.x));
-
     camera.quaternion.setFromEuler(this._euler);
-
     this.dispatchEvent(_changeEvent);
-
 }
 
 function onPointerlockChange() {
 
     if (this.domElement.ownerDocument.pointerLockElement === this.domElement) {
-
         this.dispatchEvent(_lockEvent);
-
         this.isLocked = true;
-
     } else {
-
         this.dispatchEvent(_unlockEvent);
-
         this.isLocked = false;
-
     }
 
 }

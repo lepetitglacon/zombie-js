@@ -1,17 +1,21 @@
 import {GameStates, LoadingStates} from "../components/game/game/Z3DGame";
 
+import ENV from "../ENV";
+
 import SocketHandler from "./server/SocketHandler";
 import ThreeWorld from "./map/ThreeWorld";
 import InputManager from "./input/InputManager";
 import SoundManager from "./managers/SoundManager";
 import ModelManager from "./managers/ModelManager";
-import ENV from "../ENV";
+import ControllablePlayer from "./mob/ControllablePlayer";
 // import WeaponHandler from "./weapon/WeaponHandler";
 
 export default class GameEngine extends EventTarget {
 
     constructor({socket, gameId, setGameState, setLoadingState}) {
         super();
+
+        // react setup
         this.setGameState = setGameState
         this.setLoadingState = setLoadingState
 
@@ -25,15 +29,32 @@ export default class GameEngine extends EventTarget {
         this.three = new ThreeWorld({engine: this})
 
         // this.weaponManager = new WeaponHandler()
+        this.controllablePlayer = new ControllablePlayer({engine: this})
+
+        this.lastFrameTime = performance.now();
 
         this.bind()
     }
 
-    run(t = 0) {
+    run() {
         this.requestAnimationFrame = requestAnimationFrame(() => this.run() );
+        const delta = this.getDelta_()
 
-        this.inputManager.update()
-        this.three.update()
+        console.log(delta)
+
+        // update game
+        this.inputManager.update(delta)
+        this.controllablePlayer.update(delta)
+
+        this.three.update(delta) // last update view
+
+    }
+
+    getDelta_() {
+        const time = performance.now();
+        const delta = ( time - this.lastFrameTime ) / 1000
+        this.lastFrameTime = performance.now()
+        return delta;
     }
 
     setRendererElement(node) {
@@ -73,7 +94,14 @@ export default class GameEngine extends EventTarget {
 
     cleanup() {
         cancelAnimationFrame(this.requestAnimationFrame)
+        this.cleanup_()
         this.three.cleanup()
         this.inputManager.cleanup()
     }
+
+    cleanup_() {
+        // TODO cleanup event listeners by creating function
+    }
+
+
 }

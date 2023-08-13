@@ -27,18 +27,23 @@ export default class InputManager {
     }
 
     bind() {
-        // document.addEventListener('click', this.onClick)
-        document.addEventListener( 'keyup', this.onKeyUp)
-        // document.addEventListener( 'keydown', this.onKeyDown);
-        // document.addEventListener('mouseup', this.onMouseUp)
-        // document.addEventListener('mousedown', this.onMouseDown)
-        // document.addEventListener('wheel', this.onMouseWheel)
+        this.onClick_ = this.onClick.bind(this)
+        this.onKeyUp_ = this.onKeyUp.bind(this)
+        this.onKeyDown_ = this.onKeyDown.bind(this)
+
+
+        document.addEventListener('click', this.onClick_)
+        document.addEventListener( 'keyup', this.onKeyUp_)
+        document.addEventListener( 'keydown', this.onKeyDown_);
+        // document.addEventListener('mouseup', (e) => this.onMouseUp(e))
+        // document.addEventListener('mousedown', (e) => this.onMouseDown(e))
+        // document.addEventListener('wheel', (e) => this.onMouseWheel(e))
     }
 
     cleanup() {
-        // document.removeEventListener('click', this.onClick)
-        document.removeEventListener( 'keyup', this.onKeyUp)
-        // document.removeEventListener( 'keydown', this.onKeyDown);
+        document.removeEventListener('click', this.onClick_)
+        document.removeEventListener( 'keyup', this.onKeyUp_)
+        document.removeEventListener( 'keydown', this.onKeyDown_);
         // document.removeEventListener('mouseup', this.onMouseUp)
         // document.removeEventListener('mousedown', this.onMouseDown)
         // document.removeEventListener('wheel', this.onMouseWheel)
@@ -253,31 +258,31 @@ export default class InputManager {
         }
     }
 
+    // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button
     onClick(e) {
-        this.engine.three.controls.lock()
-        switch (this.engine.state) {
-            case GameEngine.STATE.GAME:
-                if (this.engine.game.three.controls.isLocked) {
-                    // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button
-                    if (e.button === 0) {
-                        this.engine.game.weaponHandler.shoot()
-                    }
-                } else {
-                    // hide option menu
-                    if (this.engine.menu.isOpen()) {
-                        this.engine.menu.close()
-                    }
-                    // hide chat
-                    if (this.isChatOpen && !this.engine.chatInput.classList.contains('hidden')) {
-                        this.engine.chatInput.classList.toggle('hidden')
-                        this.engine.chatInput.value = ''
-                        this.isChatOpen = false
-                    }
-                    this.engine.game.three.controls.lock()
-                }
-                break;
-            case GameEngine.STATE.MENU:
-                break;
-        }
+        this.engine.controllablePlayer.controls.lock()
+        // switch (this.engine.state) {
+        //     case GameEngine.STATE.GAME:
+        //         if (this.engine.game.three.controls.isLocked) {
+        //             if (e.button === 0) {
+        //                 this.engine.game.weaponHandler.shoot()
+        //             }
+        //         } else {
+        //             // hide option menu
+        //             if (this.engine.menu.isOpen()) {
+        //                 this.engine.menu.close()
+        //             }
+        //             // hide chat
+        //             if (this.isChatOpen && !this.engine.chatInput.classList.contains('hidden')) {
+        //                 this.engine.chatInput.classList.toggle('hidden')
+        //                 this.engine.chatInput.value = ''
+        //                 this.isChatOpen = false
+        //             }
+        //             this.engine.game.three.controls.lock()
+        //         }
+        //         break;
+        //     case GameEngine.STATE.MENU:
+        //         break;
+        // }
     }
 }

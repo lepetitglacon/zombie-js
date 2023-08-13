@@ -43,28 +43,19 @@ export default class ThreeWorld {
         this.renderer.render( this.scene, this.camera );
     }
 
-    update() {
+    update(delta) {
         console.log('running')
+
 
         this.renderer.render( this.scene, this.camera );
     }
 
     async init() {
-
-
-        // this.engine.gui.addFolder('controls')
-        // this.engine.gui.addToFolder('controls', this.camera.position, 'x', -1000, 1000)
-        // this.engine.gui.addToFolder('controls', this.camera.position, 'y', -1000, 1000)
-        // this.engine.gui.addToFolder('controls', this.camera.position, 'z', -1000, 1000)
-
-        this.controls = new PointerLockControls( this.camera, this.renderer.domElement, this.engine );
-        this.controls.pointerSpeed = .27
-
         this.bind()
 
-        // 3D map from blender
+        // load 3D map from blender
         this.gltf = this.engine.modelManager.getModel('map')
-        console.log(this.gltf)
+        console.log('map gltf', this.gltf)
         this.scene.add(this.gltf)
         await this.parseMap()
     }
@@ -119,34 +110,16 @@ export default class ThreeWorld {
 
 
     setRendererElement(node) {
-        console.log('in three div', this.threeDivRef)
         node.appendChild( this.renderer.domElement )
+        console.log('[THREE] DOM Renderer node has been set')
     }
 
     bind() {
-        this.controls.addEventListener( 'lock', (e) => {
-            // this.engine.state = GameEngine.STATE.GAME
-
-            // if (window.ZombieGame.menu.isOpen()) {
-            //     window.ZombieGame.menu.close()
-            // }
-        });
-        this.controls.addEventListener( 'unlock', (e) => {
-            // if (this.engine.chat.isOpen) {
-            //
-            // } else {
-            //     // need this to open the menu on escape key
-            //     this.engine.menu.open()
-            // }
-        });
-
         window.addEventListener( 'resize', this.onResize);
         window.addEventListener('beforeunload', this.onBeforeUnload);
     }
 
     cleanup() {
-        // this.controls.removeEventListener( 'lock')
-        // this.controls.removeEventListener( 'unlock')
         window.removeEventListener( 'resize', this.onResize);
         window.removeEventListener('beforeunload', this.onBeforeUnload);
     }
