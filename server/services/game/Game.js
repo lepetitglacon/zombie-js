@@ -50,8 +50,6 @@ export default class Game extends EventTarget {
         await this.parseMap_()
         console.log('should do this after parsing map')
 
-
-
         this.waveHandler = new WaveHandler({game: this})
 
         console.log('[GAME] game initialized : ' + this.gameId)
@@ -74,7 +72,7 @@ export default class Game extends EventTarget {
         if (this.PLAYERS.size > 0) {
 
             // spawn zombies
-            this.waveHandler.update()
+            this.waveHandler.update(delta)
 
             // update Zombie movement
             // for (const [key, zombie] of this.ZOMBIES) {
@@ -84,21 +82,19 @@ export default class Game extends EventTarget {
             // }
 
             // emit players position to other players
-            // if (this.ZOMBIES.size > 0) {
-            //     const p = this.prepareZombiesToEmit()
-            //     if (p.length > 0) {
-            //         this.io.to(this.roomId).emit('zombies_positions', p)
-            //     }
-            // }
-
-            // emit players position to other players
-            // const p = this.preparePlayersToEmit()
+            // const p = this.preparePlayersToEmit_()
             // if (p.length > 0) {
             //     this.io.to(this.roomId).emit('players_position', p)
             // }
 
         }
     }
+
+    // preparePlayersToEmit_() {
+    //     for (const argument of arguments) {
+    //
+    //     }
+    // }
 
     parseMap_() {
         const file = fs.readFileSync(Server.__dirname + '/resources/gltf/maps/' + this.map.filename)
@@ -111,7 +107,7 @@ export default class Game extends EventTarget {
                         case 'Building':
                             break;
                         case 'Spawner':
-                            // ZombieFactory.spawners.push(mesh.position)
+                            ZombieFactory.spawners.push(mesh.position)
                             break;
                         case 'Door':
                             // mesh.price = 50

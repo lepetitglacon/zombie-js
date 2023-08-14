@@ -3,6 +3,7 @@ import GameModel, {GameState} from "../database/models/GameModel.js";
 import LobbyClientHandler from "./LobbyClientHandler.js";
 import MessageModel from "../database/models/MessageModel.js";
 import GameMapModel from "../database/models/GameMapModel.js";
+import {Vector3} from "three";
 
 export default class SocketRequestHandler {
 
@@ -16,6 +17,9 @@ export default class SocketRequestHandler {
 
         this.ready = false
         this.isOwner = false
+
+        this.position = new Vector3()
+        this.direction = new Vector3()
 
         this.clientGameLoaded = false
 
@@ -114,6 +118,12 @@ export default class SocketRequestHandler {
                 map: [
                     'gltf/maps/' + this.game.map.filename,
                 ],
+                models: [
+                    {
+                        name: 'zombie',
+                        path: 'gltf/zombie/zombie.glb',
+                    }
+                ],
                 sounds: [
                     'gltf/maps/' + this.game.map.filename,
 
@@ -128,6 +138,11 @@ export default class SocketRequestHandler {
         this.socket.on('client-game-loaded', () => {
             this.clientGameLoaded = true
             this.dispatchEventTo_('player-client-game-loaded')
+        })
+
+        this.socket.on('player_state', (pos, dir) => {
+            this.position.copy(pos)
+            this.direction.copy(dir)
         })
     }
 

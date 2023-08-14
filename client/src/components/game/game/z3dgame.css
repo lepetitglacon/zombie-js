@@ -1,0 +1,17 @@
+#game-ui {
+    z-index: 150;
+
+    background-color: transparent;
+    color: #121212;
+
+    font-size: 24px;
+    font-weight: 700;
+
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+.hidden {
+    display: none;
+}

@@ -14,7 +14,7 @@ export default class ThreeWorld {
         this.DOORS = new Map()
 
         this.scene = new THREE.Scene();
-        this.scene.background = new THREE.Color( 0xFFFFFF );
+        this.scene.background = new THREE.Color( 0xEEEEEE );
         this.scene.fog = new THREE.FogExp2( 0xefd1b5, 0.0025 );
 
         this.camera = new THREE.PerspectiveCamera(

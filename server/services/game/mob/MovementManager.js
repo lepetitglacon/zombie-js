@@ -27,7 +27,9 @@ export default class MovementManager {
         this.steering.z += -velocity.z
     }
 
-    update() {
+    update(delta) {
+        this.host.moveToClosestPlayer()
+
         this.host.position.add(this.steering)
         this.host.direction.copy(this.steering)
 

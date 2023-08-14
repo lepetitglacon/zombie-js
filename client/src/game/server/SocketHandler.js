@@ -1,4 +1,7 @@
+import ZombieEvents from "./events/ZombieEvents";
+
 export default class SocketHandler {
+
     constructor({engine, socket, gameId}) {
         this.engine = engine
         this.gameId = gameId
@@ -8,11 +11,19 @@ export default class SocketHandler {
         this.socket.emit('ping', {timestamp: Date.now()})
         this.socket.emit('gameInstance-init')
 
+        this.zombieEvents = new ZombieEvents({engine: this.engine, socket: this.socket})
+
         console.log('[ENGINE] start with socket ' + this.socket.id)
         this.bind()
     }
 
+    update() {
+    }
+
     bind() {
+        this.zombieEvents.bind()
+
+
         this.socket.on('ping', (e) => {
             console.log('ping: ' + e.delay + ' ms')
         })
@@ -28,6 +39,7 @@ export default class SocketHandler {
         this.socket.on('game-start', () => {
             this.dispatchEventToEngine_('game-start')
         })
+
     }
 
     dispatchEventToEngine_(eventName, data = {}) {

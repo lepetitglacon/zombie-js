@@ -7,16 +7,8 @@ export default class ZombieFactory {
         new THREE.Vector3(-27.8, 0, -16)
     ]
 
-    constructor() {
-
-    }
-
-    static createClientZombie(zombie) {
-        return
-    }
-
-    static createServerZombie(roomId) {
-        return new ServerZombie({id: this.id++, roomId: roomId, position: this.spawners[Math.floor(Math.random() * this.spawners.length)]})
+    static createServerZombie({game}) {
+        return new ServerZombie({id: this.id++, game: game, position: this.spawners[Math.floor(Math.random() * this.spawners.length)]})
     }
 
 }

@@ -1,3 +1,5 @@
+import './z3dgame.css'
+
 import {useCallback, useContext, useEffect, useRef, useState} from "react";
 import GameEngine from "../../../game/GameEngine";
 import GameContext from "../../../context/GameContext";
@@ -28,16 +30,46 @@ function Z3DGame({socket, gameEngine, setGameEngine}) {
     const [loadingState, setLoadingState] = useState(LoadingStates.CONNECT)
     const [gameState, setGameState] = useState(GameStates.LOADING)
 
+
+    const [currentWeapon, setCurrentWeapon] = useState('pistol')
+    const [weapons, setWeapons] = useState([
+        {
+            name: 'pistol',
+            magazineSize: 8,
+            maxBulletStorage: 50,
+            iconSrc: 'http://localhost:39000/assets/img/weapons/icons/weapons-icons-spritesheet.png'
+        },
+        {
+            name: 'handgun',
+            magazineSize: 30,
+            maxBulletStorage: 120,
+            iconSrc: 'http://localhost:39000/assets/img/weapons/icons/weapons-icons-spritesheet.png'
+        }
+    ])
+
     const setThreeDivRef = useCallback(node => {
         if (node) {
             gameEngine.setRendererElement(node)
         }
     }, [gameEngine])
 
+    const setGameUiRef = useCallback(node => {
+        if (node) {
+            gameEngine.setUiNode(node)
+        }
+    }, [gameEngine])
+
     useEffect(() => {
         console.clear()
         const setEngine = async () => {
-            await setGameEngine(new GameEngine({socket, gameId, setGameState, setLoadingState}))
+            await setGameEngine(new GameEngine({
+                socket,
+                gameId,
+                setGameState,
+                setLoadingState,
+                setCurrentWeapon,
+                setWeapons
+            }))
         }
         setEngine()
         return () => {
@@ -57,7 +89,17 @@ function Z3DGame({socket, gameEngine, setGameEngine}) {
                     </div>
                 )
                 : (
-                    <div id="three-container" ref={setThreeDivRef}></div>
+                    <div id="game-container">
+                        <div id="game-ui" ref={setGameUiRef} >
+                            {weapons.map((weapon, i) => {
+                                return <div key={i} className={weapon.name !== currentWeapon ? 'hidden' : ''}>
+                                    <div>{weapon.magazineSize}/{weapon.maxBulletStorage}</div>
+                                    <div><img src={weapon.iconSrc} alt=""/></div>
+                                </div>
+                            })}
+                        </div>
+                        <div id="three-container" ref={setThreeDivRef}></div>
+                    </div>
                 )
             }
 

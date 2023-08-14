@@ -4,20 +4,30 @@ import ENV from "../ENV";
 
 import SocketHandler from "./server/SocketHandler";
 import ThreeWorld from "./map/ThreeWorld";
-import InputManager from "./input/InputManager";
+import InputManager from "./managers/InputManager";
 import SoundManager from "./managers/SoundManager";
 import ModelManager from "./managers/ModelManager";
+import ZombieManager from "./managers/ZombieManager";
 import ControllablePlayer from "./mob/ControllablePlayer";
 // import WeaponHandler from "./weapon/WeaponHandler";
 
 export default class GameEngine extends EventTarget {
 
-    constructor({socket, gameId, setGameState, setLoadingState}) {
+    constructor({
+        socket,
+        gameId,
+        setGameState,
+        setLoadingState,
+        setCurrentWeapon,
+        setWeapons
+    }) {
         super();
 
         // react setup
         this.setGameState = setGameState
         this.setLoadingState = setLoadingState
+        this.setCurrentWeapon = setCurrentWeapon
+        this.setWeapons = setWeapons
 
         this.socketHandler = new SocketHandler({engine: this, socket, gameId})
 
@@ -27,6 +37,8 @@ export default class GameEngine extends EventTarget {
         this.inputManager = new InputManager({engine: this})
 
         this.three = new ThreeWorld({engine: this})
+
+        this.zombieManager = new ZombieManager({engine: this})
 
         // this.weaponManager = new WeaponHandler()
         this.controllablePlayer = new ControllablePlayer({engine: this})
@@ -44,8 +56,12 @@ export default class GameEngine extends EventTarget {
         this.inputManager.update(delta)
         this.controllablePlayer.update(delta)
 
-        this.three.update(delta) // last update view
+        this.socketHandler.update()
 
+        // send position data to server
+        this.socketHandler.socket.volatile.emit('player_state', this.controllablePlayer.position, this.controllablePlayer.lookDirection)
+
+        this.three.update(delta) // last update view
     }
 
     getDelta_() {
@@ -59,6 +75,10 @@ export default class GameEngine extends EventTarget {
         this.three.setRendererElement(node)
     }
 
+    setUiNode(node) {
+        this.guiNode = node
+    }
+
     bind() {
         this.addEventListener('loading-connected', (e) => {
             this.setLoadingState(LoadingStates.ASSETS)
@@ -67,14 +87,22 @@ export default class GameEngine extends EventTarget {
             // TODO load assets and send assets loaded to server
             console.log(e)
 
+            // map
             for (const mapToLoad of e.map) {
                 this.modelManager.registerModel('map', ENV.SERVER_HOST + 'assets/' + mapToLoad)
             }
 
+            // models
+            for (const modelToLoad of e.models) {
+                this.modelManager.registerModel(modelToLoad.name, ENV.SERVER_HOST + 'assets/' + modelToLoad.path)
+            }
+
+            // wait for models loading
             await this.modelManager.download()
             this.setLoadingState(LoadingStates.INIT)
 
             await this.three.init()
+            await this.zombieManager.init()
 
             this.dispatchEvent(new Event('three-loaded'))
         })

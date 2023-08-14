@@ -29,4 +29,10 @@ export default class Utils {
         chat.ul.appendChild(msgLi)
     }
 
+    static dispatchEventTo(eventName, data, to = null) {
+        const event = new Event(eventName)
+        Object.assign(event, data)
+        to.dispatchEvent(event)
+    }
+
 }

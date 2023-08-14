@@ -3,10 +3,11 @@ import ObjectSpawner from "./ObjectSpawner.js";
 
 export default class WaveHandler {
 
-    constructor(props) {
-        this.game = props.game
+    constructor({game}) {
+        this.game = game
 
         this.ZOMBIES = new Map()
+
         this.objectSpawner = new ObjectSpawner()
 
         this.wave = 0
@@ -21,23 +22,16 @@ export default class WaveHandler {
         this.pauseBetweenWaveTime = 1000; // 10000
         this.pauseBetweenWaveStartTime = Date.now();
 
-        this.waveConfig = {
-            0: 0,
-            1: 10,
-            2: 20,
-            3: 30,
-
-        }
-
     }
 
-    update() {
-
+    update(delta) {
         // update Zombie life
         for (const [id, zombie] of this.ZOMBIES) {
             if (zombie.health <= 0) {
                 this.killzombie(id)
             }
+
+            zombie.movementManager.update(delta)
         }
 
         if (this.shouldUpdateWave()) {
@@ -52,10 +46,15 @@ export default class WaveHandler {
             }
         }
 
+        // emit zombies position to other players
+        if (this.ZOMBIES.size > 0) {
+            this.game.io.to(this.game.gameId).emit('zombies_positions', this.prepareZombiesToEmit_())
+        }
+
     }
 
     shouldUpdateWave() {
-        return this.killedZombies >= this.waveConfig[this.wave] || this.wave === 0
+        return this.killedZombies >= this.getHowManyZombiesShoudlSpawnThisWave_() || this.wave === 0
     }
 
     updateWave() {
@@ -81,11 +80,11 @@ export default class WaveHandler {
     shouldSpawnZombie() {
         return this.zombieSpawnRateTime + this.zombieSpawnRate < Date.now() &&
             this.ZOMBIES.size < this.maxZombiesAlive &&
-            this.spawnedZombies < this.waveConfig[this.wave]
+            this.spawnedZombies < this.getHowManyZombiesShoudlSpawnThisWave_()
     }
 
     spawnZombie() {
-        this.ZOMBIES.set(ZombieFactory.id, ZombieFactory.createServerZombie(this.game.gameId))
+        this.ZOMBIES.set(ZombieFactory.id, ZombieFactory.createServerZombie({game: this.game}))
         console.debug('[WAVEHANDLER] spawned zombie ' + this.spawnedZombies)
 
         this.spawnedZombies++
@@ -104,5 +103,24 @@ export default class WaveHandler {
         this.killedZombies++
     }
 
+    getHowManyZombiesShoudlSpawnThisWave_() {
+        return this.wave * this.game.PLAYERS.size * this.getZombiesPerWavePerPlayer_()
+    }
+
+    getZombiesPerWavePerPlayer_() {
+        return this.wave < 5 ? 4 : 8
+    }
+
+    prepareZombiesToEmit_() {
+        const zombies = []
+        for (const [id, z] of this.ZOMBIES) {
+            const zombieToSend = {}
+            zombieToSend.id = z.id
+            zombieToSend.position = z.position
+            zombieToSend.direction = z.direction
+            zombies.push(zombieToSend)
+        }
+        return zombies
+    }
 
 }

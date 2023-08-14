@@ -4,14 +4,14 @@ import MovementManager from "./MovementManager.js";
 
 export default class Zombie {
 
-    constructor(props) {
-        this.id = props.id
-        this.roomId = props.roomId
+    constructor({id, game, position}) {
+        this.id = id
+        this.game = game
 
         this.movementManager = new MovementManager({host: this})
 
         this.position = new THREE.Vector3()
-        this.position.copy(props.position)
+        this.position.copy(position)
 
         this.velocity = new THREE.Vector3()
 
@@ -28,7 +28,8 @@ export default class Zombie {
     moveToClosestPlayer() {
         let closest = undefined
         let closestDistance = 999999999999
-        for (const [id, player] of ZombieServer.GAMES.get(this.roomId).PLAYERS) {
+
+        for (const [id, player] of this.game.PLAYERS) {
             const distance = player.position.manhattanDistanceTo(this.position)
             if (distance < closestDistance) {
                 closest = player
@@ -41,7 +42,7 @@ export default class Zombie {
     }
 
     repulseOtherZombies() {
-        for (const [id, zombie] of ZombieServer.GAMES.get(this.roomId).ZOMBIES) {
+        for (const [id, zombie] of ZombieServer.GAMES.get(this.gameId).ZOMBIES) {
             const distance = zombie.position.manhattanDistanceTo(this.position)
             if (distance < .8) {
                 this.movementManager.flee(zombie.position)

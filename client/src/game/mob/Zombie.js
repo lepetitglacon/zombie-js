@@ -9,7 +9,8 @@ const config = {
     depth: .3,
 }
 export default class Zombie {
-    constructor(zombie) {
+    constructor({engine, zombie}) {
+        this.engine = engine
         this.id = zombie.id
 
         this.maxHealth = 100
@@ -18,15 +19,15 @@ export default class Zombie {
         this.zombieMaterial = new THREE.MeshStandardMaterial( { color: 0x339933} );
 
         // three init
-        this.geometry = new THREE.BoxGeometry( config.width, config.height, config.depth );
-        this.material = new THREE.MeshStandardMaterial( { color: zombie.color, opacity: .5, transparent: true } );
-        this.mesh = new THREE.Mesh( this.geometry, this.material );
-        this.mesh.name = 'Zombie Mesh ' + this.id
-        this.mesh.position.set(zombie.position.x, zombie.position.y - 1, zombie.position.z)
-        window.ZombieGame.game.three.scene.add(this.mesh)
+        // this.geometry = new THREE.BoxGeometry( config.width, config.height, config.depth );
+        // this.material = new THREE.MeshStandardMaterial( { color: zombie.color, opacity: .5, transparent: true } );
+        // this.mesh = new THREE.Mesh( this.geometry, this.material );
+        // this.mesh.name = 'Zombie Mesh ' + this.id
+        // this.mesh.position.set(zombie.position.x, zombie.position.y - 1, zombie.position.z)
+        // window.ZombieGame.game.three.scene.add(this.mesh)
 
         // this.gltf = window.ZombieGame.modelManager.getModelCopy('player')
-        this.gltf = window.ZombieGame.modelManager.getModelSkeletonCopy('player')
+        this.model = this.engine.modelManager.getModelCopy('zombie')
         this.prepareGltf()
 
 
@@ -34,44 +35,37 @@ export default class Zombie {
 
     prepareGltf() {
 
-        // add animation
-        // this.animationManager = new THREE.AnimationMixer(this.gltf)
-        // const clip = THREE.AnimationClip.findByName(window.ZombieGame.modelManager, 'walking')
-        // const action = this.animationManager.clipAction(clip)
-        // action.play()
-
         // children
-        for (const bodyPart of this.gltf.children[0].children) {
+        for (const bodyPart of this.model.children[0].children) {
             bodyPart.isZombie = true
             bodyPart.zombieId = this.id
             bodyPart.material = this.zombieMaterial
         }
 
         // properties
-        this.gltf.isZombie = true
-        this.gltf.name = 'Zombie ' + this.id
-        this.gltf.material = this.zombieMaterial
+        this.model.isZombie = true
+        this.model.name = 'Zombie ' + this.id
+        this.model.material = this.zombieMaterial
 
         // // transform
         // this.gltf.scale.setScalar(1)
         // this.gltf.position.copy(this.mesh.position);
 
-
         this.aabb = new Box3()
-        this.aabb.setFromObject(this.gltf)
+        this.aabb.setFromObject(this.model)
 
         // this.mesh.updateMatrix();
         // this.mesh.updateMatrixWorld();
         // this.mesh.geometry.computeBoundingBox()
 
         this.meshHelper = new Box3Helper(this.aabb)
-        window.ZombieGame.game.three.scene.add(this.meshHelper)
+        this.engine.three.scene.add(this.meshHelper)
 
-        window.ZombieGame.game.three.scene.add( this.gltf );
+        this.engine.three.scene.add( this.model );
     }
 
     update() {
-        this.aabb.setFromObject(this.gltf);
+        this.aabb.setFromObject(this.model);
     }
 
     removeFromScene() {
