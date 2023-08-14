@@ -10,3 +10,6 @@ http://z3d.petitglacon.com
 - Physics (simple one, cannon will come after)
 - Doors
 - Mystery box
+
+# Future evols
+- Discord server, with chat rooms linked to games
