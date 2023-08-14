@@ -40,8 +40,6 @@ export default class GameEngine extends EventTarget {
         this.requestAnimationFrame = requestAnimationFrame(() => this.run() );
         const delta = this.getDelta_()
 
-        console.log(delta)
-
         // update game
         this.inputManager.update(delta)
         this.controllablePlayer.update(delta)

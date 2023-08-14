@@ -115,12 +115,13 @@ export default class ThreeWorld {
     }
 
     bind() {
-        window.addEventListener( 'resize', this.onResize);
+        this.onResize_ = this.onResize.bind(this)
+        window.addEventListener( 'resize', this.onResize_);
         window.addEventListener('beforeunload', this.onBeforeUnload);
     }
 
     cleanup() {
-        window.removeEventListener( 'resize', this.onResize);
+        window.removeEventListener( 'resize', this.onResize_);
         window.removeEventListener('beforeunload', this.onBeforeUnload);
     }
 
