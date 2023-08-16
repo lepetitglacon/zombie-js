@@ -9,9 +9,12 @@ const config = {
 }
 export default class Player {
 
-    constructor(player) {
+    constructor({engine, player}) {
+        this.engine = engine
+        console.log(player)
+
         this.socketId = player.socketId
-        this.username = player.username
+        this.gamename = player.gamename
         this.points = player.points
         this.color = player.color
 
@@ -20,48 +23,49 @@ export default class Player {
         this.health = this.maxHealth
 
         // three init
-        this.geometry = new THREE.BoxGeometry( config.width, config.height, config.depth );
-        this.material = new THREE.MeshStandardMaterial( { color: this.color, opacity: 0, transparent: true } );
-        this.mesh = new THREE.Mesh( this.geometry, this.material );
-        this.mesh.position.copy(player.position)
-        window.ZombieGame.game.three.scene.add(this.mesh)
+        // this.geometry = new THREE.BoxGeometry( config.width, config.height, config.depth );
+        // this.material = new THREE.MeshStandardMaterial( { color: this.color, opacity: 0, transparent: true } );
+        // this.mesh = new THREE.Mesh( this.geometry, this.material );
+        // this.mesh.position.copy(player.position)
+        // window.ZombieGame.game.three.scene.add(this.mesh)
 
-        this.gltf = window.ZombieGame.modelManager.getModelCopy('player')
+        this.model = this.engine.modelManager.getModelCopy('player')
         this.prepareGltf()
 
-        // sound
-        this.sound = undefined
-        this.sound = window.ZombieGame.soundManager.loadAndGetPositionalSound(
-            'weapon_pistol_shot_' + this.socketId,
-            'assets/sound/gunshot.wav'
-        )
-
-        // TODO https://web.dev/webaudio-positional-audio/
-        this.knifeSound = undefined
-        this.knifeSound = window.ZombieGame.soundManager.loadAndGetPositionalSound(
-            'weapon_knife_shot_' + this.socketId,
-            'assets/sound/knife.wav'
-        )
+        // // sound
+        // this.sound = undefined
+        // this.sound = window.ZombieGame.soundManager.loadAndGetPositionalSound(
+        //     'weapon_pistol_shot_' + this.socketId,
+        //     'assets/sound/gunshot.wav'
+        // )
+        //
+        // // TODO https://web.dev/webaudio-positional-audio/
+        // this.knifeSound = undefined
+        // this.knifeSound = window.ZombieGame.soundManager.loadAndGetPositionalSound(
+        //     'weapon_knife_shot_' + this.socketId,
+        //     'assets/sound/knife.wav'
+        // )
     }
 
     prepareGltf() {
-        this.gltf.remove(this.gltf.getObjectByName('Plane'))
-        this.gltf.scale.set(.9, .9, .9);
-        this.gltf.rotateY(Math.PI / 2);
-        this.gltf.position.copy(this.mesh.position);
+        // this.model.remove(this.model.getObjectByName('Plane'))
+        // this.model.scale.set(.9, .9, .9);
+        // this.model.rotateY(Math.PI / 2);
+        // this.model.position.copy(this.mesh.position);
+        console.log(this.model)
         const material = new THREE.MeshStandardMaterial({color: this.color})
-        for (const bodyPart of this.gltf.children[0].children) {
-            bodyPart.isPlayer = true
-            bodyPart.playerId = this.socketId
-            if (bodyPart.name === 'Head') {
-                bodyPart.material = material
-            }
-        }
-        window.ZombieGame.game.three.scene.add(this.gltf)
+        // for (const bodyPart of this.model.children[0].children) {
+        //     bodyPart.isPlayer = true
+        //     bodyPart.playerId = this.socketId
+        //     if (bodyPart.name === 'Head') {
+        //         bodyPart.material = material
+        //     }
+        // }
+        this.engine.three.scene.add(this.model)
     }
 
     removeFromScene() {
-        window.ZombieGame.game.three.scene.remove(this.mesh)
-        window.ZombieGame.game.three.scene.remove(this.gltf)
+        // this.engine.game.three.scene.remove(this.mesh)
+        this.engine.game.three.scene.remove(this.model)
     }
 }

@@ -45,23 +45,23 @@ export default class Player {
     }
 
     prepareGltf() {
-        this.gltf.remove(this.gltf.getObjectByName('Plane'))
-        this.gltf.scale.set(.9, .9, .9);
-        this.gltf.rotateY(Math.PI / 2);
-        this.gltf.position.copy(this.mesh.position);
+        this.model.remove(this.model.getObjectByName('Plane'))
+        this.model.scale.set(.9, .9, .9);
+        this.model.rotateY(Math.PI / 2);
+        this.model.position.copy(this.mesh.position);
         const material = new THREE.MeshStandardMaterial({color: this.color})
-        for (const bodyPart of this.gltf.children[0].children) {
+        for (const bodyPart of this.model.children[0].children) {
             bodyPart.isPlayer = true
             bodyPart.playerId = this.socketId
             if (bodyPart.name === 'Head') {
                 bodyPart.material = material
             }
         }
-        window.ZombieGame.game.three.scene.add(this.gltf)
+        window.ZombieGame.game.three.scene.add(this.model)
     }
 
     removeFromScene() {
         window.ZombieGame.game.three.scene.remove(this.mesh)
-        window.ZombieGame.game.three.scene.remove(this.gltf)
+        window.ZombieGame.game.three.scene.remove(this.model)
     }
 }

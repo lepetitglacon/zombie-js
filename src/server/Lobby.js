@@ -67,7 +67,7 @@ export default class Lobby {
     //     this.serverConnector.socket.on('game-state', (stateObj) => {
     //         if (stateObj.state === Game.STATUS.RUNNING) {
     //             console.log('[GAME] game already started on map : ' + stateObj.mapName)
-    //             this.modelManager.registerModel('map', 'assets/gltf/maps/' + stateObj.mapName)
+    //             this.modelManager.registerModel('map', 'assets/model/maps/' + stateObj.mapName)
     //             this.engine.init()
     //         } else {
     //             console.log('[GAME] game has not started yet')
@@ -79,7 +79,7 @@ export default class Lobby {
     //     this.serverConnector.socket.on('game_load', (mapObject) => {
     //         if (this.engine.state === GameEngine.STATE.LOBBY) {
     //             console.log('[GAME] host started the game on map : ' + mapObject.mapName)
-    //             this.modelManager.registerModel('map', 'assets/gltf/maps/' + mapObject.mapName)
+    //             this.modelManager.registerModel('map', 'assets/model/maps/' + mapObject.mapName)
     //             this.engine.init()
     //         }
     //     })

@@ -26,7 +26,7 @@ export default class Zombie {
         // this.mesh.position.set(zombie.position.x, zombie.position.y - 1, zombie.position.z)
         // window.ZombieGame.game.three.scene.add(this.mesh)
 
-        // this.gltf = window.ZombieGame.modelManager.getModelCopy('player')
+        // this.model = window.ZombieGame.modelManager.getModelCopy('player')
         this.model = this.engine.modelManager.getModelCopy('zombie')
         this.prepareGltf()
 
@@ -48,8 +48,8 @@ export default class Zombie {
         this.model.material = this.zombieMaterial
 
         // // transform
-        // this.gltf.scale.setScalar(1)
-        // this.gltf.position.copy(this.mesh.position);
+        // this.model.scale.setScalar(1)
+        // this.model.position.copy(this.mesh.position);
 
         this.aabb = new Box3()
         this.aabb.setFromObject(this.model)

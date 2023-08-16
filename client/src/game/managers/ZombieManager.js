@@ -19,7 +19,7 @@ export default class ZombieManager extends EventTarget {
         this.model = this.engine.modelManager.getModelCopy('zombie')
         console.log(this.model)
 
-        this.engine.three.scene.add(this.model)
+        // this.engine.three.scene.add(this.model)
 
         // const mergedGeometryArray = []
         // for (const bodyPart of this.model.children[0].children) {
@@ -45,15 +45,31 @@ export default class ZombieManager extends EventTarget {
         this.ZOMBIES.set(zombie.id, new Zombie({engine: this.engine, zombie}))
     }
 
+    kill_(zombie) {
+        if (this.ZOMBIES.has(zombie.id)) {
+            this.ZOMBIES.get(zombie.id).removeFromScene()
+            this.ZOMBIES.delete(zombie.id)
+        }
+
+        // spawn objects
+        for (const object of zombie.droppedObjects) {
+            console.log(" TODO [OBJECT] spawned " + object)
+            // const obj = this.serverConnector.engine.modelManager.getModelCopy('object-max_ammo')
+            // obj.position.copy(zombie.model.position)
+            // obj.position.y = 0
+            // this.serverConnector.engine.game.three.scene.add(obj)
+            // this.engine.game.OBJECTS.set()
+        }
+    }
+
     bind() {
         this.addEventListener('spawn', e => {
             this.spawn_(e.zombie)
         })
-        this.addEventListener('kill', zombie => {
-
+        this.addEventListener('kill', e => {
+            this.kill_(e.zombie)
         })
         this.addEventListener('positions', e => {
-
             for (const zombie of e.zombies) {
                 if (this.ZOMBIES.has(zombie.id)) {
                     const z = this.ZOMBIES.get(zombie.id)
@@ -65,23 +81,6 @@ export default class ZombieManager extends EventTarget {
                     Utils.dispatchEventTo('spawn', {zombie: zombie}, this)
                 }
             }
-
-            // for (const i in zombies) {
-            //     const z = zombies[i]
-            //     if (this.serverConnector.engine.game.ZOMBIES.has(z.id)) {
-            //         const zombie = this.serverConnector.engine.game.ZOMBIES.get(z.id)
-            //         zombie.mesh.position.set(z.position.x, z.position.y, z.position.z)
-            //         let angle = Math.atan2(z.direction.z, z.direction.x)
-            //         zombie.mesh.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -angle - -(Math.PI / 2))
-            //         if (zombie.gltf !== undefined) {
-            //             zombie.gltf.position.set(z.position.x, z.position.y - 1, z.position.z)
-            //             zombie.gltf.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -angle - -(Math.PI / 2))
-            //         }
-            //     } else {
-            //         this.serverConnector.engine.game.ZOMBIES.set(z.id, new Zombie(z))
-            //     }
-            //
-            // }
         })
     }
 

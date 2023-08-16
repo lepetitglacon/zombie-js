@@ -70,31 +70,25 @@ export default class Game extends EventTarget {
         const delta = (time - this.prevTime) / 1000;
 
         if (this.PLAYERS.size > 0) {
-
-            // spawn zombies
             this.waveHandler.update(delta)
 
-            // update Zombie movement
-            // for (const [key, zombie] of this.ZOMBIES) {
-            //     zombie.moveToClosestPlayer()
-            //     zombie.repulseOtherZombies()
-            //     zombie.movementManager.update()
-            // }
-
             // emit players position to other players
-            // const p = this.preparePlayersToEmit_()
-            // if (p.length > 0) {
-            //     this.io.to(this.roomId).emit('players_position', p)
-            // }
-
+            this.io.to(this.roomId).emit('players_position', this.preparePlayersToEmitForPositions_())
         }
     }
 
-    // preparePlayersToEmit_() {
-    //     for (const argument of arguments) {
-    //
-    //     }
-    // }
+    preparePlayersToEmitForPositions_() {
+        const players = []
+        for (const [id, player] of this.PLAYERS) {
+            const p = {
+                socketId: player.socket.id,
+                position: player.position,
+                direction: player.direction
+            }
+            players.push(p)
+        }
+        return players
+    }
 
     parseMap_() {
         const file = fs.readFileSync(Server.__dirname + '/resources/gltf/maps/' + this.map.filename)

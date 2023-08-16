@@ -35,7 +35,7 @@ export default class ServerConnector {
     //
     //     // receive map info
     //     this.socket.on('map', (mapName) => {
-    //         this.engine.modelManager.registerModel('map', 'assets/gltf/maps/' + mapName)
+    //         this.engine.modelManager.registerModel('map', 'assets/model/maps/' + mapName)
     //     })
     //
     //     // On game start
@@ -136,9 +136,9 @@ export default class ServerConnector {
     //                         let angle = Math.atan2(playerList[i].direction.z,playerList[i].direction.x)
     //                         p.mesh.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -angle - -(Math.PI/2))
     //
-    //                         if (p.gltf !== undefined) {
-    //                             p.gltf.position.set(playerList[i].position.x, playerList[i].position.y - 1, playerList[i].position.z)
-    //                             p.gltf.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -angle - -(Math.PI/2))
+    //                         if (p.model !== undefined) {
+    //                             p.model.position.set(playerList[i].position.x, playerList[i].position.y - 1, playerList[i].position.z)
+    //                             p.model.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -angle - -(Math.PI/2))
     //
     //                             // update sounds
     //                             p.sound.getOutput().positionX.setValueAtTime(

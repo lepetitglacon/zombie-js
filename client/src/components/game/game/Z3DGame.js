@@ -46,6 +46,7 @@ function Z3DGame({socket, gameEngine, setGameEngine}) {
             iconSrc: 'http://localhost:39000/assets/img/weapons/icons/weapons-icons-spritesheet.png'
         }
     ])
+    const [players, setPlayers] = useState([])
 
     const setThreeDivRef = useCallback(node => {
         if (node) {
@@ -68,7 +69,8 @@ function Z3DGame({socket, gameEngine, setGameEngine}) {
                 setGameState,
                 setLoadingState,
                 setCurrentWeapon,
-                setWeapons
+                setWeapons,
+                setPlayers
             }))
         }
         setEngine()
@@ -91,12 +93,23 @@ function Z3DGame({socket, gameEngine, setGameEngine}) {
                 : (
                     <div id="game-container">
                         <div id="game-ui" ref={setGameUiRef} >
-                            {weapons.map((weapon, i) => {
-                                return <div key={i} className={weapon.name !== currentWeapon ? 'hidden' : ''}>
-                                    <div>{weapon.magazineSize}/{weapon.maxBulletStorage}</div>
-                                    <div><img src={weapon.iconSrc} alt=""/></div>
-                                </div>
-                            })}
+                            <div id="weapon-ui">
+                                {weapons.map((weapon, i) => {
+                                    return <div key={i} className={weapon.name !== currentWeapon ? 'hidden' : ''}>
+                                        <div>{weapon.magazineSize}/{weapon.maxBulletStorage}</div>
+                                        <div><img src={weapon.iconSrc} alt=""/></div>
+                                    </div>
+                                })}
+                            </div>
+
+                            <div id="player-ui">
+                                {players.map((player, i) => {
+                                    return <div key={i} className={player.color}>
+                                        <div>{player.gamename}</div>
+                                        <div>{player.points}</div>
+                                    </div>
+                                })}
+                            </div>
                         </div>
                         <div id="three-container" ref={setThreeDivRef}></div>
                     </div>

@@ -17,13 +17,15 @@ export default class SocketRequestHandler {
 
         this.ready = false
         this.isOwner = false
+        this.clientGameLoaded = false
 
         this.position = new Vector3()
         this.direction = new Vector3()
+        this.points = 0
+        this.maxHealth = 100
+        this.health = this.maxHealth
 
-        this.clientGameLoaded = false
-
-        this.io.to(this.game.gameId.toString()).emit('player-connect', this.user)
+        this.io.to(this.game.gameId.toString()).emit('player-connect', this.getPlayerOnConnection_())
         this.socket.join(this.game.gameId.toString())
 
         console.log(`${this.socket.id} connected to game "${this.game.gameId}"`)
@@ -60,7 +62,7 @@ export default class SocketRequestHandler {
             const msgs = await this.getMessages()
             this.socket.emit('messages', msgs)
 
-            this.socket.emit('players', this.getPlayersToSend())
+            this.socket.emit('players', this.getPlayersForLobby())
 
             if (this.user._id.toString() === this.game.owner._id.toString()) {
                 this.socket.emit('owner', true)
@@ -109,12 +111,12 @@ export default class SocketRequestHandler {
         /**
          * GAME START
          */
-
         this.socket.on('gameInstance-init', async (e) => {
             console.log(`[${this.socket.id}] connecting to game instance`)
             this.socket.emit('loading-connected')
 
-            this.io.to(this.game.gameId.toString()).emit('loading-assets', {
+            // TODO replace hard values by assets in GameMapModel
+            this.socket.emit('loading-assets', {
                 map: [
                     'gltf/maps/' + this.game.map.filename,
                 ],
@@ -122,6 +124,10 @@ export default class SocketRequestHandler {
                     {
                         name: 'zombie',
                         path: 'gltf/zombie/zombie.glb',
+                    },
+                    {
+                        name: 'player',
+                        path: 'gltf/player.glb',
                     }
                 ],
                 sounds: [
@@ -144,16 +150,48 @@ export default class SocketRequestHandler {
             this.position.copy(pos)
             this.direction.copy(dir)
         })
+
+        this.socket.on('get_players', () => {
+            this.socket.emit('get_players', this.getPlayersForGame())
+        })
     }
 
     async getMessages() {
         return await MessageModel.find({game: this.game.gameId}).sort({dateReceived: 1}).populate('user')
     }
 
-    getPlayersToSend() {
+    getPlayerOnConnection_() {
+        return {
+            _id: this.user._id,
+            socketId: this.socket.id,
+            gamename: this.user.gamename,
+            color: this.user.color,
+            position: this.position,
+            direction: this.direction,
+            points: this.points
+        }
+    }
+
+    getPlayersForLobby() {
         const players = []
         for (const [id, player] of this.game.PLAYERS) {
-            players.push(player.user)
+            console.log(player)
+        }
+        return players
+    }
+
+    getPlayersForGame() {
+        const players = []
+        for (const [id, player] of this.game.PLAYERS) {
+            const p = {
+                socketId: player.socket.id,
+                position: player.position,
+                direction: player.direction,
+                gamename: player.gamename,
+                points: player.points,
+                color: player.user.color
+            }
+            players.push(p)
         }
         return players
     }

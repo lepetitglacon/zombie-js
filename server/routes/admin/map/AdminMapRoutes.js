@@ -86,7 +86,7 @@ export default class AdminMapRoutes {
             let uploadPath = path.join(Server.__dirname, '../../uploads')
             let assetsPath = path.join(Server.__dirname, './resources')
 
-            // gltf
+            // model
             let gltfFromUploads = path.join(uploadPath, map.uploadFilename)
             let gltfPath = path.join(assetsPath, 'gltf/maps', map.filename)
             let gltfResponse = await fs.copyFile(gltfFromUploads, gltfPath)

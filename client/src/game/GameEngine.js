@@ -9,6 +9,7 @@ import SoundManager from "./managers/SoundManager";
 import ModelManager from "./managers/ModelManager";
 import ZombieManager from "./managers/ZombieManager";
 import ControllablePlayer from "./mob/ControllablePlayer";
+import PlayerManager from "./managers/PlayerManager";
 // import WeaponHandler from "./weapon/WeaponHandler";
 
 export default class GameEngine extends EventTarget {
@@ -19,7 +20,8 @@ export default class GameEngine extends EventTarget {
         setGameState,
         setLoadingState,
         setCurrentWeapon,
-        setWeapons
+        setWeapons,
+        setPlayers
     }) {
         super();
 
@@ -28,18 +30,15 @@ export default class GameEngine extends EventTarget {
         this.setLoadingState = setLoadingState
         this.setCurrentWeapon = setCurrentWeapon
         this.setWeapons = setWeapons
+        this.setPlayers = setPlayers
 
         this.socketHandler = new SocketHandler({engine: this, socket, gameId})
-
+        this.playerManager = new PlayerManager({engine: this})
         this.soundManager = new SoundManager({engine: this})
         this.modelManager = new ModelManager({engine: this})
-
         this.inputManager = new InputManager({engine: this})
-
         this.three = new ThreeWorld({engine: this})
-
         this.zombieManager = new ZombieManager({engine: this})
-
         // this.weaponManager = new WeaponHandler()
         this.controllablePlayer = new ControllablePlayer({engine: this})
 
@@ -48,6 +47,9 @@ export default class GameEngine extends EventTarget {
         this.bind()
     }
 
+    /**
+     * Main loop
+     */
     run() {
         this.requestAnimationFrame = requestAnimationFrame(() => this.run() );
         const delta = this.getDelta_()
@@ -114,6 +116,7 @@ export default class GameEngine extends EventTarget {
             console.log('GAME START')
             console.log('----------------')
             this.setGameState(GameStates.GAME)
+            this.socketHandler.socket.emit('get_players')
             this.run()
         })
     }

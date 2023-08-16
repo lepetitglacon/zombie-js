@@ -25,7 +25,7 @@ export default class Zombie {
         this.mesh.position.set(zombie.position.x, zombie.position.y - 1, zombie.position.z)
         window.ZombieGame.game.three.scene.add(this.mesh)
 
-        // this.gltf = window.ZombieGame.modelManager.getModelCopy('player')
+        // this.model = window.ZombieGame.modelManager.getModelCopy('player')
         this.gltf = window.ZombieGame.modelManager.getModelSkeletonCopy('player')
         this.prepareGltf()
 
@@ -35,7 +35,7 @@ export default class Zombie {
     prepareGltf() {
 
         // add animation
-        // this.animationManager = new THREE.AnimationMixer(this.gltf)
+        // this.animationManager = new THREE.AnimationMixer(this.model)
         // const clip = THREE.AnimationClip.findByName(window.ZombieGame.modelManager, 'walking')
         // const action = this.animationManager.clipAction(clip)
         // action.play()
@@ -53,8 +53,8 @@ export default class Zombie {
         this.gltf.material = this.zombieMaterial
 
         // // transform
-        // this.gltf.scale.setScalar(1)
-        // this.gltf.position.copy(this.mesh.position);
+        // this.model.scale.setScalar(1)
+        // this.model.position.copy(this.mesh.position);
 
 
         this.aabb = new Box3()

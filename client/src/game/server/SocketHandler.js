@@ -1,4 +1,5 @@
 import ZombieEvents from "./events/ZombieEvents";
+import PlayerEvents from "./events/PlayerEvents";
 
 export default class SocketHandler {
 
@@ -12,6 +13,7 @@ export default class SocketHandler {
         this.socket.emit('gameInstance-init')
 
         this.zombieEvents = new ZombieEvents({engine: this.engine, socket: this.socket})
+        this.playerEvents = new PlayerEvents({engine: this.engine, socket: this.socket})
 
         console.log('[ENGINE] start with socket ' + this.socket.id)
         this.bind()
@@ -22,6 +24,7 @@ export default class SocketHandler {
 
     bind() {
         this.zombieEvents.bind()
+        this.playerEvents.bind()
 
 
         this.socket.on('ping', (e) => {
