@@ -3,7 +3,6 @@ import Server from "../../Server.js";
 import fs from "fs";
 import ZombieFactory from "./mob/ZombieFactory.js";
 import NodeThreeExporter from "@injectit/threejs-nodejs-exporters";
-import path from "path";
 import SocketRequestHandler from "../../socket/SocketRequestHandler.js";
 import GameMapModel from "../../database/models/GameMapModel.js";
 import GameModel from "../../database/models/GameModel.js";
@@ -28,7 +27,7 @@ export default class Game extends EventTarget {
 
         this.gameId = props.gameId
         this.name = props.name
-        this.map = props.map
+        this.map = props.map ?? GameMapModel.find({}).limit(1)
         this.owner = props.owner
         this.private = props.private
         this.online = props.online
@@ -56,10 +55,10 @@ export default class Game extends EventTarget {
     }
 
     run() {
-        // Start the gameloop
         this.status = Game.STATUS.RUNNING
         this.io.to(this.gameId).emit('game-start')
 
+        // Start the gameloop
         setInterval(() => {
             this.update()
         }, 1 / this.tickRate * 1000)

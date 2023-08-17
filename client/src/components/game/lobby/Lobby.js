@@ -85,7 +85,7 @@ function Lobby({socket}) {
         if (isOwner) {
             sendMapChangeEvent()
         }
-    }, [currentMap, isOwner])
+    }, [currentMap])
 
     useEffect(() => {
         chatContainerRef.current.scroll({ top: chatContainerRef.current.scrollHeight, behavior: 'smooth' });
@@ -199,10 +199,10 @@ function Lobby({socket}) {
         console.log('set map'); // true
         console.log(maps)
         if (maps) {
-            const newMap = maps.filter(map => {
+            const mapToSet = maps.filter(map => {
                 return map._id === e.mapId
             })
-            setCurrentMap(newMap[0])
+            setCurrentMap(mapToSet[0])
         }
     }
     function onGameDeleted() {

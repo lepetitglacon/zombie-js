@@ -1,6 +1,5 @@
 import UserModel from "../database/models/UserModel.js";
 import GameModel, {GameState} from "../database/models/GameModel.js";
-import LobbyClientHandler from "./LobbyClientHandler.js";
 import MessageModel from "../database/models/MessageModel.js";
 import GameMapModel from "../database/models/GameMapModel.js";
 import {Vector3} from "three";

@@ -1,7 +1,7 @@
 import * as THREE from "three"
 
 
-export default class GameClientHandler {
+export default class Old_socket_handler {
 
     constructor(props) {
         this.socket = props.socket
