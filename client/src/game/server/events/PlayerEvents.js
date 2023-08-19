@@ -34,6 +34,7 @@ export default class PlayerEvents {
         })
 
         this.socket.on('players_positions', (playerList) => {
+            console.log(playerList)
             Utils.dispatchEventTo('positions', {players: playerList}, this.engine.playerManager)
         })
 

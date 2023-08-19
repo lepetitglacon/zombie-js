@@ -42,6 +42,7 @@ function Lobby({socket}) {
         socket.on('game-counter', onGameCounter)
         socket.on('stop-game-counter', onStopGameCounter)
         socket.on('owner', onOwner)
+        socket.on('maps', onMaps)
         socket.on('map', onMap)
         socket.on('game-deleted', onGameDeleted)
         socket.on('game-start', onGameStart)
@@ -55,42 +56,33 @@ function Lobby({socket}) {
             socket.off('game-counter', onGameCounter)
             socket.off('stop-game-counter', onStopGameCounter)
             socket.off('owner', onOwner)
+            socket.off('maps', onMaps)
             socket.off('map', onMap)
             socket.off('game-deleted', onGameDeleted)
             socket.off('game-start', onGameStart)
         }
     }, [])
 
-    useEffect(() => {
-        const fetchMaps = async () => {
-            try {
-                const res = await axios.get(ENV.SERVER_HOST + 'api/availableMaps', {
-                    withCredentials: true
-                })
-                if (res.data.success) {
-                    setMaps(res.data.maps)
-                    setCurrentMap(res.data.maps[0])
-                }
-            } catch (e) {
-                console.error(e)
-            }
-        }
-        fetchMaps()
-        return () => {
-            // TODO cancel fetch
-        }
-    }, [])
+    // useEffect(() => {
+    //     if (isOwner) {
+    //         sendMapChangeEvent()
+    //     }
+    // }, [currentMap])
 
     useEffect(() => {
-        if (isOwner) {
-            sendMapChangeEvent()
-        }
-    }, [currentMap])
+        console.log(maps)
+    }, [maps])
 
+    /**
+     * scroll chat to last message
+     */
     useEffect(() => {
         chatContainerRef.current.scroll({ top: chatContainerRef.current.scrollHeight, behavior: 'smooth' });
     }, [messages])
 
+    /**
+     * make the countdown count
+     */
     useEffect(() => {
         if (countdown !== null) {
             const interval = setInterval(() => {
@@ -160,7 +152,6 @@ function Lobby({socket}) {
         }
     }
 
-
     function onMessages(messages) {
         console.log('onMessages')
         setMessages(messages)
@@ -197,14 +188,20 @@ function Lobby({socket}) {
         setIsOwner(isOwner)
     }
     function onMap(e) {
-        console.log('set map from server'); // true
-        console.log(e)
+        console.log('set map from server', e);
+        console.log(maps);
         if (maps) {
             const mapToSet = maps.filter(map => {
                 return map._id === e.mapId
             })
             setCurrentMap(mapToSet[0])
+            console.log('map set from server', mapToSet[0]);
         }
+    }
+    async function onMaps(maps) {
+        console.log('set maps from server', maps);
+        await setMaps(maps)
+
     }
     function onGameDeleted() {
         navigate('/')
@@ -225,12 +222,12 @@ function Lobby({socket}) {
                             <h3>Maps</h3>
                             <div ref={mapCarouselRef}  className="d-flex maps-container">
                                 <ul className="w-100">
-                                    {maps.map((map, i) => {
+                                    {maps && maps.map((map, i) => {
                                         return (
                                             <li
                                                 key={map._id}
                                                 data-id={map._id}
-                                                className={currentMap._id === map._id ? 'active map-item' : 'map-item'}
+                                                className={currentMap && currentMap._id === map._id ? 'active map-item' : 'map-item'}
                                                 onMouseOver={onMapItemHover}
                                                 onClick={onMapItemClick}
                                             >{map.name}</li>

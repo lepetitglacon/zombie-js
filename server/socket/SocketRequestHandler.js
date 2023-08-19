@@ -57,9 +57,12 @@ export default class SocketRequestHandler {
 
         // init client info
         this.socket.on('init', async () => {
-            const msgs = await this.getMessages()
-            this.socket.emit('messages', msgs)
-
+            // maps
+            this.socket.emit('maps', await GameMapModel.find(
+                {playable: true},
+                ['_id', 'name', 'preview']
+            ))
+            this.socket.emit('messages', await this.getMessages())
             this.socket.emit('players', this.getPlayersForLobby())
 
             if (this.user._id.toString() === this.game.owner._id.toString()) {
@@ -68,7 +71,7 @@ export default class SocketRequestHandler {
             }
 
             if (this.game.map) {
-                this.socket.emit('set-map', {mapId: this.game.map._id})
+                this.socket.emit('map', {mapId: this.game.map._id})
             }
         })
 
@@ -94,7 +97,7 @@ export default class SocketRequestHandler {
         })
 
         this.socket.on('map', async (e) => {
-            console.log(e)
+            console.log('client is setting map to ', e)
             this.socket.to(this.game.gameId).emit('set-map', e)
 
             this.dispatchEventTo_('set-map', {

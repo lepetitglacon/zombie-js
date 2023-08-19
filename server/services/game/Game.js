@@ -27,7 +27,7 @@ export default class Game extends EventTarget {
 
         this.gameId = props.gameId
         this.name = props.name
-        this.map = props.map ?? GameMapModel.find({}).limit(1)
+        this.map = props.map
         this.owner = props.owner
         this.private = props.private
         this.online = props.online

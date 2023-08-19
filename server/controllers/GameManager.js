@@ -48,7 +48,7 @@ export default class gameManager extends EventTarget{
     async init() {
         const gamesToStartFromDB = await GameModel.find({state: GameState.LOBBY})
         for (const gameToStart of gamesToStartFromDB) {
-            this.GAMES.set(gameToStart._id.toString(), this.createGameInstance_(gameToStart))
+            this.GAMES.set(gameToStart._id.toString(), await this.createGameInstance_(gameToStart))
         }
         console.log(`[SERVER][GAMES] games created from DB`, this.GAMES)
     }
@@ -69,7 +69,7 @@ export default class gameManager extends EventTarget{
         }
 
         console.log('[GAME] created [' + newGameFromDB._id + ']')
-        const gameInstance = this.createGameInstance_(newGameFromDB)
+        const gameInstance = await this.createGameInstance_(newGameFromDB)
 
         this.GAMES.set(newGameFromDB._id.toString(), gameInstance)
         return newGameFromDB._id.toString()
@@ -127,13 +127,15 @@ export default class gameManager extends EventTarget{
      * @returns {Game}
      * @private
      */
-    createGameInstance_(gameToStart) {
+    async createGameInstance_(gameToStart) {
+        const maps = await GameMapModel.find({}).limit(1)
         return new Game({
             gameId: gameToStart._id.toString(),
             name: gameToStart.name,
             owner: gameToStart.owner,
             private: gameToStart.private,
             online: gameToStart.online,
+            map: maps[0],
             io: this.server.io,
             server: this.server,
             gameManager: this
