@@ -190,7 +190,9 @@ export default class Game extends EventTarget {
                     }, Game.CONF.timeToStartAGameInSec * 1000)
                 }
             } else {
-                this.io.to(this.gameId.toString()).emit('stop-game-counter')
+                this.io.to(this.gameId.toString()).emit('stop-game-counter', {
+                    reason: 'waiting for players'
+                })
                 if (this.gameStartTimer) {
                     clearTimeout(this.gameStartTimer)
                     this.gameStartTimer = null

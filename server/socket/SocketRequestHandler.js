@@ -12,7 +12,6 @@ export default class SocketRequestHandler {
         this.io = this.server.io
         this.socket = props.socket
         this.user = props.user
-        this.user.socketId = this.socket.id
 
         this.ready = false
         this.isOwner = false
@@ -174,7 +173,12 @@ export default class SocketRequestHandler {
     getPlayersForLobby() {
         const players = []
         for (const [id, player] of this.game.PLAYERS) {
-            console.log(player)
+            players.push({
+                _id: player.user._id,
+                socketId: player.socket.id,
+                gamename: player.user.gamename,
+                color: player.user.color
+            })
         }
         return players
     }

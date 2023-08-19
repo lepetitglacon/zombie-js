@@ -42,7 +42,7 @@ function Lobby({socket}) {
         socket.on('game-counter', onGameCounter)
         socket.on('stop-game-counter', onStopGameCounter)
         socket.on('owner', onOwner)
-        socket.on('set-map', onSetMap)
+        socket.on('map', onMap)
         socket.on('game-deleted', onGameDeleted)
         socket.on('game-start', onGameStart)
         return () => {
@@ -55,7 +55,7 @@ function Lobby({socket}) {
             socket.off('game-counter', onGameCounter)
             socket.off('stop-game-counter', onStopGameCounter)
             socket.off('owner', onOwner)
-            socket.off('set-map', onSetMap)
+            socket.off('map', onMap)
             socket.off('game-deleted', onGameDeleted)
             socket.off('game-start', onGameStart)
         }
@@ -142,8 +142,8 @@ function Lobby({socket}) {
     }
 
     const onMapItemHover = (e) => {
-        console.log(e)
-
+        // TODO replace the current image with the hoverd map
+        // TODO set map on click
     }
     const onMapItemClick = (e) => {
         console.log(e)
@@ -159,6 +159,7 @@ function Lobby({socket}) {
             socket.emit('map', {mapId: currentMap._id})
         }
     }
+
 
     function onMessages(messages) {
         console.log('onMessages')
@@ -186,8 +187,8 @@ function Lobby({socket}) {
         console.log('start countdown'); // true
         setCountdown(e.timeInSec)
     }
-    function onStopGameCounter() {
-        console.log('stop countdown'); // true
+    function onStopGameCounter(e) {
+        console.log('stop countdown because : ', e.reason); // true
         setCountdown(null)
         clearInterval(countdownTimer)
     }
@@ -195,9 +196,9 @@ function Lobby({socket}) {
         console.log('you are owner'); // true
         setIsOwner(isOwner)
     }
-    function onSetMap(e) {
-        console.log('set map'); // true
-        console.log(maps)
+    function onMap(e) {
+        console.log('set map from server'); // true
+        console.log(e)
         if (maps) {
             const mapToSet = maps.filter(map => {
                 return map._id === e.mapId
