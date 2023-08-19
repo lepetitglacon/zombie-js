@@ -27,24 +27,9 @@ export default class gameManager extends EventTarget{
         this.bind()
     }
 
-    bind() {
-        this.addEventListener('delete-game', async (e) => {
-            if (this.GAMES.has(e.gameId)) {
-                delete this.GAMES.get(e.gameId)
-                this.GAMES.delete(e.gameId)
-
-                await GameModel.findByIdAndUpdate(
-                    e.gameId,
-                    {
-                        state: GameState.ARCHIVED,
-                        archiveDate: Date.now()
-                    }
-                )
-                console.log(`[GAME] ${e.gameId} deleted`)
-            }
-        })
-    }
-
+    /**
+     * Init gamemanager by recreating all games from DB (in lobby state)
+     */
     async init() {
         const gamesToStartFromDB = await GameModel.find({state: GameState.LOBBY})
         for (const gameToStart of gamesToStartFromDB) {
@@ -54,7 +39,7 @@ export default class gameManager extends EventTarget{
     }
 
     /**
-     * Lobby
+     * Create a game (in lobby state)
      */
     async create(props) {
         const owner = await UserModel.findById(props.ownerId)
@@ -75,6 +60,11 @@ export default class gameManager extends EventTarget{
         return newGameFromDB._id.toString()
     }
 
+    /**
+     * Connects a socket handler to a game
+     * @param socket
+     * @returns {Promise<*>}
+     */
     async connect(socket) {
         const game = this.findExistingGameFromId_(socket.handshake.query.gameId)
         if (!game) {
@@ -100,7 +90,7 @@ export default class gameManager extends EventTarget{
     }
 
     /**
-     *
+     * Finds a game
      * @param gameId
      * @returns {Game|null}
      * @private
@@ -112,6 +102,13 @@ export default class gameManager extends EventTarget{
         return null
     }
 
+    /**
+     * Create a game in database
+     * @param props
+     * @param populate
+     * @returns {Promise<*>}
+     * @private
+     */
     async createDBGame_(props, populate = false) {
         return new GameModel({
             name: props.name,
@@ -122,7 +119,7 @@ export default class gameManager extends EventTarget{
     }
 
     /**
-     *
+     * Create the game code instance
      * @param gameToStart
      * @returns {Game}
      * @private
@@ -139,6 +136,25 @@ export default class gameManager extends EventTarget{
             io: this.server.io,
             server: this.server,
             gameManager: this
+        })
+    }
+
+
+    bind() {
+        this.addEventListener('delete-game', async (e) => {
+            if (this.GAMES.has(e.gameId)) {
+                delete this.GAMES.get(e.gameId)
+                this.GAMES.delete(e.gameId)
+
+                await GameModel.findByIdAndUpdate(
+                    e.gameId,
+                    {
+                        state: GameState.ARCHIVED,
+                        archiveDate: Date.now()
+                    }
+                )
+                console.log(`[GAME] ${e.gameId} deleted`)
+            }
         })
     }
 }

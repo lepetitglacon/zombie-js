@@ -17,8 +17,6 @@ export default class ZombieManager extends EventTarget {
 
     async init() {
         this.model = this.engine.modelManager.getModelCopy('zombie')
-        console.log(this.model)
-
         // this.engine.three.scene.add(this.model)
 
         // const mergedGeometryArray = []

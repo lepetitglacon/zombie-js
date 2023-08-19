@@ -13,6 +13,7 @@ export default class Player {
         this.engine = engine
         console.log(player)
 
+        this._id = player._id
         this.socketId = player.socketId
         this.gamename = player.gamename
         this.points = player.points

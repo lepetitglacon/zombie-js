@@ -10,9 +10,10 @@ import GameModel from "../../database/models/GameModel.js";
 export default class Game extends EventTarget {
 
     static STATUS = {
-        PAUSED: 0,
-        RUNNING: 1,
-        TERMINATED: 2,
+        PAUSED: 'PAUSED',
+        LOBBY: 'LOBBY',
+        RUNNING: 'RUNNING',
+        TERMINATED: 'TERMINATED',
     }
 
     static CONF = {
@@ -36,13 +37,17 @@ export default class Game extends EventTarget {
 
         this.PLAYERS = new Map()
 
-        this.status = Game.STATUS.PAUSED
+        this.status = Game.STATUS.LOBBY
         this.tickRate = 60
         this.prevTime = Date.now();
 
         this.bind()
     }
 
+    /**
+     * Init elements used in the game
+     * @returns {Promise<void>}
+     */
     async init() {
         // Init the actual game
         this.GLTFLoader = new NodeThreeExporter()
@@ -54,9 +59,12 @@ export default class Game extends EventTarget {
         console.log('[GAME] game initialized : ' + this.gameId)
     }
 
+    /**
+     * Handle last changes before game start and start the game
+     */
     run() {
         this.status = Game.STATUS.RUNNING
-        this.io.to(this.gameId).emit('game-start')
+        this.io.to(this.gameId).emit('game:init:game-start')
 
         // Start the gameloop
         setInterval(() => {
@@ -64,6 +72,9 @@ export default class Game extends EventTarget {
         }, 1 / this.tickRate * 1000)
     }
 
+    /**
+     * Main loop of the game
+     */
     update() {
         const time = Date.now();
         const delta = (time - this.prevTime) / 1000;
@@ -72,19 +83,19 @@ export default class Game extends EventTarget {
             this.waveHandler.update(delta)
 
             // emit players position to other players
-            this.io.to(this.roomId).emit('players_position', this.preparePlayersToEmitForPositions_())
+            this.io.to(this.gameId).emit('game:players_positions', this.preparePlayersToEmitForPositions_())
         }
     }
 
     preparePlayersToEmitForPositions_() {
         const players = []
         for (const [id, player] of this.PLAYERS) {
-            const p = {
+            players.push({
+                _id: player.user._id,
                 socketId: player.socket.id,
                 position: player.position,
                 direction: player.direction
-            }
-            players.push(p)
+            })
         }
         return players
     }
@@ -120,23 +131,13 @@ export default class Game extends EventTarget {
     }
 
     canStart_() {
-
         let gameLoaded = true
         for (const [id, player] of this.PLAYERS) {
             if (!player.clientGameLoaded) {
                 gameLoaded = false
             }
         }
-
-        if (gameLoaded && this.status !== Game.STATUS.RUNNING) {
-            this.status = Game.STATUS.RUNNING
-            this.run()
-        } else {
-            console.log('allready RUNNING')
-        }
-
-
-
+        return gameLoaded && this.status !== Game.STATUS.RUNNING;
     }
 
     createSocketRequestHandler(socket, user) {
@@ -157,9 +158,10 @@ export default class Game extends EventTarget {
         this.addEventListener('player-disconnect', (e) => {
             this.PLAYERS.delete(e.playerId)
         })
-        this.addEventListener('player-client-game-loaded', (e) => {
-            console.log('client loaded the game')
-            this.canStart_()
+        this.addEventListener('game:init:client_game_instance-loaded_assets', (e) => {
+            if (this.canStart_()) {
+                this.run()
+            }
         })
         this.addEventListener('player-ready', () => {
             let startOrContinueTimer = true

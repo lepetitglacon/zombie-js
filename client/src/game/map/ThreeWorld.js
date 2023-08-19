@@ -55,7 +55,6 @@ export default class ThreeWorld {
 
         // load 3D map from blender
         this.gltf = this.engine.modelManager.getModel('map')
-        console.log('map model', this.gltf)
         this.scene.add(this.gltf)
         await this.parseMap()
     }

@@ -3,12 +3,11 @@ import './lobby.css'
 import {useContext, useEffect, useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
-import axios from "axios";
 import moment from "moment";
 
 import ENV from "../../../ENV";
-import AuthContext from "../../../context/AuthContext";
 import {GAMESTATE} from "../Game";
+import AuthContext from "../../../context/AuthContext";
 import GameContext from "../../../context/GameContext";
 
 function Lobby({socket}) {
@@ -19,7 +18,7 @@ function Lobby({socket}) {
     const navigate = useNavigate()
 
     const [maps, setMaps] = useState([])
-    const [currentMap, setCurrentMap] = useState()
+    const [currentMap, setCurrentMap] = useState(undefined)
     const [isOwner, setIsOwner] = useState(false)
     const [countdown, setCountdown] = useState(null)
     const [countdownTimer, setCountdownTimer] = useState([])
@@ -33,7 +32,7 @@ function Lobby({socket}) {
     const mapCarouselRef = useRef()
 
     useEffect(() => {
-        socket.emit('init')
+        socket.emit('lobby:init')
         socket.on('messages', onMessages)
         socket.on('message', onMessage)
         socket.on('players', onPlayers)
@@ -63,11 +62,11 @@ function Lobby({socket}) {
         }
     }, [])
 
-    // useEffect(() => {
-    //     if (isOwner) {
-    //         sendMapChangeEvent()
-    //     }
-    // }, [currentMap])
+    useEffect(() => {
+        if (isOwner && currentMap) {
+            sendMapChangeEvent()
+        }
+    }, [currentMap])
 
     useEffect(() => {
         console.log(maps)
@@ -77,7 +76,9 @@ function Lobby({socket}) {
      * scroll chat to last message
      */
     useEffect(() => {
-        chatContainerRef.current.scroll({ top: chatContainerRef.current.scrollHeight, behavior: 'smooth' });
+        if (socket.connected) {
+            chatContainerRef.current.scroll({ top: chatContainerRef.current.scrollHeight, behavior: 'smooth' });
+        }
     }, [messages])
 
     /**
@@ -128,7 +129,7 @@ function Lobby({socket}) {
     const handleReady = async () => {
         await setReady(ready => !ready)
         console.log('ready', ready)
-        socket.emit('player-ready', {
+        socket.emit('lobby:player-ready', {
             ready: ready
         })
     }
@@ -189,19 +190,12 @@ function Lobby({socket}) {
     }
     function onMap(e) {
         console.log('set map from server', e);
-        console.log(maps);
-        if (maps) {
-            const mapToSet = maps.filter(map => {
-                return map._id === e.mapId
-            })
-            setCurrentMap(mapToSet[0])
-            console.log('map set from server', mapToSet[0]);
-        }
+        setCurrentMap(e)
+        console.log('map set from server', currentMap);
     }
     async function onMaps(maps) {
         console.log('set maps from server', maps);
         await setMaps(maps)
-
     }
     function onGameDeleted() {
         navigate('/')
@@ -211,113 +205,120 @@ function Lobby({socket}) {
     }
 
     return (
-        <div className="container-fluid h-100">
+        <div>
 
-            <div className="row h-100">
+        {socket.connected
+                ? <div className="container-fluid h-100">
+                    <div className="row h-100">
 
-                <div className="col d-flex flex-column justify-content-around">
+                        <div className="col d-flex flex-column justify-content-around">
 
-                    {isOwner &&
-                        <div>
-                            <h3>Maps</h3>
-                            <div ref={mapCarouselRef}  className="d-flex maps-container">
-                                <ul className="w-100">
-                                    {maps && maps.map((map, i) => {
-                                        return (
-                                            <li
-                                                key={map._id}
-                                                data-id={map._id}
-                                                className={currentMap && currentMap._id === map._id ? 'active map-item' : 'map-item'}
-                                                onMouseOver={onMapItemHover}
-                                                onClick={onMapItemClick}
-                                            >{map.name}</li>
-                                        )
-                                    })}
+                            {isOwner &&
+                                <div>
+                                    <h3>Maps</h3>
+                                    <div ref={mapCarouselRef}  className="d-flex maps-container">
+                                        <ul className="w-100">
+                                            {maps && maps.map((map, i) => {
+                                                return (
+                                                    <li
+                                                        key={map._id}
+                                                        data-id={map._id}
+                                                        className={currentMap && currentMap._id === map._id ? 'active map-item' : 'map-item'}
+                                                        onMouseOver={onMapItemHover}
+                                                        onClick={onMapItemClick}
+                                                    >{map.name}</li>
+                                                )
+                                            })}
 
-                                    <li className='map-item'>...</li>
-                                    <li className='map-item'>...</li>
-                                    <li className='map-item'>...</li>
-                                </ul>
+                                            <li className='map-item'>...</li>
+                                            <li className='map-item'>...</li>
+                                            <li className='map-item'>...</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            }
+
+
+                            <div>
+                                <label className={!ready ? "btn btn-primary ready" : "btn btn-primary"} htmlFor="btn-check">Ready</label>
+                                <input ref={readyButton}
+                                       onClick={handleReady}
+                                       type="checkbox"
+                                       className="btn-check"
+                                       id="btn-check"
+                                       autoComplete="off"/>
                             </div>
-                        </div>
-                    }
 
+                            {countdown && <div>
+                                <p>All players are ready</p>
+                                <p>Starting game in <span>{countdown}</span></p>
+                            </div>}
 
-                    <div>
-                        <label className={!ready ? "btn btn-primary ready" : "btn btn-primary"} htmlFor="btn-check">Ready</label>
-                        <input ref={readyButton}
-                               onClick={handleReady}
-                               type="checkbox"
-                               className="btn-check"
-                               id="btn-check"
-                               autoComplete="off"/>
-                    </div>
+                            <div className="d-flex">
+                                <div className="col">
+                                    <h3>Players <span>{users.length}/4</span></h3>
+                                    <ul>
+                                        {
+                                            users.map((user) => {
+                                                return <li key={user._id.toString()} data-id={user._id}>{user.gamename}</li>
+                                            })
+                                        }
+                                    </ul>
+                                </div>
 
-                    {countdown && <div>
-                        <p>All players are ready</p>
-                        <p>Starting game in <span>{countdown}</span></p>
-                    </div>}
-
-                    <div className="d-flex">
-                        <div className="col">
-                            <h3>Players <span>{users.length}/4</span></h3>
-                            <ul>
-                                {
-                                    users.map((user) => {
-                                        return <li key={user._id.toString()} data-id={user._id}>{user.gamename}</li>
-                                    })
-                                }
-                            </ul>
-                        </div>
-
-                        <div className="col">
-                            <h3>Chat</h3>
-                            <div ref={chatContainerRef} className="chat-container">
-                                <ul  id="chat">
-                                    {messages.map(message => {
-                                        return <li key={message._id}>
+                                <div className="col">
+                                    <h3>Chat</h3>
+                                    <div ref={chatContainerRef} className="chat-container">
+                                        <ul  id="chat">
+                                            {messages.map(message => {
+                                                return <li key={message._id}>
                                             <span className="chat-date">
                                                 [{moment(message.dateReceived).format('kk:mm:ss')}]
                                             </span>
-                                            <span className="chat-username">{message.user.gamename}</span>
-                                            <span className="chat-text">{message.text}</span>
-                                        </li>
-                                    })}
-                                </ul>
-                            </div>
-                            <div className="mb-3">
-                                <label htmlFor="chat-textarea" className="form-label sr-only">Example textarea</label>
-                                <textarea ref={chatTextareaRef}
-                                          id="chat-textarea"
-                                          className="form-control"
-                                          rows="1"
-                                          placeholder="Press enter to send"
-                                          onInput={handleChatInput}
-                                          onKeyDown={handleChatKeys}
-                                >
+                                                    <span className="chat-username">{message.user.gamename}</span>
+                                                    <span className="chat-text">{message.text}</span>
+                                                </li>
+                                            })}
+                                        </ul>
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="chat-textarea" className="form-label sr-only">Example textarea</label>
+                                        <textarea ref={chatTextareaRef}
+                                                  id="chat-textarea"
+                                                  className="form-control"
+                                                  rows="1"
+                                                  placeholder="Press enter to send"
+                                                  onInput={handleChatInput}
+                                                  onKeyDown={handleChatKeys}
+                                        >
                             </textarea>
+                                    </div>
+                                </div>
                             </div>
+
+                        </div>
+
+                        <div className="col">
+
+                            <div id="current-map">
+                                {currentMap &&
+                                    <div>
+                                        <p id="current-map-name">{currentMap.name}</p>
+                                        <img src={ENV.SERVER_HOST + 'assets/img/map-preview/' + currentMap.preview}
+                                             className="d-block img-preview" alt="..."/>
+                                    </div>
+                                }
+                            </div>
+
                         </div>
                     </div>
 
                 </div>
-
-                <div className="col">
-
-                    <div id="current-map">
-                        {currentMap &&
-                            <div>
-                                <p id="current-map-name">{currentMap.name}</p>
-                                <img src={ENV.SERVER_HOST + 'assets/img/map-preview/' + currentMap.preview}
-                                    className="d-block img-preview" alt="..."/>
-                            </div>
-                        }
-                    </div>
-
-                </div>
-            </div>
-
+                : <div>Connecting</div>
+        }
         </div>
+
+
     );
 }
 

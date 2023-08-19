@@ -23,13 +23,13 @@ export default class PlayerManager extends EventTarget {
     }
 
     connect_(player) {
-        this.PLAYERS.set(player.id, new Player({engine: this.engine, player}))
+        this.PLAYERS.set(player._id, new Player({engine: this.engine, player}))
     }
 
     disconnect_(player) {
-        if (this.PLAYERS.has(player.id)) {
-            this.PLAYERS.get(player.id).removeFromScene()
-            this.PLAYERS.delete(player.id)
+        if (this.PLAYERS.has(player._id)) {
+            this.PLAYERS.get(player._id).removeFromScene()
+            this.PLAYERS.delete(player._id)
         }
     }
 
@@ -42,17 +42,19 @@ export default class PlayerManager extends EventTarget {
         })
         this.addEventListener('positions', e => {
             for (const player of e.players) {
-                if (this.PLAYERS.has(player.id)) {
-                    const p = this.PLAYERS.get(player.id)
-                    const angle = Math.atan2(player.direction.z, player.direction.x)
+                if (player.socketId !== this.engine.socketHandler.socket.id) {
+                    if (this.PLAYERS.has(player._id)) {
+                        const p = this.PLAYERS.get(player._id)
+                        const angle = Math.atan2(player.direction.z, player.direction.x)
 
-                    p.model.position.set(player.position.x, player.position.y, player.position.z)
-                    p.model.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -angle - -(Math.PI / 2))
-                } else {
-                    Utils.dispatchEventTo('connect', {player: player}, this)
+                        p.model.position.set(player.position.x, player.position.y, player.position.z)
+                        p.model.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -angle - -(Math.PI / 2))
+                    } else {
+                        Utils.dispatchEventTo('connect', {player: player}, this)
+                    }
                 }
             }
-            this.setPlayersForUi()
+            // this.setPlayersForUi(this.PLAYERS.values())
         })
     }
 

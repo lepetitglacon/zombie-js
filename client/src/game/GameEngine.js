@@ -61,7 +61,7 @@ export default class GameEngine extends EventTarget {
         this.socketHandler.update()
 
         // send position data to server
-        this.socketHandler.socket.volatile.emit('player_state', this.controllablePlayer.position, this.controllablePlayer.lookDirection)
+        this.socketHandler.socket.volatile.emit('game:player_position', this.controllablePlayer.position, this.controllablePlayer.lookDirection)
 
         this.three.update(delta) // last update view
     }
@@ -82,10 +82,10 @@ export default class GameEngine extends EventTarget {
     }
 
     bind() {
-        this.addEventListener('loading-connected', (e) => {
+        this.addEventListener('game:init:loading-connected', (e) => {
             this.setLoadingState(LoadingStates.ASSETS)
         })
-        this.addEventListener('loading-assets', async (e) => {
+        this.addEventListener('game:init:assets_to_load', async (e) => {
             // TODO load assets and send assets loaded to server
             console.log(e)
 
@@ -109,14 +109,13 @@ export default class GameEngine extends EventTarget {
             this.dispatchEvent(new Event('three-loaded'))
         })
         this.addEventListener('three-loaded', (e) => {
-            this.socketHandler.emitToServer('client-game-loaded')
+            this.socketHandler.emitToServer('game:init:client_game_instance-loaded_assets')
         })
         this.addEventListener('game-start', () => {
             console.log('----------------')
             console.log('GAME START')
             console.log('----------------')
             this.setGameState(GameStates.GAME)
-            this.socketHandler.socket.emit('get_players')
             this.run()
         })
     }

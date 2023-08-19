@@ -3,10 +3,13 @@ import GameModel, {GameState} from "../database/models/GameModel.js";
 import MessageModel from "../database/models/MessageModel.js";
 import GameMapModel from "../database/models/GameMapModel.js";
 import {Vector3} from "three";
+import Game from "../services/game/Game.js";
+import Utils from "../Utils.js";
 
 export default class SocketRequestHandler {
 
     constructor(props) {
+        this.lobby = props.lobby
         this.game = props.game
         this.server = props.server
         this.io = this.server.io
@@ -14,7 +17,7 @@ export default class SocketRequestHandler {
         this.user = props.user
 
         this.ready = false
-        this.isOwner = false
+        this.isOwner = this.user._id.toString() === this.game.owner._id.toString()
         this.clientGameLoaded = false
 
         this.position = new Vector3()
@@ -23,59 +26,67 @@ export default class SocketRequestHandler {
         this.maxHealth = 100
         this.health = this.maxHealth
 
-        this.io.to(this.game.gameId.toString()).emit('player-connect', this.getPlayerOnConnection_())
-        this.socket.join(this.game.gameId.toString())
-
         console.log(`${this.socket.id} connected to game "${this.game.gameId}"`)
-        this.bind()
+
+        // TODO
+        this.bindEventsGlobal()
+        this.bindEventsForLobby()
+        this.bindEventsForGame()
+
+        switch (this.game.status) {
+            case Game.STATUS.LOBBY: {
+                this.io.to(this.game.gameId.toString()).emit('lobby:player-connect', this.getPlayersForLobby())
+                break
+            }
+            case Game.STATUS.RUNNING: {
+                this.io.to(this.game.gameId.toString()).emit('game:player-connect', this.getPlayersForGame())
+                break
+            }
+        }
+        this.socket.join(this.game.gameId.toString())
     }
 
-    bind() {
+    bindEventsGlobal() {
+        this.socket.on('ping', async (e) => {
+            this.socket.emit('ping', {delay: Date.now() - e.timestamp})
+        })
+    }
 
-        /**
-         * LOBBY
-         */
-
+    bindEventsForLobby() {
         this.socket.on('disconnect', (reason) => {
             console.log(`${this.socket.id} disconnected for reason "${reason}"`)
-
-            this.dispatchEventTo_('player-disconnect', {
-                playerId: this.user._id.toString()
-            })
-
+            Utils.dispatchEventTo(
+                'player-disconnect',
+                {playerId: this.user._id.toString()},
+                this.game
+            )
             if (this.isOwner) {
                 this.io.to(this.game.gameId).emit('game-deleted')
-
-                this.dispatchEventTo_('delete-game', {
-                    gameId: this.game.gameId
-                }, this.game.gameManager)
+                Utils.dispatchEventTo(
+                    'delete-game',
+                    {gameId: this.game.gameId},
+                    this.game.gameManager
+                )
                 console.log('owner is leaving')
             }
-
-            this.io.to(this.game.gameId.toString()).emit('player-disconnect', this.user)
+            this.io.to(this.game.gameId.toString()).emit('lobby:player-disconnect', this.user)
         })
 
         // init client info
-        this.socket.on('init', async () => {
-            // maps
+        this.socket.on('lobby:init', async () => {
             this.socket.emit('maps', await GameMapModel.find(
                 {playable: true},
                 ['_id', 'name', 'preview']
             ))
-            this.socket.emit('messages', await this.getMessages())
+            this.socket.emit('messages', await this.getMessages_())
             this.socket.emit('players', this.getPlayersForLobby())
 
-            if (this.user._id.toString() === this.game.owner._id.toString()) {
-                this.socket.emit('owner', true)
-                this.isOwner = true
-            }
-
-            if (this.game.map) {
-                this.socket.emit('map', {mapId: this.game.map._id})
-            }
+            if (this.isOwner) {this.socket.emit('owner', true)}
+            if (this.game.map) {this.socket.emit('map', {mapId: this.game.map._id})}
         })
 
-        this.socket.on('message', async (e) => {
+        // messages
+        this.socket.on('lobby:message', async (e) => {
             const game = await GameModel.findById(this.game.gameId)
             const user = await UserModel.findById(e.userId)
             const message = new MessageModel({
@@ -90,34 +101,29 @@ export default class SocketRequestHandler {
             this.io.to(this.game.gameId.toString()).emit('message', messageToSend)
         })
 
-        this.socket.on('player-ready', async (e) => {
+        this.socket.on('lobby:player-ready', async (e) => {
             console.log(e)
             this.ready = e.ready
             this.game.dispatchEvent(new Event('player-ready'))
         })
 
-        this.socket.on('map', async (e) => {
+        this.socket.on('lobby:set-map', async (e) => {
             console.log('client is setting map to ', e)
-            this.socket.to(this.game.gameId).emit('set-map', e)
+            this.socket.to(this.game.gameId).emit('map', e)
 
             this.dispatchEventTo_('set-map', {
                 mapId: e.mapId
             })
         })
+    }
 
-        this.socket.on('ping', async (e) => {
-            this.socket.emit('ping', {delay: Date.now() - e.timestamp})
-        })
+    bindEventsForGame() {
 
-        /**
-         * GAME START
-         */
-        this.socket.on('gameInstance-init', async (e) => {
+        this.socket.on('game:init:client_game_instance-ready-for-init', async (e) => {
             console.log(`[${this.socket.id}] connecting to game instance`)
-            this.socket.emit('loading-connected')
 
-            // TODO replace hard values by assets in GameMapModel
-            this.socket.emit('loading-assets', {
+            this.socket.emit('game:init:loading-connected')
+            this.socket.emit('game:init:assets_to_load', { // TODO replace hard values by assets in GameMapModel
                 map: [
                     'gltf/maps/' + this.game.map.filename,
                 ],
@@ -142,35 +148,23 @@ export default class SocketRequestHandler {
             })
         })
 
-        this.socket.on('client-game-loaded', () => {
+        this.socket.on('game:init:client_game_instance-loaded_assets', () => {
             this.clientGameLoaded = true
-            this.dispatchEventTo_('player-client-game-loaded')
+            this.dispatchEventTo_('game:init:client_game_instance-loaded_assets')
         })
 
-        this.socket.on('player_state', (pos, dir) => {
+        this.socket.on('game:player_position', (pos, dir) => {
             this.position.copy(pos)
             this.direction.copy(dir)
         })
 
-        this.socket.on('get_players', () => {
+        this.socket.on('game:get_players', () => {
             this.socket.emit('get_players', this.getPlayersForGame())
         })
     }
 
-    async getMessages() {
+    async getMessages_() {
         return await MessageModel.find({game: this.game.gameId}).sort({dateReceived: 1}).populate('user')
-    }
-
-    getPlayerOnConnection_() {
-        return {
-            _id: this.user._id,
-            socketId: this.socket.id,
-            gamename: this.user.gamename,
-            color: this.user.color,
-            position: this.position,
-            direction: this.direction,
-            points: this.points
-        }
     }
 
     getPlayersForLobby() {

@@ -33,8 +33,7 @@ export default class PlayerEvents {
             Utils.dispatchEventTo('disconnect', {player: player}, this.engine.playerManager)
         })
 
-        this.socket.on('players_positions', (playerList) => {
-            console.log(playerList)
+        this.socket.on('game:players_positions', (playerList) => {
             Utils.dispatchEventTo('positions', {players: playerList}, this.engine.playerManager)
         })
 
