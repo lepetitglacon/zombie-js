@@ -9,7 +9,8 @@ import RoutesHandler from "./routes/RoutesHandler.js";
 import dotenv from 'dotenv'
 import SocketRequestHandler from "./socket/SocketRequestHandler.js";
 import DatabaseHandler from "./database/DatabaseHandler.js";
-import gameManager from "./controllers/GameManager.js";
+import GameManager from "./controllers/GameManager.js";
+import Logger from "./Logger.js";
 
 export default class Server {
 
@@ -25,7 +26,7 @@ export default class Server {
     }
 
     constructor(props) {
-        console.log('[SERVER] Starting server')
+        Logger.server('Starting server')
         dotenv.config()
 
         this.configuration = props
@@ -41,9 +42,7 @@ export default class Server {
         });
 
         this.dbHandler = new DatabaseHandler(this.configuration)
-
-        this.gameManager = new gameManager({server: this})
-        this.USERS = new Map()
+        this.gameManager = new GameManager({server: this})
     }
 
     async run() {

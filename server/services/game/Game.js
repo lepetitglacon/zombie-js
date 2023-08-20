@@ -6,6 +6,8 @@ import NodeThreeExporter from "@injectit/threejs-nodejs-exporters";
 import SocketRequestHandler from "../../socket/SocketRequestHandler.js";
 import GameMapModel from "../../database/models/GameMapModel.js";
 import GameModel from "../../database/models/GameModel.js";
+import Logger from "../../Logger.js";
+Logger.init()
 
 export default class Game extends EventTarget {
 
@@ -52,11 +54,10 @@ export default class Game extends EventTarget {
         // Init the actual game
         this.GLTFLoader = new NodeThreeExporter()
         await this.parseMap_()
-        console.log('should do this after parsing map')
 
         this.waveHandler = new WaveHandler({game: this})
 
-        console.log('[GAME] game initialized : ' + this.gameId)
+        Logger.game('game initialized : ' + this.gameId)
     }
 
     /**

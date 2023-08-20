@@ -1,8 +1,10 @@
+import Logger from "../../Logger.js";
+
 export default class DBConnector {
 
     constructor(props) {
 
-        console.log('[DATABASE] using ' + props.database.name)
+        Logger.server(`using ${props.database.name}`, 'database')
 
     }
 

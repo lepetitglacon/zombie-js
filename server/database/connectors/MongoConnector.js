@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import mongoose from 'mongoose'
 import DBConnector from "./DBConnector.js";
+import Logger from "../../Logger.js";
 
 export default class MongoConnector extends DBConnector{
 
@@ -14,15 +15,16 @@ export default class MongoConnector extends DBConnector{
 
         this.url = `mongodb://0.0.0.0:27017/${this.databaseName}`
 
-        console.log(`[DATABASE] Mongo URL: ${this.url}`)
+        Logger.server(`Mongo URL: ${this.url}`, 'database')
     }
 
     async connect() {
         try {
             mongoose.connect(this.url, { useNewUrlParser: true, useUnifiedTopology: true })
-            console.log('[DATABASE] Connected to MongoDB')
+            Logger.server(`Connected to MongoDB`, 'database')
         } catch (e) {
-            console.error('[DATABASE] Failed to connect to MongoDB', e)
+            Logger.server(`Failed to connect to MongoDB`, 'database')
+            console.error(e)
         }
     }
 

@@ -4,7 +4,7 @@ import GameMapModel from "../database/models/GameMapModel.js";
 import Game from "../services/game/Game.js";
 import {Vector3} from "three";
 
-export default class gameManager extends EventTarget{
+export default class GameManager extends EventTarget{
 
     static playerColors = [
         0x999999, // white

@@ -1,7 +1,7 @@
 import Server from "../../Server.js";
 import GameMap from "../../database/models/GameMapModel.js";
 import path from "path";
-import gameManager from "../../controllers/GameManager.js";
+import GameManager from "../../controllers/GameManager.js";
 import GameModel from "../../database/models/GameModel.js";
 
 export default class GameRoutes {
