@@ -78,11 +78,11 @@ export default class SocketRequestHandler {
                 {playable: true},
                 ['_id', 'name', 'preview']
             ))
-            this.socket.emit('messages', await this.getMessages_())
-            this.socket.emit('players', this.getPlayersForLobby())
+            this.socket.emit('lobby:init:messages', await this.getMessages_())
+            this.socket.emit('lobby:init:players', this.getPlayersForLobby())
 
-            if (this.isOwner) {this.socket.emit('owner', true)}
-            if (this.game.map) {this.socket.emit('map', {mapId: this.game.map._id})}
+            if (this.isOwner) {this.socket.emit('lobby:init:owner', true)}
+            if (this.game.map) {this.socket.emit('lobby:init:map', {mapId: this.game.map._id})}
         })
 
         // messages

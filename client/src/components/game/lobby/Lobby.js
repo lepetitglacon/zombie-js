@@ -33,39 +33,40 @@ function Lobby({socket}) {
 
     useEffect(() => {
         socket.emit('lobby:init')
-        socket.on('messages', onMessages)
+        socket.on('lobby:init:messages', onMessages)
         socket.on('message', onMessage)
-        socket.on('players', onPlayers)
+        socket.on('lobby:init:players', onPlayers)
         socket.on('player-connect', onPlayerConnect)
         socket.on('player-disconnect', onPlayerDisconnect)
         socket.on('game-counter', onGameCounter)
         socket.on('stop-game-counter', onStopGameCounter)
-        socket.on('owner', onOwner)
+        socket.on('lobby:init:owner', onOwner)
         socket.on('maps', onMaps)
-        socket.on('map', onMap)
+        socket.on('lobby:init:map', onMap)
         socket.on('game-deleted', onGameDeleted)
         socket.on('game-start', onGameStart)
         return () => {
             console.log('clear listeners')
-            socket.off('messages', onMessages)
+            socket.off('lobby:init:messages', onMessages)
             socket.off('message', onMessage)
-            socket.off('players', onPlayers)
+            socket.off('lobby:init:players', onPlayers)
             socket.off('player-connect', onPlayerConnect)
             socket.off('player-disconnect', onPlayerDisconnect)
             socket.off('game-counter', onGameCounter)
             socket.off('stop-game-counter', onStopGameCounter)
-            socket.off('owner', onOwner)
+            socket.off('lobby:init:owner', onOwner)
             socket.off('maps', onMaps)
-            socket.off('map', onMap)
+            socket.off('lobby:init:map', onMap)
             socket.off('game-deleted', onGameDeleted)
             socket.off('game-start', onGameStart)
         }
     }, [])
 
     useEffect(() => {
-        if (isOwner && currentMap) {
-            sendMapChangeEvent()
-        }
+        console.log(currentMap)
+        // if (isOwner && currentMap) {
+        //     sendMapChangeEvent()
+        // }
     }, [currentMap])
 
     useEffect(() => {
@@ -104,7 +105,7 @@ function Lobby({socket}) {
         console.log('message')
         const message = chatTextareaRef.current.value
         if (message === '') return;
-        await socket.emit('message', {
+        await socket.emit('lobby:message', {
             userId: user._id.toString(),
             message: message,
             date: Date.now(),
@@ -154,48 +155,48 @@ function Lobby({socket}) {
     }
 
     function onMessages(messages) {
-        console.log('onMessages')
+        console.log('[LOBBY][INIT] get messages')
         setMessages(messages)
     }
     function onMessage(message) {
-        console.log('onMessage')
+        console.log('[LOBBY] new message')
         setMessages((msgs) => {
             return [...msgs, message]
         })
     }
     function onPlayers(players) {
-        console.log('players', players); // true
+        console.log('[LOBBY][INIT] get players', players); // true
         setUsers(players)
     }
     function onPlayerConnect(player) {
-        console.log('player connected'); // true
+        console.log('[LOBBY] new player connected', player); // true
         setUsers(users => [...users, player])
     }
     function onPlayerDisconnect(player) {
-        console.log('player disconnected', player); // true
+        console.log('[LOBBY] player disconnected', player); // true
         setUsers(users => users.filter(user => user._id.toString() !== player._id.toString()))
     }
     function onGameCounter(e) {
-        console.log('start countdown'); // true
+        console.log('[LOBBY] start countdown before game starts'); // true
         setCountdown(e.timeInSec)
     }
     function onStopGameCounter(e) {
-        console.log('stop countdown because : ', e.reason); // true
+        console.log('[LOBBY] stop countdown before game starts', e.reason); // true
         setCountdown(null)
         clearInterval(countdownTimer)
     }
     function onOwner(isOwner) {
-        console.log('you are owner'); // true
+        console.log('[LOBBY][INIT] You are the owner of the game'); // true
         setIsOwner(isOwner)
     }
-    function onMap(e) {
-        console.log('set map from server', e);
-        setCurrentMap(e)
-        console.log('map set from server', currentMap);
+    async function onMap(e) {
+        console.log('[LOBBY] Server sent map', e);
+        await setCurrentMap(oldCurrent => maps.filter(map => map._id === e.mapId)[0])
     }
     async function onMaps(maps) {
-        console.log('set maps from server', maps);
-        await setMaps(maps)
+        console.log('[LOBBY][INIT] Server sent available maps', maps);
+        await setMaps(oldMaps => maps)
+        await setCurrentMap(oldCurrent => maps[0])
     }
     function onGameDeleted() {
         navigate('/')
