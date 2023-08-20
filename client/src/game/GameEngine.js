@@ -10,9 +10,19 @@ import ModelManager from "./managers/ModelManager";
 import ZombieManager from "./managers/ZombieManager";
 import ControllablePlayer from "./mob/ControllablePlayer";
 import PlayerManager from "./managers/PlayerManager";
-// import WeaponHandler from "./weapon/WeaponHandler";
+import WeaponManager from "./weapon/WeaponManager";
 
 export default class GameEngine extends EventTarget {
+
+    /**
+     * Global states for the GameEngine
+     * @type {{GAME: string, CHAT: string, MENU: string}}
+     */
+    static STATES = {
+        GAME: 'GAME',
+        MENU: 'MENU',
+        CHAT: 'CHAT',
+    }
 
     constructor({
         socket,
@@ -32,14 +42,16 @@ export default class GameEngine extends EventTarget {
         this.setWeapons = setWeapons
         this.setPlayers = setPlayers
 
+        this.state = GameEngine.STATES.GAME
+
         this.socketHandler = new SocketHandler({engine: this, socket, gameId})
+        this.three = new ThreeWorld({engine: this})
         this.playerManager = new PlayerManager({engine: this})
         this.soundManager = new SoundManager({engine: this})
         this.modelManager = new ModelManager({engine: this})
         this.inputManager = new InputManager({engine: this})
-        this.three = new ThreeWorld({engine: this})
         this.zombieManager = new ZombieManager({engine: this})
-        // this.weaponManager = new WeaponHandler()
+        this.weaponManager = new WeaponManager({engine: this})
         this.controllablePlayer = new ControllablePlayer({engine: this})
 
         this.lastFrameTime = performance.now();
@@ -59,6 +71,7 @@ export default class GameEngine extends EventTarget {
         this.controllablePlayer.update(delta)
 
         this.socketHandler.update()
+        this.weaponManager.update(delta)
 
         // send position data to server
         this.socketHandler.socket.volatile.emit('game:player_position', this.controllablePlayer.position, this.controllablePlayer.lookDirection)
@@ -98,6 +111,12 @@ export default class GameEngine extends EventTarget {
             for (const modelToLoad of e.models) {
                 this.modelManager.registerModel(modelToLoad.name, ENV.SERVER_HOST + 'assets/' + modelToLoad.path)
             }
+
+            // TODO sounds
+            // for (const soundToLoad of e.sounds) {
+            //     this.soundManager.(soundToLoad.name, ENV.SERVER_HOST + 'assets/' + soundToLoad.path)
+            // }
+            await this.soundManager.loadSounds()
 
             // wait for models loading
             await this.modelManager.download()

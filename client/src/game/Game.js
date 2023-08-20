@@ -1,5 +1,5 @@
 import ThreeWorld from "./map/ThreeWorld.js";
-import WeaponHandler from "./weapon/WeaponHandler.js";
+import WeaponManager from "./weapon/WeaponManager.js";
 import {Box3} from "three";
 import ControllablePlayer from "./mob/ControllablePlayer.js";
 import * as THREE from "three";
@@ -61,7 +61,7 @@ export default class Game {
             this.engine.chat.init()
             this.engine.points.init()
 
-            this.weaponHandler = new WeaponHandler();
+            this.weaponHandler = new WeaponManager();
 
             this.cannonWorldConfig = {
                 gravity: 9.8 // 9.8 normalementq

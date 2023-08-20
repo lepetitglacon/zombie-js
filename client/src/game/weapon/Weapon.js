@@ -5,11 +5,10 @@ export default class Weapon {
     // assets
     // https://www.videvo.net/search/?q=pistol&mode=sound-effects&sort=
 
-    constructor(props) {
-        this.raycaster = props.raycaster
-        this.weaponHandler = props.weaponHandler
-
-        this.assetsPath = window.location.href.substring(0, window.location.href.lastIndexOf('/')) + '/'
+    constructor({engine, weaponManager, raycaster}) {
+        this.engine = engine
+        this.weaponManager = weaponManager
+        this.raycaster = raycaster
 
         this.isAutomatic = false
         this.switchTime = 500 // ms
@@ -18,7 +17,7 @@ export default class Weapon {
         this.headshotPoint = 50
 
         this.name = "Weapon"
-        this.imgSrc = "assets/img/weapons/pistol/fpsview.png"
+        // this.imgSrc = "assets/img/weapons/pistol/fpsview.png"
 
         this.damages = 20
         this.fireRate = 200 // ms
@@ -37,31 +36,30 @@ export default class Weapon {
 
         this.fireSoundName = 'weapon_pistol_shot'
 
-        this.div = document.getElementById('current-weapon-fpsview')
+        // this.div = document.getElementById('current-weapon-fpsview')
 
-        this.engine = window.ZombieGame
+    }
+
+    update(delta) {
+
     }
 
     shoot() {
-        this.weaponHandler.raycaster.set(this.engine.game.three.camera.position, this.engine.game.player.lookDirection)
+        this.raycaster.set(this.engine.three.camera.position, this.engine.controllablePlayer.lookDirection)
 
-        if (!this.weaponHandler.knife.isReloading) {
-            if (!this.isReloading) {
-                if (this.bulletsInMagazine > 0) {
-                    if (this.canShootByFireRate_()) {
+        if (!this.weaponManager.knife.isReloading && !this.isReloading) {
+            if (this.bulletsInMagazine > 0) {
+                if (this.canShootByFireRate_()) {
+                    this.playFireSound_()
+                    this.handleHit_(this.getIntersection_())
+                    this.sendHitsToServer_()
+                    this.prepareNextShot_()
+                    this.handleMagazinChange_()
+                    // this.updateUI()
 
-                        this.playFireSound_()
-                        this.handleHit_(this.getIntersection_())
-                        this.sendHitsToServer_()
-                        this.prepareNextShot_()
-                        this.handleMagazinChange_()
-                        this.updateUI()
-
-                    }
-
-                } else {
-                    this.reload()
                 }
+            } else {
+                this.reload()
             }
         }
 
@@ -73,9 +71,9 @@ export default class Weapon {
                 this.realoadStart + this.realoadRate < Date.now() &&
                 this.bulletStorage > 0
             ) {
-                window.ZombieGame.soundManager.play('weapon_pistol_reload')
+                this.engine.soundManager.play('weapon_pistol_reload')
 
-                this.weaponHandler.UIFpsView.style.opacity = 1
+                // this.weaponManager.UIFpsView.style.opacity = 1
 
                 // console.log("[WEAPON] fully reloaded")
                 const missingBullets = Math.abs(this.bulletsInMagazine - this.magazineSize)
@@ -93,17 +91,17 @@ export default class Weapon {
 
             if (this.bulletsInMagazine !== this.magazineSize) {
                 if (this.bulletStorage <= 0) {
-                    window.ZombieGame.soundManager.play('weapon_pistol_reload')
+                    this.engine.soundManager.play('weapon_pistol_reload')
 
                 } else {
                     this.isReloading = true
-                    this.weaponHandler.UIFpsView.style.opacity = 0.5
+                    // this.weaponManager.UIFpsView.style.opacity = 0.5
                 }
             }
 
             // console.log("[WEAPON] started reload")
         }
-        this.updateUI()
+        // this.updateUI()
     }
 
     // can shoot if cooldown is up
@@ -112,16 +110,16 @@ export default class Weapon {
     }
 
     updateUI() {
-        this.weaponHandler.UIBulletCount.innerText = this.bulletsInMagazine
-        this.weaponHandler.UIStoredBullet.innerText = this.bulletStorage
+        this.weaponManager.UIBulletCount.innerText = this.bulletsInMagazine
+        this.weaponManager.UIStoredBullet.innerText = this.bulletStorage
 
-        console.log(this.weaponHandler.UIFpsViewImg.src)
+        console.log(this.weaponManager.UIFpsViewImg.src)
         console.log(this.assetsPath)
         console.log(this.assetsPath + this.imgSrc)
         console.log(this.imgSrc)
 
-        if (this.weaponHandler.UIFpsViewImg.src !== this.assetsPath + this.imgSrc) {
-            this.weaponHandler.UIFpsViewImg.src = this.imgSrc
+        if (this.weaponManager.UIFpsViewImg.src !== this.assetsPath + this.imgSrc) {
+            this.weaponManager.UIFpsViewImg.src = this.imgSrc
         }
 
         this.div.style.transitionDuration = '.1s'
@@ -138,11 +136,11 @@ export default class Weapon {
     }
 
     getIntersection_() {
-        return this.raycaster.intersectObjects( window.ZombieGame.game.three.scene.children );
+        return this.raycaster.intersectObjects( this.engine.three.scene.children );
     }
 
     playFireSound_() {
-        window.ZombieGame.soundManager.play(this.fireSoundName)
+        this.engine.soundManager.play(this.fireSoundName)
     }
 
     handleHit_(intersects) {
@@ -158,8 +156,8 @@ export default class Weapon {
                 this.currentHitObject = obj
                 this.alreadyHit.set(obj.zombieId, {damages: this.getDamage_(), points: this.getPoints_()})
 
-                if (ZombieGame.game.ZOMBIES.has(this.currentHitObject.zombieId)) {
-                    ZombieGame.game.ZOMBIES.get(this.currentHitObject.zombieId).health -= this.getDamage_()
+                if (this.engine.zombieManager.ZOMBIES.has(this.currentHitObject.zombieId)) {
+                    this.engine.zombieManager.ZOMBIES.get(this.currentHitObject.zombieId).health -= this.getDamage_()
                 }
             }
         }
@@ -170,7 +168,7 @@ export default class Weapon {
     }
 
     isLastHit() {
-        return ZombieGame.game.ZOMBIES.get(this.currentHitObject.zombieId).health - this.getDamage_() <= 0;
+        return this.engine.zombieManager.ZOMBIES.get(this.currentHitObject.zombieId).health - this.getDamage_() <= 0;
     }
 
     getPoints_() {
@@ -187,7 +185,7 @@ export default class Weapon {
 
     sendHitsToServer_() {
         const hits = this.prepareHitsForServer_()
-        this.engine.serverConnector.socket.emit('shot', {hits: hits, weapon: this.name, soundName: this.fireSoundName})
+        this.engine.socketHandler.socket.emit('shot', {hits: hits, weapon: this.name, soundName: this.fireSoundName})
         this.alreadyHit.clear()
 
     }

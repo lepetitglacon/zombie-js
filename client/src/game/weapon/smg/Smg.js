@@ -3,7 +3,11 @@ import Weapon from "../Weapon.js";
 export default class Smg extends Weapon {
 
     constructor(props) {
-        super(props);
+        super({
+            engine: props.engine,
+            weaponManager: props.weaponManager,
+            raycaster: props.raycaster,
+        });
 
         this.name = "MP40"
         this.imgSrc = "assets/img/weapons/smg/mp40.png"

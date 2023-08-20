@@ -138,8 +138,18 @@ export default class SocketRequestHandler {
                     }
                 ],
                 sounds: [
-                    'gltf/maps/' + this.game.map.filename,
-
+                    {
+                        name: 'weapon_pistol_shot',
+                        path: 'sound/gunshot.wav',
+                    },
+                    {
+                        name: 'weapon_pistol_reload',
+                        path: 'sound/gunreload.mp3',
+                    },
+                    {
+                        name: 'weapon_knife_slash',
+                        path: 'sound/knife.wav',
+                    }
                 ],
                 weapons: [
                     'gltf/maps/' + this.game.map.filename,
