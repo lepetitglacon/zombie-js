@@ -6,6 +6,7 @@ import GameContext from "../../../context/GameContext";
 import {GAMESTATE} from "../Game";
 import {useParams} from "react-router-dom";
 import LoadingSpinner from "../../utils/LoadingSpinner";
+import ENV from "../../../ENV";
 
 export const GameStates = {
     LOADING: 'LOADING',
@@ -93,16 +94,21 @@ function Z3DGame({socket, gameEngine, setGameEngine}) {
                 : (
                     <div id="game-container">
                         <div id="game-ui" ref={setGameUiRef} >
-                            <div id="weapon-ui">
+
+                            <div id="crosshair-ui" className="ui-component-container">
+                                <img src={ENV.SERVER_HOST + 'assets/img/crosshair.png'} width="100px" height="100px" alt=""/>
+                            </div>
+
+                            <div id="weapon-ui" className="ui-component-container">
                                 {weapons.map((weapon, i) => {
-                                    return <div key={i} className={weapon.name !== currentWeapon ? 'hidden' : ''}>
+                                    return <div key={i} className={weapon.name !== currentWeapon ? 'hidden weapon-ui-div' : 'weapon-ui-div'}>
                                         <div>{weapon.magazineSize}/{weapon.maxBulletStorage}</div>
-                                        <div><img src={weapon.iconSrc} alt=""/></div>
+                                        <div><img src={weapon.iconSrc} width="50px" height="50px" alt=""/></div>
                                     </div>
                                 })}
                             </div>
 
-                            <div id="player-ui">
+                            <div id="player-ui" className="ui-component-container">
                                 {players.map((player, i) => {
                                     return <div key={i} className={player.color}>
                                         <div>{player.gamename}</div>

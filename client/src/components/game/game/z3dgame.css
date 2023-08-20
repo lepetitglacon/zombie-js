@@ -8,10 +8,31 @@
     font-weight: 700;
 
     position: absolute;
-    bottom: 0;
+    top: 0;
+    left: 0;
+}
+
+.ui-component-container {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+}
+
+.weapon-ui-div {
+    position: absolute;
     right: 0;
+    bottom: 0;
 }
 
 .hidden {
     display: none;
+}
+
+#crosshair-ui {
+    top: 0;
+    left: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
