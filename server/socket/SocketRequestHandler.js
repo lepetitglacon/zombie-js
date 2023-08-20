@@ -171,6 +171,14 @@ export default class SocketRequestHandler {
         this.socket.on('game:get_players', () => {
             this.socket.emit('get_players', this.getPlayersForGame())
         })
+
+        this.socket.on('game:shot', (shot) => {
+            Utils.dispatchEventTo('shot', {shot: shot}, this.game.waveHandler)
+
+            // this.io.to(this.game.gameId).emit('points', this.game.preparePoints())
+            this.socket.to(this.game.gameId).emit('game:player_shot', {playerId: this.socket.id, weapon: shot.weapon, sound: shot.soundName})
+        })
+
     }
 
     async getMessages_() {

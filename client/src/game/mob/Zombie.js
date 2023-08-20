@@ -69,10 +69,11 @@ export default class Zombie {
     }
 
     removeFromScene() {
-        window.ZombieGame.game.three.scene.remove(this.aabb)
-        window.ZombieGame.game.three.scene.remove(this.meshHelper)
+        this.engine.three.scene.remove(this.aabb)
+        this.engine.three.scene.remove(this.meshHelper)
 
-        window.ZombieGame.game.three.scene.remove(this.mesh)
-        window.ZombieGame.game.three.scene.remove(this.gltf)
+        this.engine.three.scene.remove(this.mesh)
+        this.engine.three.scene.remove(this.gltf)
+        this.engine.three.scene.remove(this.model)
     }
 }

@@ -16,7 +16,7 @@ export default class ZombieEvents {
         })
 
         // on zombie death
-        this.socket.on('zombie_death', (zombie) => {
+        this.socket.on('game:zombie_death', (zombie) => {
             Utils.dispatchEventTo('kill', {zombie: zombie}, this.engine.zombieManager)
         })
     }

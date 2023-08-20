@@ -43,7 +43,7 @@ export default class PointerLockControls extends EventDispatcher {
     update(delta) {
         this.updatePlayerVelocity(delta)
         this.movePlayerCamera(this.player.velocity.clone().multiplyScalar(delta))
-        this.getDirection()
+        this.getDirection(this.engine.controllablePlayer.lookDirection)
     }
 
     updatePlayerVelocity(delta) {

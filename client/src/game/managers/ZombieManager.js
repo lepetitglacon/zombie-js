@@ -50,14 +50,14 @@ export default class ZombieManager extends EventTarget {
         }
 
         // spawn objects
-        for (const object of zombie.droppedObjects) {
-            console.log(" TODO [OBJECT] spawned " + object)
+        // for (const object of zombie.droppedObjects) {
+        //     console.log(" TODO [OBJECT] spawned " + object)
             // const obj = this.serverConnector.engine.modelManager.getModelCopy('object-max_ammo')
             // obj.position.copy(zombie.model.position)
             // obj.position.y = 0
             // this.serverConnector.engine.game.three.scene.add(obj)
             // this.engine.game.OBJECTS.set()
-        }
+        // }
     }
 
     bind() {
@@ -65,6 +65,7 @@ export default class ZombieManager extends EventTarget {
             this.spawn_(e.zombie)
         })
         this.addEventListener('kill', e => {
+            console.log(e)
             this.kill_(e.zombie)
         })
         this.addEventListener('positions', e => {

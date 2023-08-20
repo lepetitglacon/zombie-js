@@ -34,70 +34,6 @@ export default class PointerLockControls extends EventDispatcher {
         this._onPointerlockError = onPointerlockError.bind(this);
 
         this.connect();
-
-    }
-
-    /**
-     * gives next position for collision testing
-     * @param distance
-     * @param times
-     * @returns {*}
-     */
-    testMoveForward(distance, times = 1) {
-        const camera = this.camera;
-        const vec = this._direction.clone()
-        vec.setFromMatrixColumn(camera.matrix, 0);
-        vec.crossVectors(camera.up, vec);
-        const pos = camera.position.clone()
-        return pos.addScaledVector(vec, distance * times);
-    }
-
-    /**
-     *
-     * @param distance
-     * @param times
-     */
-    testMoveRight(distance, times = 1) {
-        const camera = this.camera;
-        const vec = this._direction.clone()
-        vec.setFromMatrixColumn(camera.matrix, 0);
-        const pos = camera.position.clone()
-        return pos.addScaledVector(vec, distance * times);
-    }
-
-    moveForward(distance) {
-        const camera = this.camera;
-        this._direction.setFromMatrixColumn(camera.matrix, 0);
-        this._direction.crossVectors(camera.up, this._direction);
-        camera.position.addScaledVector(this._direction, distance);
-    }
-
-    moveRight(distance) {
-        const camera = this.camera;
-        this._direction.setFromMatrixColumn(camera.matrix, 0);
-        camera.position.addScaledVector(this._direction, distance);
-    }
-
-    /**
-     *
-     * @param velocity
-     * @param times
-     * @returns {{times: number, position: Vector3}}
-     */
-    testMove(velocity, times = 1) {
-        const camera = this.camera;
-        const pos = this.camera.position.clone();
-        const dir = this._direction.clone();
-
-        // set x velocity facing the camera
-        dir.setFromMatrixColumn(camera.matrix, 0);
-        pos.addScaledVector(dir, velocity.x);
-
-        // set z velocity facing the camera
-        dir.crossVectors(camera.up, dir);
-        pos.addScaledVector(dir, velocity.z);
-
-        return {position: pos, times: times};
     }
 
     move(velocity) {
@@ -130,11 +66,11 @@ export default class PointerLockControls extends EventDispatcher {
         let collisions = [];
 
         // BUILDINGS
-        for (const [name, aabb] of this.engine.game.three.WALLS) {
-            if (aabb.intersectsBox(hitbox)) {
-                collisions.push(aabb)
-            }
-        }
+        // for (const [name, aabb] of this.engine.game.three.WALLS) {
+        //     if (aabb.intersectsBox(hitbox)) {
+        //         collisions.push(aabb)
+        //     }
+        // }
 
         if (collisions.length === 0) {
             camera.position.copy(newPosition);
@@ -198,7 +134,7 @@ function onMouseMove(event) {
     const movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
     const movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
 
-    window.ZombieGame.game.weaponHandler.pointer.set(event.clientX, event.clientY)
+    this.engine.weaponManager.pointer.set(event.clientX, event.clientY)
 
     const camera = this.camera;
     this._euler.setFromQuaternion(camera.quaternion);

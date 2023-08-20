@@ -45,11 +45,10 @@ export default class Weapon {
     }
 
     shoot() {
-        this.raycaster.set(this.engine.three.camera.position, this.engine.controllablePlayer.lookDirection)
-
         if (!this.weaponManager.knife.isReloading && !this.isReloading) {
             if (this.bulletsInMagazine > 0) {
                 if (this.canShootByFireRate_()) {
+                    this.raycaster.set(this.engine.three.camera.position, this.engine.controllablePlayer.lookDirection)
                     this.playFireSound_()
                     this.handleHit_(this.getIntersection_())
                     this.sendHitsToServer_()
@@ -185,9 +184,8 @@ export default class Weapon {
 
     sendHitsToServer_() {
         const hits = this.prepareHitsForServer_()
-        this.engine.socketHandler.socket.emit('shot', {hits: hits, weapon: this.name, soundName: this.fireSoundName})
+        this.engine.socketHandler.socket.emit('game:shot', {hits: hits, weapon: this.name, soundName: this.fireSoundName})
         this.alreadyHit.clear()
-
     }
 
     handleMagazinChange_() {

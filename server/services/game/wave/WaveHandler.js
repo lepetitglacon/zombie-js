@@ -1,9 +1,10 @@
 import ZombieFactory from "../mob/ZombieFactory.js";
 import ObjectSpawner from "./ObjectSpawner.js";
 
-export default class WaveHandler {
+export default class WaveHandler extends EventTarget{
 
     constructor({game}) {
+        super()
         this.game = game
 
         this.ZOMBIES = new Map()
@@ -22,13 +23,14 @@ export default class WaveHandler {
         this.pauseBetweenWaveTime = 1000; // 10000
         this.pauseBetweenWaveStartTime = Date.now();
 
+        this.bind()
     }
 
     update(delta) {
         // update Zombie life
         for (const [id, zombie] of this.ZOMBIES) {
             if (zombie.health <= 0) {
-                this.killzombie(id)
+                this.killZombie(id)
             }
 
             zombie.movementManager.update(delta)
@@ -94,8 +96,8 @@ export default class WaveHandler {
 
     }
 
-    killzombie(id) {
-        this.game.io.to(this.game.roomId).emit('zombie_death', {
+    killZombie(id) {
+        this.game.io.to(this.game.gameId).emit('game:zombie_death', {
             id: id,
             objects: this.objectSpawner.spawnObject()
         })
@@ -123,4 +125,17 @@ export default class WaveHandler {
         return zombies
     }
 
+    bind() {
+        this.addEventListener('shot', (e) => {
+            const shot = e.shot
+            for (let i in shot.hits) {
+                const zombieId = shot.hits[i].id
+
+                if (this.ZOMBIES.has(zombieId)) {
+                    this.ZOMBIES.get(zombieId).health -= shot.hits[i].damages
+                    const points = shot.hits[i].points
+                }
+            }
+        })
+    }
 }
