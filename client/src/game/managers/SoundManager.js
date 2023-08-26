@@ -21,10 +21,6 @@ export default class SoundManager {
         this.engine.three.camera.add( this.listener );
     }
 
-    registerSound(name, path) {
-
-    }
-
     loadAndGetPositionalSound(name, path) {
         const sound = new THREE.PositionalAudio( this.listener );
         this.loader.load( path, ( buffer ) => {
@@ -52,7 +48,7 @@ export default class SoundManager {
         this.loader.load( ENV.SERVER_HOST + path, ( buffer ) => {
             sound.setBuffer( buffer );
             sound.setLoop( false );
-            sound.setVolume( .1 );
+            sound.setVolume( .5 );
         },
             () => {},
             (error) => {

@@ -29,8 +29,6 @@ export default class GameEngine extends EventTarget {
         gameId,
         setGameState,
         setLoadingState,
-        setCurrentWeapon,
-        setWeapons,
         setPlayers
     }) {
         super();
@@ -38,8 +36,6 @@ export default class GameEngine extends EventTarget {
         // react setup
         this.setGameState = setGameState
         this.setLoadingState = setLoadingState
-        this.setCurrentWeapon = setCurrentWeapon
-        this.setWeapons = setWeapons
         this.setPlayers = setPlayers
 
         this.state = GameEngine.STATES.GAME
@@ -94,6 +90,10 @@ export default class GameEngine extends EventTarget {
         this.guiNode = node
     }
 
+    setCustomSetter(setterName, setterFunc) {
+        this[setterName] = setterFunc
+    }
+
     bind() {
         this.addEventListener('game:init:loading-connected', (e) => {
             this.setLoadingState(LoadingStates.ASSETS)
@@ -113,10 +113,10 @@ export default class GameEngine extends EventTarget {
             }
 
             // TODO sounds
-            // for (const soundToLoad of e.sounds) {
-            //     this.soundManager.(soundToLoad.name, ENV.SERVER_HOST + 'assets/' + soundToLoad.path)
-            // }
-            await this.soundManager.loadSounds()
+            for (const soundToLoad of e.sounds) {
+                this.soundManager.loadSound(soundToLoad.name, 'assets/' + soundToLoad.path)
+            }
+            // await this.soundManager.loadSounds()
 
             // wait for models loading
             await this.modelManager.download()

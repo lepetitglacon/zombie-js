@@ -67,6 +67,11 @@ function App() {
                 <MainMenu/>
             }
 
+            {
+                // https://www.youtube.com/watch?v=vXJkeZf-4-4
+                // protected route qui render le même item
+            }
+
                 <Routes>
                     <Route path="/" element={
                         <ProtectedRoute user={user} >

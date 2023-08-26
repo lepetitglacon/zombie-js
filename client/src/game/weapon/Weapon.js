@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import Utils from "../Utils";
 
 export default class Weapon {
 
@@ -54,8 +55,7 @@ export default class Weapon {
                     this.sendHitsToServer_()
                     this.prepareNextShot_()
                     this.handleMagazinChange_()
-                    // this.updateUI()
-
+                    this.updateUI()
                 }
             } else {
                 this.reload()
@@ -65,73 +65,57 @@ export default class Weapon {
     }
 
     reload() {
-        if (this.isReloading) {
-            if (
-                this.realoadStart + this.realoadRate < Date.now() &&
-                this.bulletStorage > 0
-            ) {
-                this.engine.soundManager.play('weapon_pistol_reload')
+        if (!this.isReloading) {
+            if (this.#isMagazineFullyLoaded()) return;
 
-                // this.weaponManager.UIFpsView.style.opacity = 1
-
-                // console.log("[WEAPON] fully reloaded")
-                const missingBullets = Math.abs(this.bulletsInMagazine - this.magazineSize)
-                if (this.bulletStorage >= missingBullets) {
-                    this.bulletStorage -= missingBullets
-                    this.bulletsInMagazine += missingBullets
-                } else {
-                    this.bulletsInMagazine += this.bulletStorage
-                    this.bulletStorage = 0
-                }
-                this.isReloading = false
+            if (this.#hasBulletLeftInStorage()) {
+                this.realoadStart = Date.now()
+                this.isReloading = true
+            } else {
+                this.engine.soundManager.play('weapon_pistol_reload_fail')
             }
+
         } else {
-            this.realoadStart = Date.now()
-
-            if (this.bulletsInMagazine !== this.magazineSize) {
-                if (this.bulletStorage <= 0) {
-                    this.engine.soundManager.play('weapon_pistol_reload')
-
-                } else {
-                    this.isReloading = true
-                    // this.weaponManager.UIFpsView.style.opacity = 0.5
-                }
+            if (this.canReloadByTime() && this.#hasBulletLeftInStorage()) {
+                this.engine.soundManager.play('weapon_pistol_reload')
+                this.transferBulletsFromStorageToMagazine();
+                this.isReloading = false
+                this.weaponManager.dispatchEvent(new Event('after-reload'))
             }
-
-            // console.log("[WEAPON] started reload")
         }
-        // this.updateUI()
     }
 
-    // can shoot if cooldown is up
+    canReloadByTime() {
+        return this.realoadStart + this.realoadRate < Date.now();
+    }
+
+    transferBulletsFromStorageToMagazine() {
+        const missingBullets = Math.abs(this.bulletsInMagazine - this.magazineSize)
+        if (this.bulletStorage >= missingBullets) {
+            this.bulletStorage -= missingBullets
+            this.bulletsInMagazine += missingBullets
+        } else {
+            this.bulletsInMagazine += this.bulletStorage
+            this.bulletStorage = 0
+        }
+    }
+
+    #hasBulletLeftInStorage() {
+        return this.bulletStorage > 0;
+    }
+
+    #isMagazineFullyLoaded() {
+        return this.bulletsInMagazine === this.magazineSize;
+    }
+
+// can shoot if cooldown is up
     canShootByFireRate_() {
         return (this.lastFired + this.fireRate < Date.now())
     }
 
     updateUI() {
-        this.weaponManager.UIBulletCount.innerText = this.bulletsInMagazine
-        this.weaponManager.UIStoredBullet.innerText = this.bulletStorage
-
-        console.log(this.weaponManager.UIFpsViewImg.src)
-        console.log(this.assetsPath)
-        console.log(this.assetsPath + this.imgSrc)
-        console.log(this.imgSrc)
-
-        if (this.weaponManager.UIFpsViewImg.src !== this.assetsPath + this.imgSrc) {
-            this.weaponManager.UIFpsViewImg.src = this.imgSrc
-        }
-
-        this.div.style.transitionDuration = '.1s'
-
-        if (this.isReloading) {
-            this.div.style.transform = 'translateX(2vw) translateY(2vw) rotate(60deg)'
-        }
-        this.div.style.transform = 'translateX(2vw) translateY(2vw) rotate(5deg)'
-
-        setTimeout(() => {
-            this.div.style.transitionDuration = '.05s'
-            this.div.style.transform = 'translateX(0) translateY(0) rotate(0)'
-        }, this.fireRate - 50)
+        console.log(this.bulletsInMagazine)
+        Utils.dispatchEventTo('after-shot', {}, this.weaponManager)
     }
 
     getIntersection_() {

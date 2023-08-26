@@ -1,6 +1,15 @@
 import GameEngine from "../GameEngine.js";
+import Utils from "../Utils";
 
 export default class InputManager {
+
+    static MouseButtons = {
+        LEFT: 0,
+        WHEEL: 1,
+        RIGHT: 2,
+        BACK: 3,
+        FORWARD: 4,
+    }
 
     constructor({engine}) {
         this.engine = engine
@@ -32,6 +41,7 @@ export default class InputManager {
         this.onKeyDown_ = this.onKeyDown.bind(this)
         this.onMouseUp_ = this.onMouseUp.bind(this)
         this.onMouseDown_ = this.onMouseDown.bind(this)
+        this.onMouseWheel_ = this.onMouseWheel.bind(this)
 
 
         document.addEventListener('click', this.onClick_)
@@ -39,7 +49,7 @@ export default class InputManager {
         document.addEventListener( 'keydown', this.onKeyDown_);
         document.addEventListener('mouseup', this.onMouseUp_)
         document.addEventListener('mousedown', this.onMouseDown_)
-        // document.addEventListener('wheel', (e) => this.onMouseWheel(e))
+        document.addEventListener('wheel', this.onMouseWheel_)
     }
 
     cleanup() {
@@ -48,7 +58,7 @@ export default class InputManager {
         document.removeEventListener( 'keydown', this.onKeyDown_);
         document.removeEventListener('mouseup', this.onMouseUp_)
         document.removeEventListener('mousedown', this.onMouseDown_)
-        // document.removeEventListener('wheel', this.onMouseWheel)
+        document.removeEventListener('wheel', this.onMouseWheel_)
     }
 
     onKeyDown(e) {
@@ -73,9 +83,9 @@ export default class InputManager {
                 this.moveRight = true;
                 break;
 
-            // case 'KeyR':
-            //     this.engine.game.weaponManager.reload()
-            //     break;
+            case 'KeyR':
+                this.engine.weaponManager.dispatchEvent(new Event('reload'))
+                break;
             //
             // case 'KeyX':
             //     // toggle debug objects
@@ -139,18 +149,18 @@ export default class InputManager {
             //     this.engine.menu.close()
             //     break;
             //
-            // case 'Tab':
-            //     e.preventDefault()
-            //     if (this.lastEscapeOrTab + this.lastEscapeOrTabRate < Date.now()) {
-            //         this.engine.menu.toggle()
-            //     }
-            //     break;
-            //
-            // case 'AltLeft':
-            //     // Knife
-            //     e.preventDefault()
-            //     this.engine.game.weaponManager.knife.shoot()
-            //     break;
+            case 'Tab':
+                e.preventDefault()
+                // if (this.lastEscapeOrTab + this.lastEscapeOrTabRate < Date.now()) {
+                //     this.engine.menu.toggle()
+                // }
+                break;
+
+            case 'AltLeft':
+                // Knife
+                e.preventDefault()
+                this.engine.game.weaponManager.dispatchEvent(new Event('shoot-knife'))
+                break;
         }
 
     }
@@ -185,106 +195,46 @@ export default class InputManager {
 
             case GameEngine.STATES.GAME:
                 if (this.engine.controllablePlayer.controls.isLocked) {
-                    if (e.button === 0) {
+                    if (e.button === InputManager.MouseButtons.LEFT) {
                         this.isClicking = true
                     }
-                } else {
-                    // hide menu
-                    // if (this.engine.menu.isOpen()) {
-                    //     this.engine.menu.close()
-                    // }
-                    // hide chat
-                    // if (this.isChatOpen && !this.engine.chatInput.classList.contains('hidden')) {
-                    //     this.engine.chatInput.classList.toggle('hidden')
-                    //     this.engine.chatInput.value = ''
-                    //     this.isChatOpen = false
-                    // }
-                    this.engine.controllablePlayer.controls.lock()
                 }
-                break;
-
-            case GameEngine.STATES.MENU:
-                break;
+            break;
         }
     }
 
-    onMouseWheel(e) {
-        switch (this.engine.state) {
-
-            case GameEngine.STATES.GAME:
-                if (this.engine.controllablePlayer.controls.isLocked) {
-                    this.engine.weaponHandler.dispatchEvent(new Event('switch', e))
-                } else {
-
-                    // hide option menu
-                    if (this.engine.menu.isOpen()) {
-                        this.engine.menu.close()
-                    }
-
-                    // hide chat
-                    if (this.isChatOpen && !this.engine.chatInput.classList.contains('hidden')) {
-                        this.engine.chatInput.classList.toggle('hidden')
-                        this.engine.chatInput.value = ''
-                        this.isChatOpen = false
-                    }
-
-                    this.engine.controllablePlayer.controls.lock()
-                }
-                break;
-        }
-    }
 
     onMouseUp(e) {
         switch (this.engine.state) {
 
             case GameEngine.STATES.GAME:
                 if (this.engine.controllablePlayer.controls.isLocked) {
-                    // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button
-                    if (e.button === 0) {
+                    if (e.button === InputManager.MouseButtons.LEFT) {
                         this.isClicking = false
                     }
-                } else {
-                    // hide option menu
-                    // if (this.engine.menu.isOpen()) {
-                    //     this.engine.menu.close()
-                    // }
-                    // // hide chat
-                    // if (this.isChatOpen && !this.engine.chatInput.classList.contains('hidden')) {
-                    //     this.engine.chatInput.classList.toggle('hidden')
-                    //     this.engine.chatInput.value = ''
-                    //     this.isChatOpen = false
-                    // }
-                    this.engine.controllablePlayer.controls.lock()
                 }
-                break;
-
-            case GameEngine.STATES.MENU:
                 break;
         }
     }
 
+    onMouseWheel(e) {
+        Utils.dispatchEventTo('switch', {e: e}, this.engine.weaponManager)
+    }
+
     // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button
     onClick(e) {
-        this.engine.controllablePlayer.controls.lock()
+
+        if (!this.engine.controllablePlayer.controls.isLocked) {
+            this.engine.controllablePlayer.controls.lock()
+        }
+
         switch (this.engine.state) {
 
             case GameEngine.STATES.GAME:
                 if (this.engine.controllablePlayer.controls.isLocked) {
-                    if (e.button === 0) {
-                        this.engine.weaponManager.dispatchEvent(new Event('shoot'))
+                    if (e.button === InputManager.MouseButtons.LEFT) {
+                        this.engine.weaponManager.dispatchEvent(new Event('player-triggering-shot'))
                     }
-                } else {
-                    // hide option menu
-                    // if (this.engine.menu.isOpen()) {
-                    //     this.engine.menu.close()
-                    // }
-                    // // hide chat
-                    // if (this.isChatOpen && !this.engine.chatInput.classList.contains('hidden')) {
-                    //     this.engine.chatInput.classList.toggle('hidden')
-                    //     this.engine.chatInput.value = ''
-                    //     this.isChatOpen = false
-                    // }
-                    this.engine.controllablePlayer.controls.lock()
                 }
                 break;
 

@@ -7,6 +7,8 @@ import {GAMESTATE} from "../Game";
 import {useParams} from "react-router-dom";
 import LoadingSpinner from "../../utils/LoadingSpinner";
 import ENV from "../../../ENV";
+import WeaponManager from "./weapons/WeaponManager";
+import GameEngineContext from "../../../context/GameEngineContext";
 
 export const GameStates = {
     LOADING: 'LOADING',
@@ -22,31 +24,16 @@ export const LoadingStates = {
     INIT: 'Initializing'
 }
 
-function Z3DGame({socket, gameEngine, setGameEngine}) {
+function Z3DGame({socket}) {
 
     const {clientState, setClientState} = useContext(GameContext)
+    const {gameEngine, setGameEngine} = useContext(GameEngineContext)
 
     const gameId = useParams()['id']
 
     const [loadingState, setLoadingState] = useState(LoadingStates.CONNECT)
     const [gameState, setGameState] = useState(GameStates.LOADING)
 
-
-    const [currentWeapon, setCurrentWeapon] = useState('pistol')
-    const [weapons, setWeapons] = useState([
-        {
-            name: 'pistol',
-            magazineSize: 8,
-            maxBulletStorage: 50,
-            iconSrc: 'http://localhost:39000/assets/img/weapons/icons/weapons-icons-spritesheet.png'
-        },
-        {
-            name: 'handgun',
-            magazineSize: 30,
-            maxBulletStorage: 120,
-            iconSrc: 'http://localhost:39000/assets/img/weapons/icons/weapons-icons-spritesheet.png'
-        }
-    ])
     const [players, setPlayers] = useState([])
 
     const setThreeDivRef = useCallback(node => {
@@ -69,8 +56,6 @@ function Z3DGame({socket, gameEngine, setGameEngine}) {
                 gameId,
                 setGameState,
                 setLoadingState,
-                setCurrentWeapon,
-                setWeapons,
                 setPlayers
             }))
         }
@@ -99,14 +84,7 @@ function Z3DGame({socket, gameEngine, setGameEngine}) {
                                 <img src={ENV.SERVER_HOST + 'assets/img/crosshair.png'} width="100px" height="100px" alt=""/>
                             </div>
 
-                            <div id="weapon-ui" className="ui-component-container">
-                                {weapons.map((weapon, i) => {
-                                    return <div key={i} className={weapon.name !== currentWeapon ? 'hidden weapon-ui-div' : 'weapon-ui-div'}>
-                                        <div>{weapon.magazineSize}/{weapon.maxBulletStorage}</div>
-                                        <div><img src={weapon.iconSrc} width="50px" height="50px" alt=""/></div>
-                                    </div>
-                                })}
-                            </div>
+                            <WeaponManager socket={socket} />
 
                             <div id="player-ui" className="ui-component-container">
                                 {players.map((player, i) => {

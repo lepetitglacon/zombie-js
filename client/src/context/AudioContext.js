@@ -11,7 +11,14 @@ export const useVolume = () => {
 
 export const VolumeProvider = ({ children }) => {
 
-    const [audioFile, setAudioFile] = useState(new Audio(ENV.SERVER_HOST + 'assets/sound/mainlobby.mp3'))
+    const sounds = [
+        'assets/sound/lobby/mainlobby.mp3',
+        // 'assets/sound/lobby/mainlobby2.mp3',
+        // 'assets/sound/lobby/mainlobby3.mp3',
+        // 'assets/sound/lobby/mainlobby4.mp3',
+    ]
+
+    const [audioFile, setAudioFile] = useState(new Audio(ENV.SERVER_HOST + sounds[Math.floor(Math.random() * sounds.length)]))
     const [volume, setVolume] = useState(0.5); // Default volume
     const [isMuted, setIsMuted] = useState(false);
 

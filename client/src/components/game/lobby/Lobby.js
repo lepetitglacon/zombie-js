@@ -9,11 +9,13 @@ import ENV from "../../../ENV";
 import {GAMESTATE} from "../Game";
 import AuthContext from "../../../context/AuthContext";
 import GameContext from "../../../context/GameContext";
+import {useVolume} from "../../../context/AudioContext";
 
 function Lobby({socket}) {
 
     const {user} = useContext(AuthContext)
     const {clientState, setClientState} = useContext(GameContext)
+    const {pause: pauseMusic} = useVolume()
 
     const navigate = useNavigate()
 
@@ -202,6 +204,7 @@ function Lobby({socket}) {
         navigate('/')
     }
     function onGameStart() {
+        pauseMusic()
         setClientState(GAMESTATE.LOADING)
     }
 

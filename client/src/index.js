@@ -8,6 +8,8 @@ import { BrowserRouter } from "react-router-dom";
 import {AuthProvider} from "./context/AuthContext";
 import {GameProvider} from "./context/GameContext";
 import {VolumeProvider} from "./context/AudioContext";
+import {GameEngineProvider} from "./context/GameEngineContext";
+import {SocketProvider} from "./context/SocketContext";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -15,15 +17,19 @@ root.render(
 
         <AuthProvider>
             <VolumeProvider>
-                <GameProvider>
+                <GameEngineProvider>
+                    <SocketProvider>
+                        <GameProvider>
 
 
 
-                    <App/>
+                            <App/>
 
 
 
-                </GameProvider>
+                        </GameProvider>
+                    </SocketProvider>
+                </GameEngineProvider>
             </VolumeProvider>
         </AuthProvider>
 

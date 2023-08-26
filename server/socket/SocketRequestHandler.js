@@ -147,6 +147,10 @@ export default class SocketRequestHandler {
                         path: 'sound/gunreload.mp3',
                     },
                     {
+                        name: 'weapon_pistol_reload_fail',
+                        path: 'sound/weapons/reload_fail.mp3',
+                    },
+                    {
                         name: 'weapon_knife_slash',
                         path: 'sound/knife.wav',
                     }

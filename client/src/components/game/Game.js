@@ -5,6 +5,7 @@ import Z3DGame from "./game/Z3DGame";
 import Socket from "../../socket/Socket";
 import AuthContext from "../../context/AuthContext";
 import useGameState from "../../hooks/useGameState";
+import GameEngineContext from "../../context/GameEngineContext";
 
 export const GAMESTATE = {
     NOGAME: 'NOGAME',
@@ -22,7 +23,7 @@ function Game() {
     const gameId = useParams()['id']
     let socket = Socket(gameId, user._id.toString())
 
-    const [gameEngine, setGameEngine] = useState(null)
+    const {gameEngine, setGameEngine} = useContext(GameEngineContext)
 
     useEffect(() => {
         socket.connect()
