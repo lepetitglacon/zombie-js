@@ -177,12 +177,24 @@ export default class SocketRequestHandler {
         })
 
         this.socket.on('game:shot', (shot) => {
+            console.log(shot)
             Utils.dispatchEventTo('shot', {shot: shot}, this.game.waveHandler)
 
-            // this.io.to(this.game.gameId).emit('points', this.game.preparePoints())
-            this.socket.to(this.game.gameId).emit('game:player_shot', {playerId: this.socket.id, weapon: shot.weapon, sound: shot.soundName})
-        })
+            let totalPoints = 0
+            for (const hit of shot.hits) {
+                totalPoints += hit.points
+                this.points += hit.points
+            }
 
+
+            this.io.to(this.game.gameId).emit('game:player_shot', {
+                playerId: this.user._id,
+                socketId: this.socket.id,
+                weapon: shot.weapon,
+                sound: shot.soundName,
+                points: totalPoints
+            })
+        })
     }
 
     async getMessages_() {

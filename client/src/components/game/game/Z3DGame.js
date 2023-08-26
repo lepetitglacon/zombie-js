@@ -10,6 +10,7 @@ import ENV from "../../../ENV";
 import WeaponManager from "./weapons/WeaponManager";
 import GameEngineContext from "../../../context/GameEngineContext";
 import Wave from "./wave/Wave";
+import Points from "./points/Points";
 
 export const GameStates = {
     LOADING: 'LOADING',
@@ -87,6 +88,7 @@ function Z3DGame({socket}) {
 
                             <WeaponManager />
                             <Wave />
+                            <Points />
 
                             <div id="player-ui" className="ui-component-container">
                                 {players.map((player, i) => {

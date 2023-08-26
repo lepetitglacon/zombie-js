@@ -97,8 +97,6 @@ export default class GameEngine extends EventTarget {
             this.setLoadingState(LoadingStates.ASSETS)
         })
         this.addEventListener('game:init:assets_to_load', async (e) => {
-            // TODO load assets and send assets loaded to server
-            console.log(e)
 
             // map
             for (const mapToLoad of e.map) {

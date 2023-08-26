@@ -44,9 +44,6 @@ export default class ThreeWorld {
     }
 
     update(delta) {
-        console.log('running')
-
-
         this.renderer.render( this.scene, this.camera );
     }
 

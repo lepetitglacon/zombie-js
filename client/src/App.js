@@ -37,7 +37,6 @@ function App() {
                                 withCredentials: true
                             })
                             const data = await res.json()
-                            console.log(data.user)
                             setUser(data.user)
                             navigate('/')
                         } catch (e) {

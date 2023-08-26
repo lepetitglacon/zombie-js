@@ -64,17 +64,6 @@ function Lobby({socket}) {
         }
     }, [])
 
-    useEffect(() => {
-        console.log(currentMap)
-        // if (isOwner && currentMap) {
-        //     sendMapChangeEvent()
-        // }
-    }, [currentMap])
-
-    useEffect(() => {
-        console.log(maps)
-    }, [maps])
-
     /**
      * scroll chat to last message
      */
@@ -142,7 +131,6 @@ function Lobby({socket}) {
         // TODO set map on click
     }
     const onMapItemClick = (e) => {
-        console.log(e)
         const newMap = maps.filter(map => {
             return map._id === e.target.dataset.id
         })

@@ -19,7 +19,6 @@ export default class PlayerManager extends EventTarget {
 
     async init() {
         this.model = this.engine.modelManager.getModelCopy('player')
-        console.log(this.model)
     }
 
     connect_(player) {
@@ -36,6 +35,10 @@ export default class PlayerManager extends EventTarget {
     bind() {
         this.addEventListener('connect', e => {
             this.connect_(e.player)
+            this.dispatchEvent(new Event('after-connect'))
+        })
+        this.addEventListener('after-connect', e => {
+
         })
         this.addEventListener('disconnect', e => {
             this.disconnect_(e.player)
@@ -54,7 +57,9 @@ export default class PlayerManager extends EventTarget {
                     }
                 }
             }
-            // this.setPlayersForUi(this.PLAYERS.values())
+        })
+        this.addEventListener('player_shot', e => {
+            console.log(e)
         })
     }
 

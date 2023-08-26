@@ -12,7 +12,6 @@ function Wave() {
 
     useEffect(() => {
         gameEngine.game.addEventListener('after-wave_update', () => {
-            console.log('wave UI', gameEngine.game.wave)
             setWave(gameEngine.game.wave)
         })
     }, [])

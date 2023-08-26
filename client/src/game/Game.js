@@ -13,7 +13,6 @@ export default class Game extends EventTarget {
 
     bind() {
         this.addEventListener('wave_update', (e) => {
-            console.log('wave Game', e)
             this.wave = e.wave
             this.dispatchEvent(new Event('after-wave_update'))
         })

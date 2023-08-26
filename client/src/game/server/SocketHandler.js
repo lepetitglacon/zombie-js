@@ -38,7 +38,6 @@ export default class SocketHandler {
         })
         this.socket.on('game:init:assets_to_load', (e) => {
             this.dispatchEventToEngine_('game:init:assets_to_load', e)
-            console.log('need to load assets', e)
         })
         this.socket.on('game:init:game-start', () => {
             this.dispatchEventToEngine_('game-start')

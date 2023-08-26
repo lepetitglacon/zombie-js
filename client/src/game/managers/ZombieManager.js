@@ -65,7 +65,6 @@ export default class ZombieManager extends EventTarget {
             this.spawn_(e.zombie)
         })
         this.addEventListener('kill', e => {
-            console.log(e)
             this.kill_(e.zombie)
         })
         this.addEventListener('positions', e => {

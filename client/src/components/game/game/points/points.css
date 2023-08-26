@@ -1,0 +1,9 @@
+#own_info {
+    position: absolute;
+    bottom: 50%;
+
+    margin-left: 20px;
+
+    color: #880000;
+    font-size: 32px;
+}

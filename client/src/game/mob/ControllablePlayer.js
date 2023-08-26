@@ -3,10 +3,11 @@ import {Box3, Box3Helper, Vector3} from "three";
 import GameEngine from "../GameEngine.js";
 import PointerLockControls from "../input/PointerLockControls";
 
-export default class ControllablePlayer {
+export default class ControllablePlayer extends EventTarget {
 
 
-    constructor({engine}) {
+    constructor({engine})  {
+        super()
         this.engine = engine
 
         // game attributes
@@ -26,6 +27,8 @@ export default class ControllablePlayer {
         this.runningSpeedBoost = 1.05
         this.mass = 90
 
+        this.points = 0
+
         this.velocity = new THREE.Vector3();
         this.feetDirection = new THREE.Vector3();
         this.lookDirection = new THREE.Vector3();
@@ -41,11 +44,24 @@ export default class ControllablePlayer {
         // init
         this.position = this.engine.three.camera.position
         this.lastPosition = this.engine.three.camera.position.clone()
+
+        this.bind()
     }
 
     update(delta) {
 
         // update position
         this.controls.update(delta)
+    }
+
+    bind() {
+        this.addEventListener('player_shot', e => {
+            console.log(this.engine.socketHandler.socket.id)
+            console.log(e.socketId)
+            if (e.socketId === this.engine.socketHandler.socket.id) {
+                this.points += e.points
+                this.dispatchEvent(new Event('after_own_shot'))
+            }
+        })
     }
 }

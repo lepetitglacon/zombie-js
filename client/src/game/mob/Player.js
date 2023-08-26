@@ -11,7 +11,6 @@ export default class Player {
 
     constructor({engine, player}) {
         this.engine = engine
-        console.log(player)
 
         this._id = player._id
         this.socketId = player.socketId
@@ -53,7 +52,6 @@ export default class Player {
         // this.model.scale.set(.9, .9, .9);
         // this.model.rotateY(Math.PI / 2);
         // this.model.position.copy(this.mesh.position);
-        console.log(this.model)
         const material = new THREE.MeshStandardMaterial({color: this.color})
         // for (const bodyPart of this.model.children[0].children) {
         //     bodyPart.isPlayer = true

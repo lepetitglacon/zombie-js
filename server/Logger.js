@@ -42,6 +42,5 @@ export default class Logger {
 
         const string = `[${type.toUpperCase()}]${subtype && `[${subtype.toUpperCase()}]`} ${message}`
         const coloredString = chalk.hex(this.colors[type])(string);
-        console.log(coloredString);
     }
 }

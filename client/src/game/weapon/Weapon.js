@@ -123,7 +123,6 @@ export default class Weapon {
     }
 
     updateUI() {
-        console.log(this.bulletsInMagazine)
         Utils.dispatchEventTo('after-shot', {}, this.weaponManager)
     }
 
