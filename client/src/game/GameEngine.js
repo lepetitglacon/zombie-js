@@ -11,6 +11,7 @@ import ZombieManager from "./managers/ZombieManager";
 import ControllablePlayer from "./mob/ControllablePlayer";
 import PlayerManager from "./managers/PlayerManager";
 import WeaponManager from "./weapon/WeaponManager";
+import Game from "./Game";
 
 export default class GameEngine extends EventTarget {
 
@@ -42,6 +43,7 @@ export default class GameEngine extends EventTarget {
 
         this.socketHandler = new SocketHandler({engine: this, socket, gameId})
         this.three = new ThreeWorld({engine: this})
+        this.game = new Game({engine: this})
         this.playerManager = new PlayerManager({engine: this})
         this.soundManager = new SoundManager({engine: this})
         this.modelManager = new ModelManager({engine: this})
@@ -88,10 +90,6 @@ export default class GameEngine extends EventTarget {
 
     setUiNode(node) {
         this.guiNode = node
-    }
-
-    setCustomSetter(setterName, setterFunc) {
-        this[setterName] = setterFunc
     }
 
     bind() {

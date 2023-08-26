@@ -46,22 +46,31 @@ export default class Weapon {
     }
 
     shoot() {
-        if (!this.weaponManager.knife.isReloading && !this.isReloading) {
-            if (this.bulletsInMagazine > 0) {
-                if (this.canShootByFireRate_()) {
-                    this.raycaster.set(this.engine.three.camera.position, this.engine.controllablePlayer.lookDirection)
-                    this.playFireSound_()
-                    this.handleHit_(this.getIntersection_())
-                    this.sendHitsToServer_()
-                    this.prepareNextShot_()
-                    this.handleMagazinChange_()
-                    this.updateUI()
-                }
-            } else {
-                this.reload()
+        if (this.isKnifing() || this.isReloading) return;
+
+        if (this.hasBulletsInMagazine()) {
+            if (this.canShootByFireRate_()) {
+                this.raycaster.set(this.engine.three.camera.position, this.engine.controllablePlayer.lookDirection)
+                this.playFireSound_()
+                this.handleHit_(this.getIntersection_())
+                this.sendHitsToServer_()
+                this.prepareNextShot_()
+                this.handleMagazinChange_()
+                this.updateUI()
             }
+        } else {
+            this.reload()
         }
 
+
+    }
+
+    isKnifing() {
+        return this.weaponManager.knife.isReloading;
+    }
+
+    hasBulletsInMagazine() {
+        return this.bulletsInMagazine > 0;
     }
 
     reload() {
@@ -72,7 +81,7 @@ export default class Weapon {
                 this.realoadStart = Date.now()
                 this.isReloading = true
             } else {
-                this.engine.soundManager.play('weapon_pistol_reload_fail')
+                // this.engine.soundManager.play('weapon_pistol_reload_fail')
             }
 
         } else {

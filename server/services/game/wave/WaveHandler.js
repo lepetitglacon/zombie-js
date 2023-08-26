@@ -20,7 +20,7 @@ export default class WaveHandler extends EventTarget{
         this.zombieSpawnRate = 5000
         this.zombieSpawnRateTime = Date.now();
 
-        this.pauseBetweenWaveTime = 1000; // 10000
+        this.pauseBetweenWaveTime = 10000; // 10000
         this.pauseBetweenWaveStartTime = Date.now();
 
         this.bind()
@@ -67,7 +67,7 @@ export default class WaveHandler extends EventTarget{
 
         this.pauseBetweenWaveStartTime = Date.now()
 
-        this.game.io.to(this.game.gameId).emit('wave_update', {wave: this.wave})
+        this.game.io.to(this.game.gameId).emit('game:wave_update', {wave: this.wave})
         console.debug('[WAVEHANDLER] wave ' + this.wave)
     }
 

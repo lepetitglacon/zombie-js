@@ -9,6 +9,7 @@ import LoadingSpinner from "../../utils/LoadingSpinner";
 import ENV from "../../../ENV";
 import WeaponManager from "./weapons/WeaponManager";
 import GameEngineContext from "../../../context/GameEngineContext";
+import Wave from "./wave/Wave";
 
 export const GameStates = {
     LOADING: 'LOADING',
@@ -84,7 +85,8 @@ function Z3DGame({socket}) {
                                 <img src={ENV.SERVER_HOST + 'assets/img/crosshair.png'} width="100px" height="100px" alt=""/>
                             </div>
 
-                            <WeaponManager socket={socket} />
+                            <WeaponManager />
+                            <Wave />
 
                             <div id="player-ui" className="ui-component-container">
                                 {players.map((player, i) => {
