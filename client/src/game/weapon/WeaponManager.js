@@ -88,6 +88,9 @@ export default class WeaponManager extends EventTarget {
         this.addEventListener('player-triggering-shot', (e) => {
             this.#shoot()
         })
+        this.addEventListener('knife', (e) => {
+            this.knife.shoot()
+        })
 
         
         this.addEventListener('reload', (e) => {

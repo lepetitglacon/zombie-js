@@ -159,7 +159,7 @@ export default class InputManager {
             case 'AltLeft':
                 // Knife
                 e.preventDefault()
-                this.engine.game.weaponManager.dispatchEvent(new Event('shoot-knife'))
+                this.engine.weaponManager.dispatchEvent(new Event('knife'))
                 break;
         }
 

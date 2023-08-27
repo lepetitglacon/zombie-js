@@ -16,7 +16,6 @@ export default class Knife extends Weapon {
         this.bulletsInMagazine = Infinity
 
         this.fireSoundName = 'weapon_knife_slash'
-        this.div = document.getElementById('knife')
 
         this.range = 2.1
     }
@@ -35,26 +34,5 @@ export default class Knife extends Weapon {
                 this.addToAlreadyHit_(obj)
             }
         }
-    }
-
-    // override
-    updateUI() {
-        this.isReloading = true
-
-        this.div.style.transitionDuration = '.2s'
-        this.div.style.transform = 'translateX(100vw)'
-
-        this.engine.game.weaponHandler.weapon.div.style.transitionDuration = '.2s'
-        this.engine.game.weaponHandler.weapon.div.style.transform = 'translateY(50vw)'
-
-        setTimeout(() => {
-            this.isReloading = false
-
-            this.div.style.transitionDuration = '0'
-            this.div.style.transform = 'translateX(-100vw)'
-
-            this.engine.game.weaponHandler.weapon.div.style.transitionDuration = '.4s'
-            this.engine.game.weaponHandler.weapon.div.style.transform = 'translateY(0)'
-        }, this.fireRate - 400)
     }
 }
