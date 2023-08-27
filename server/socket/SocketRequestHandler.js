@@ -177,7 +177,6 @@ export default class SocketRequestHandler {
         })
 
         this.socket.on('game:shot', (shot) => {
-            console.log(shot)
             Utils.dispatchEventTo('shot', {shot: shot}, this.game.waveHandler)
 
             let totalPoints = 0

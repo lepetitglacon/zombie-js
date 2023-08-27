@@ -59,7 +59,7 @@ export default class PlayerManager extends EventTarget {
             }
         })
         this.addEventListener('player_shot', e => {
-            console.log(e)
+            // TODO changer l'affichage des points des joueurs
         })
     }
 

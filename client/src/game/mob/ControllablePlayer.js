@@ -56,8 +56,6 @@ export default class ControllablePlayer extends EventTarget {
 
     bind() {
         this.addEventListener('player_shot', e => {
-            console.log(this.engine.socketHandler.socket.id)
-            console.log(e.socketId)
             if (e.socketId === this.engine.socketHandler.socket.id) {
                 this.points += e.points
                 this.dispatchEvent(new Event('after_own_shot'))
