@@ -12,7 +12,7 @@ function Weapon({weapon}) {
 
     useEffect(() => {
         gameEngine.weaponManager.addEventListener('after-shot', () => {
-            setBullets(oldBullets => oldBullets - 1)
+            setBullets(gameEngine.weaponManager.weapon.bulletsInMagazine)
         })
     }, [])
 
