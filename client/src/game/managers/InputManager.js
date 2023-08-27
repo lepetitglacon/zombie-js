@@ -101,12 +101,9 @@ export default class InputManager {
             //     })
             //     break;
             //
-            // case 'KeyF':
-            //     let door = this.engine.actionGui.door
-            //     if (door !== null) {
-            //         door.buy()
-            //     }
-            //     break;
+            case 'KeyF':
+                this.engine.actionManager.dispatchEvent(new Event('execute_action'))
+                break;
             //
             // case 'ShiftLeft':
             //     this.isRunning = true

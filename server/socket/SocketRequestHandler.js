@@ -185,7 +185,6 @@ export default class SocketRequestHandler {
                 this.points += hit.points
             }
 
-
             this.io.to(this.game.gameId).emit('game:player_shot', {
                 playerId: this.user._id,
                 socketId: this.socket.id,
@@ -193,6 +192,12 @@ export default class SocketRequestHandler {
                 sound: shot.soundName,
                 points: totalPoints
             })
+        })
+
+        this.socket.on('game:door:buy', (e) => {
+            e.userId = this.user._id.toString()
+            console.log('game:door:buy', e)
+            Utils.dispatchEventTo('player_trying_to_open_door', e, this.game.doorManager)
         })
     }
 

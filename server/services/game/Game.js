@@ -7,6 +7,7 @@ import SocketRequestHandler from "../../socket/SocketRequestHandler.js";
 import GameMapModel from "../../database/models/GameMapModel.js";
 import GameModel from "../../database/models/GameModel.js";
 import Logger from "../../Logger.js";
+import DoorManager from "./world/DoorManager.js";
 Logger.init()
 
 export default class Game extends EventTarget {
@@ -37,6 +38,8 @@ export default class Game extends EventTarget {
 
         this.gameStartTimer = null
 
+        this.zombieFactory = new ZombieFactory({game: this})
+
         this.PLAYERS = new Map()
 
         this.status = Game.STATUS.LOBBY
@@ -56,6 +59,7 @@ export default class Game extends EventTarget {
         await this.parseMap_()
 
         this.waveHandler = new WaveHandler({game: this})
+        this.doorManager = new DoorManager({game: this})
 
         Logger.game('game initialized : ' + this.gameId)
     }
@@ -105,19 +109,22 @@ export default class Game extends EventTarget {
         const file = fs.readFileSync(Server.__dirname + '/resources/gltf/maps/' + this.map.filename)
         this.GLTFLoader.parse('glb', file,
             (gltf) => {
+
                 for (const mesh of gltf.scene.children) {
+
                     switch (mesh.userData.type) {
-                        case 'Ground':
+                        case 'Floor':
                             break;
                         case 'Building':
                             break;
                         case 'Spawner':
-                            ZombieFactory.spawners.push(mesh.position)
+                            this.zombieFactory.setSpawner({
+                                roomId: mesh.userData.RoomId,
+                                position: mesh.position.clone()
+                            })
                             break;
                         case 'Door':
-                            // mesh.price = 50
-                            // mesh.isOpen = false
-                            // this.DOORS.set(mesh.name, mesh)
+                            this.doorManager.addDoor(mesh)
                             break;
                         default:
                             console.warn('[MAP] Unrecognized node')

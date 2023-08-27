@@ -1,15 +1,20 @@
 import {Box3} from "three";
 import * as THREE from "three";
-import {VertexNormalsHelper} from "three/addons/helpers/VertexNormalsHelper.js";
 
 export default class Door {
-    constructor(obj) {
-        this.engine = window.ZombieGame
-        this.three = window.ZombieGame.game.three
 
-        this.price = 750
+    static idCounter = 0
 
+    constructor({engine, obj}) {
+        this.engine = engine
+        this.three = this.engine.three
+
+        this.id = Door.idCounter++
         this.obj = obj
+
+        this.price = this.obj.userData.Price
+        this.isOpen = false
+
         this.obj.geometry.computeBoundingBox()
 
         this.aabb = new Box3()
@@ -24,27 +29,13 @@ export default class Door {
 
         this.actionAABBHelper = new THREE.Box3Helper( this.actionAABB, 0xff9900 );
         this.three.scene.add( this.actionAABBHelper );
-
-        this.normalHelper = new VertexNormalsHelper( obj, 1, 0xffffff );
-        this.three.scene.add( this.normalHelper );
-
-        this.isOpen = false
-    }
-
-    init() {
-
     }
 
     buy() {
-        // frontend verification is not useful for now
-        // if (
-        //     this.engine.game.points >= this.price &&
-        //     !this.isOpen
-        // ) {
 
             // send to server
-            this.engine.serverConnector.socket.emit('door_buy', {
-                doorId: this.obj.name
+            this.engine.socketHandler.socket.emit('game:door:buy', {
+                doorId: this.id,
             })
 
             console.log('send open door to server')
@@ -52,6 +43,10 @@ export default class Door {
             this.engine.game.points -= this.price
 
         // }
+    }
+
+    shake() {
+
     }
 
     /**
@@ -65,9 +60,10 @@ export default class Door {
         this.three.scene.remove(this.normalHelper)
 
         this.three.WALLS.delete(this.obj.name)
-        this.three.DOORS.delete(this.obj.name)
+        this.three.DOORS.delete(this.id)
 
-        window.ZombieGame.game.three.gltf.remove(this.obj)
+        // this.three.scene.remove(this.obj)
+        this.obj.removeFromParent()
     }
 
 }

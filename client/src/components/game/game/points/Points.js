@@ -22,6 +22,9 @@ function Points() {
         gameEngine.controllablePlayer.addEventListener('after_own_shot', () => {
             setPoints(gameEngine.controllablePlayer.points)
         })
+        gameEngine.controllablePlayer.addEventListener('after_buying_door', () => {
+            setPoints(gameEngine.controllablePlayer.points)
+        })
     }, [])
 
     return (

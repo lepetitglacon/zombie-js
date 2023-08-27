@@ -4,10 +4,12 @@ import GameEngine from "../GameEngine.js";
 import {Box3} from "three";
 import {VertexNormalsHelper} from "three/addons/helpers/VertexNormalsHelper.js";
 import Door from "./Door/Door.js";
+import Utils from "../Utils";
 
-export default class ThreeWorld {
+export default class ThreeWorld extends EventTarget{
 
     constructor({engine}) {
+        super()
         this.engine = engine
 
         this.WALLS = new Map()
@@ -44,6 +46,28 @@ export default class ThreeWorld {
     }
 
     update(delta) {
+
+        // Doors hitbox
+        let hitDoor = false
+        for (const [name, door] of this.DOORS) {
+
+            if (this.engine.controllablePlayer.aabb.intersectsBox(door.actionAABB)) {
+                console.log('player is in door range', name)
+
+                const doorMessage = `Press F to Unlock Door : ${door.price}`
+                Utils.dispatchEventTo('set_action', {
+                    message: doorMessage,
+                    action: () => {
+                        door.buy()
+                    }
+                }, this.engine.actionManager)
+                hitDoor = true
+            }
+        }
+        if (hitDoor === false) {
+            this.engine.actionManager.dispatchEvent(new Event('unset_action'))
+        }
+
         this.renderer.render( this.scene, this.camera );
     }
 
@@ -87,11 +111,8 @@ export default class ThreeWorld {
                     break;
 
                 case 'Door':
-                    // const door = new Door(obj)
-                    //
-                    // this.DOORS.set(obj.name, door)
-                    // this.WALLS.set(obj.name, door.aabb)
-
+                    const door = new Door({engine: this.engine, obj})
+                    this.DOORS.set(door.id, door)
                     break;
 
                 case 'Floor':
@@ -100,7 +121,6 @@ export default class ThreeWorld {
                     break;
             }
         }
-        // this.engine.serverConnector.socket.emit('map_loaded_doors')
     }
 
 
@@ -114,6 +134,17 @@ export default class ThreeWorld {
         this.onResize_ = this.onResize.bind(this)
         window.addEventListener( 'resize', this.onResize_);
         window.addEventListener('beforeunload', this.onBeforeUnload);
+
+        this.addEventListener('before_door_opening', (e) => {
+            if (this.DOORS.has(e.doorId)) {
+                this.DOORS.get(e.doorId).shake()
+            }
+        })
+        this.addEventListener('door_open', (e) => {
+            if (this.DOORS.has(e.doorId)) {
+                this.DOORS.get(e.doorId).remove_()
+            }
+        })
     }
 
     cleanup() {

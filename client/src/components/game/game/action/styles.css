@@ -1,0 +1,12 @@
+#action_container {
+    height: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: end;
+
+    padding-bottom: 50px;
+
+    color: #880000;
+    font-size: 48px;
+}

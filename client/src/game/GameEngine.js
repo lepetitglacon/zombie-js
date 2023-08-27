@@ -11,6 +11,7 @@ import ZombieManager from "./managers/ZombieManager";
 import ControllablePlayer from "./mob/ControllablePlayer";
 import PlayerManager from "./managers/PlayerManager";
 import WeaponManager from "./weapon/WeaponManager";
+import ActionManager from "./managers/ActionManager";
 import Game from "./Game";
 
 export default class GameEngine extends EventTarget {
@@ -50,6 +51,7 @@ export default class GameEngine extends EventTarget {
         this.inputManager = new InputManager({engine: this})
         this.zombieManager = new ZombieManager({engine: this})
         this.weaponManager = new WeaponManager({engine: this})
+        this.actionManager = new ActionManager({engine: this})
         this.controllablePlayer = new ControllablePlayer({engine: this})
 
         this.lastFrameTime = performance.now();
