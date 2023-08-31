@@ -58,8 +58,22 @@ export default class PlayerManager extends EventTarget {
                 }
             }
         })
+
         this.addEventListener('player_shot', e => {
             // TODO changer l'affichage des points des joueurs
+        })
+
+        this.addEventListener('points', e => {
+            for (const player of e.players) {
+                if (player.socketId === this.engine.socketHandler.socket.id) {
+                    this.engine.controllablePlayer.points = player.points
+                } else {
+                    if (this.PLAYERS.has(player._id)) {
+                        this.PLAYERS.get(player._id).points = player.points
+                    }
+                }
+            }
+            this.engine.controllablePlayer.dispatchEvent(new Event('points'))
         })
     }
 

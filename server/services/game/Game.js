@@ -105,6 +105,18 @@ export default class Game extends EventTarget {
         return players
     }
 
+    preparePlayersPoints() {
+        const players = []
+        for (const [id, player] of this.PLAYERS) {
+            players.push({
+                _id: player.user._id,
+                socketId: player.socket.id,
+                points: player.points
+            })
+        }
+        return players
+    }
+
     parseMap_() {
         const file = fs.readFileSync(Server.__dirname + '/resources/gltf/maps/' + this.map.filename)
         this.GLTFLoader.parse('glb', file,

@@ -26,8 +26,7 @@ export default class DoorManager extends EventTarget{
             const door = this.DOORS.get(e.doorId)
             const player = this.game.PLAYERS.get(e.userId)
 
-            console.log(player.points)
-            console.log(door.price)
+            console.log(door.price, player.points)
 
             if (player.points >= door.price) {
                 console.log('player bought door')
@@ -35,9 +34,8 @@ export default class DoorManager extends EventTarget{
                 player.points -= door.price
 
                 // TODO send player points info
-                this.game.io.to(this.game.gameId).emit('game:player:update_point')
+                this.game.io.to(this.game.gameId).emit('game:players:points', this.game.preparePlayersPoints())
 
-                // TODO add new spawners to ZombieFactory for each rooms
                 this.game.zombieFactory.makeSpawnersAvailableForRooms(door.rooms)
 
                 console.log(`[DOORS] ${e.doorId} opened`)
@@ -65,7 +63,7 @@ class Door {
     static idCounter = 0
 
     constructor(mesh) {
-        this.id = Door.idCounter++
+        this.id = mesh.name
 
         this.mesh = mesh
         this.rooms = mesh.userData.RoomIds

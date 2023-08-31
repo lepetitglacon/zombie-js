@@ -9,7 +9,7 @@ export default class Door {
         this.engine = engine
         this.three = this.engine.three
 
-        this.id = Door.idCounter++
+        this.id = obj.name
         this.obj = obj
 
         this.price = this.obj.userData.Price

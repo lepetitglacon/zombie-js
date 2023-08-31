@@ -45,6 +45,10 @@ export default class PlayerEvents {
         this.socket.on('game:player_resurrect', (player) => {
             Utils.dispatchEventTo('resurrect', {player: player}, this.engine.playerManager)
         })
+
+        this.socket.on('game:players:points', (players) => {
+            Utils.dispatchEventTo('points', {players: players}, this.engine.playerManager)
+        })
     }
 
 }

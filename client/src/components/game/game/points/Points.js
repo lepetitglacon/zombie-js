@@ -9,21 +9,26 @@ function Points() {
     const {gameEngine, setGameEngine} = useContext(GameEngineContext)
 
     const [points, setPoints] = useState(gameEngine.controllablePlayer.points)
-    const [players, setPlayers] = useState(gameEngine.playerManager.PLAYERS)
+    const [players, setPlayers] = useState([])
 
     useEffect(() => {
         gameEngine.playerManager.addEventListener('after-connect', () => {
-            console.log('after-connect')
-            setPlayers(gameEngine.playerManager.PLAYERS)
         })
     }, [])
 
     useEffect(() => {
-        gameEngine.controllablePlayer.addEventListener('after_own_shot', () => {
+        gameEngine.controllablePlayer.addEventListener('points', () => {
             setPoints(gameEngine.controllablePlayer.points)
-        })
-        gameEngine.controllablePlayer.addEventListener('after_buying_door', () => {
-            setPoints(gameEngine.controllablePlayer.points)
+
+            setPlayers(players => {
+                return players.map(p => {
+                    if (gameEngine.playerManager.PLAYERS.has(p._id)) {
+                        p.points = gameEngine.playerManager.PLAYERS.get(p._id).points
+                    }
+                })
+            })
+
+
         })
     }, [])
 
@@ -34,14 +39,13 @@ function Points() {
                     <span>{points}</span>
                 </div>
             </div>
-            {/*<div id="other_player_points">*/}
-            {/*    {players.values().map((player, i) => {*/}
-            {/*        return <div key={i}>*/}
-            {/*            <span>{player.gamename}</span>*/}
-            {/*            <span>{player.points}</span>*/}
-            {/*        </div>*/}
-            {/*    })}*/}
-            {/*</div>*/}
+            <div id="other_player_points">
+                {players.map((player, i) => {
+                    return <div key={i}>
+                        <span>{player.points}</span>
+                    </div>
+                })}
+            </div>
         </div>
     );
 }
