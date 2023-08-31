@@ -49,13 +49,18 @@ export default class ZombieFactory {
         })
         this.spawners.set(spawner.id, spawner)
 
+        // set defaults spawners for room 0
         if (spawner.roomId === 0) {
             this.availableSpawners.set(spawner.id, spawner)
         }
     }
 
     makeSpawnersAvailableForRooms(roomsArray) {
-
+        for (const [id, spawner] of this.spawners) {
+            if (spawner.roomId in roomsArray && !this.availableSpawners.has(spawner.id)) {
+                this.availableSpawners.set(spawner.id, spawner)
+            }
+        }
     }
 
 }

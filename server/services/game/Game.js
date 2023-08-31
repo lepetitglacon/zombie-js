@@ -120,7 +120,8 @@ export default class Game extends EventTarget {
                         case 'Spawner':
                             this.zombieFactory.setSpawner({
                                 roomId: mesh.userData.RoomId,
-                                position: mesh.position.clone()
+                                position: mesh.position.clone(),
+                                name: mesh.name
                             })
                             break;
                         case 'Door':
