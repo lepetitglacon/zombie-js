@@ -200,8 +200,11 @@ export default class SocketRequestHandler {
 
         this.socket.on('game:door:buy', (e) => {
             e.userId = this.user._id.toString()
-            console.log('game:door:buy', e)
             Utils.dispatchEventTo('player_trying_to_open_door', e, this.game.doorManager)
+        })
+        this.socket.on('game:gun:buy', (e) => {
+            e.userId = this.user._id.toString()
+            Utils.dispatchEventTo('player_trying_to_buy_weapon', e, this.game.gunShopManager)
         })
     }
 

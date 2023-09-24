@@ -18,6 +18,7 @@ export default class PlayerEvents {
             }
         })
 
+        // NETWORK STATE
         this.socket.on('game:player-connect', (player) => {
             console.log('PLAYER CONNECTED', player)
             Utils.dispatchEventTo('connect', {player: player}, this.engine.playerManager)
@@ -26,16 +27,14 @@ export default class PlayerEvents {
             Utils.dispatchEventTo('disconnect', {player: player}, this.engine.playerManager)
         })
 
+        // PLAYER STATE
         this.socket.on('game:players_positions', (playerList) => {
             Utils.dispatchEventTo('positions', {players: playerList}, this.engine.playerManager)
         })
-
         this.socket.on('game:player_shot', (e) => {
             Utils.dispatchEventTo('player_shot', e, this.engine.playerManager)
             Utils.dispatchEventTo('player_shot', e, this.engine.controllablePlayer)
         })
-
-
         this.socket.on('game:player_down', (player) => {
             Utils.dispatchEventTo('down', {player: player}, this.engine.playerManager)
         })
@@ -45,9 +44,13 @@ export default class PlayerEvents {
         this.socket.on('game:player_resurrect', (player) => {
             Utils.dispatchEventTo('resurrect', {player: player}, this.engine.playerManager)
         })
-
         this.socket.on('game:players:points', (players) => {
             Utils.dispatchEventTo('points', {players: players}, this.engine.playerManager)
+        })
+
+        // WEAPONS
+        this.socket.on('game:weapon:bought', (e) => {
+            Utils.dispatchEventTo('game:weapon:bought', {e: e}, this.engine.weaponManager)
         })
     }
 

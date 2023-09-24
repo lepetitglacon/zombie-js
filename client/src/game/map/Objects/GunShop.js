@@ -33,6 +33,7 @@ export default class GunShop {
     buy() {
             // send to server
             this.engine.socketHandler.socket.emit('game:gun:buy', {
+                gunShopId: this.id,
                 weaponName: this.weaponName,
             })
             console.log(`send buy weapon ${this.weaponName} to server`)

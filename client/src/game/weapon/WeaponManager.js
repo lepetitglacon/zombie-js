@@ -11,6 +11,8 @@ export default class WeaponManager extends EventTarget {
         super()
         this.listeners = []
 
+        this.weaponHoldLimit = 2
+
         this.engine = engine
 
         this.raycaster = new THREE.Raycaster();
@@ -62,7 +64,16 @@ export default class WeaponManager extends EventTarget {
      * @param weapon
      */
     addWeapon(weapon) {
-        this.weapons.push(weapon)
+
+        // TODO gérer les armes déjà présentes
+        // TODO ou changer l'arme courante
+        if (this.weapons.length >= this.weaponHoldLimit) {
+
+        } else {
+            this.weapons.push(weapon)
+
+        }
+
         this.weapon = weapon
     }
 
@@ -122,6 +133,11 @@ export default class WeaponManager extends EventTarget {
         })
         this.addEventListener('after-switch', (e) => {
             // console.log('weapon has shot')
+        })
+
+        this.addEventListener('game:weapon:bought', (e) => {
+            // TODO ajouter l'arme
+            console.log('weapon has been bought from server', e)
         })
     }
 }

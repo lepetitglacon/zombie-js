@@ -41,7 +41,7 @@ export default class Game extends EventTarget {
 
         this.zombieFactory = new ZombieFactory({game: this})
 
-        this.PLAYERS = new Map()
+        /** @type {Map<string, SocketRequestHandler>} */ this.PLAYERS = new Map()
 
         this.status = Game.STATUS.LOBBY
         this.tickRate = 60
