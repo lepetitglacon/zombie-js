@@ -135,6 +135,14 @@ export default class SocketRequestHandler {
                     {
                         name: 'player',
                         path: 'gltf/player.glb',
+                    },
+                    {
+                        name: 'weapon/m1911',
+                        path: 'gltf/weapons/m1911.glb',
+                    },
+                    {
+                        name: 'weapon/mp40',
+                        path: 'gltf/weapons/mp40.glb',
                     }
                 ],
                 sounds: [
@@ -154,10 +162,6 @@ export default class SocketRequestHandler {
                         name: 'weapon_knife_slash',
                         path: 'sound/knife.wav',
                     }
-                ],
-                weapons: [
-                    'gltf/maps/' + this.game.map.filename,
-
                 ]
             })
         })

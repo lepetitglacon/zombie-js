@@ -122,6 +122,7 @@ export default class GameEngine extends EventTarget {
 
             await this.three.init()
             await this.zombieManager.init()
+            await this.weaponManager.init()
 
             this.dispatchEvent(new Event('three-loaded'))
         })

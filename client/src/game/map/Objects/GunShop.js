@@ -1,7 +1,7 @@
 import {Box3} from "three";
 import * as THREE from "three";
 
-export default class Door {
+export default class GunShop {
 
     static idCounter = 0
 
@@ -10,10 +10,9 @@ export default class Door {
         this.three = this.engine.three
 
         this.id = obj.name
+        this.weaponName = obj.userData.weaponName
+        this.price = obj.userData.Price
         this.obj = obj
-
-        this.price = this.obj.userData.Price
-        this.isOpen = false
 
         this.obj.geometry.computeBoundingBox()
 
@@ -32,17 +31,12 @@ export default class Door {
     }
 
     buy() {
-
             // send to server
-            this.engine.socketHandler.socket.emit('game:door:buy', {
-                doorId: this.id,
+            this.engine.socketHandler.socket.emit('game:gun:buy', {
+                weaponName: this.weaponName,
             })
-
-            console.log('send open door to server')
-
+            console.log(`send buy weapon ${this.weaponName} to server`)
             this.engine.game.points -= this.price
-
-        // }
     }
 
     shake() {
@@ -57,7 +51,6 @@ export default class Door {
 
         this.three.scene.remove(this.aabbHelper)
         this.three.scene.remove(this.actionAABBHelper)
-        this.three.scene.remove(this.normalHelper)
 
         this.three.WALLS.delete(this.obj.name)
         this.three.DOORS.delete(this.id)

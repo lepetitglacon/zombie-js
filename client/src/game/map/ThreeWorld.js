@@ -3,17 +3,20 @@ import PointerLockControls from "../input/PointerLockControls.js";
 import GameEngine from "../GameEngine.js";
 import {Box3} from "three";
 import {VertexNormalsHelper} from "three/addons/helpers/VertexNormalsHelper.js";
-import Door from "./Door/Door.js";
+import Door from "./Objects/Door.js";
 import Utils from "../Utils";
+import GunShop from "./Objects/GunShop";
 
 export default class ThreeWorld extends EventTarget{
 
     constructor({engine}) {
         super()
-        this.engine = engine
+        /** @type GameEngine */ this.engine = engine
 
         this.WALLS = new Map()
-        this.DOORS = new Map()
+
+        /** @type {Map<Number, Door>} */ this.DOORS = new Map()
+        /** @type {Map<Number, GunShop>} */ this.GUNSHOPS = new Map()
 
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color( 0xEEEEEE );
@@ -27,7 +30,9 @@ export default class ThreeWorld extends EventTarget{
         );
         this.camera.position.y = 5
 
-        this.renderer = new THREE.WebGLRenderer();
+        this.renderer = new THREE.WebGLRenderer({
+            alpha: true
+        });
         this.renderer.setSize( window.innerWidth, window.innerHeight );
 
         this.renderer.shadowMap.enabled = true;
@@ -48,12 +53,9 @@ export default class ThreeWorld extends EventTarget{
     update(delta) {
 
         // Doors hitbox
-        let hitDoor = false
+        let actionNeedToBeSet = false
         for (const [name, door] of this.DOORS) {
-
             if (this.engine.controllablePlayer.aabb.intersectsBox(door.actionAABB)) {
-                console.log('player is in door range', name)
-
                 const doorMessage = `Press F to Unlock Door : ${door.price}`
                 Utils.dispatchEventTo('set_action', {
                     message: doorMessage,
@@ -61,10 +63,23 @@ export default class ThreeWorld extends EventTarget{
                         door.buy()
                     }
                 }, this.engine.actionManager)
-                hitDoor = true
+                actionNeedToBeSet = true
             }
         }
-        if (hitDoor === false) {
+        // GunShop hitbox
+        for (const [name, door] of this.GUNSHOPS) {
+            if (this.engine.controllablePlayer.aabb.intersectsBox(door.actionAABB)) {
+                const doorMessage = `Press F to buy ${door.weaponName} : ${door.price}`
+                Utils.dispatchEventTo('set_action', {
+                    message: doorMessage,
+                    action: () => {
+                        door.buy()
+                    }
+                }, this.engine.actionManager)
+                actionNeedToBeSet = true
+            }
+        }
+        if (!actionNeedToBeSet) { // remove action if no action registered
             this.engine.actionManager.dispatchEvent(new Event('unset_action'))
         }
 
@@ -95,7 +110,6 @@ export default class ThreeWorld extends EventTarget{
                     break;
 
                 case 'Building':
-
                     // obj.geometry.computeBoundingBox()
                     //
                     // aabb = new Box3()
@@ -107,14 +121,15 @@ export default class ThreeWorld extends EventTarget{
                     //
                     // normalHelper = new VertexNormalsHelper( obj, 1, 0xffffff );
                     // this.scene.add( normalHelper );
-
                     break;
-
                 case 'Door':
                     const door = new Door({engine: this.engine, obj})
                     this.DOORS.set(door.id, door)
                     break;
-
+                case 'GunShop':
+                    const gunShop = new GunShop({engine: this.engine, obj})
+                    this.GUNSHOPS.set(gunShop.id, gunShop)
+                    break;
                 case 'Floor':
                     break;
                 default:

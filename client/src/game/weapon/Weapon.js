@@ -37,12 +37,18 @@ export default class Weapon {
 
         this.fireSoundName = 'weapon_pistol_shot'
 
+        this.model = this.engine.modelManager.getModel('weapon/m1911')
+        this.model.position.set()
+        this.weaponManager.scene.add(this.model)
+
         // this.div = document.getElementById('current-weapon-fpsview')
 
     }
 
     update(delta) {
-
+        this.model.position.copy(this.engine.three.camera.position)
+        // this.model.rotation.copy(this.engine.three.camera.rotation)
+        this.model.position.y -= 0.25
     }
 
     shoot() {

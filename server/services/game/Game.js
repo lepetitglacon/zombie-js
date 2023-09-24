@@ -8,6 +8,7 @@ import GameMapModel from "../../database/models/GameMapModel.js";
 import GameModel from "../../database/models/GameModel.js";
 import Logger from "../../Logger.js";
 import DoorManager from "./world/DoorManager.js";
+import GunShopManager from "./world/GunShopManager.js";
 Logger.init()
 
 export default class Game extends EventTarget {
@@ -60,6 +61,7 @@ export default class Game extends EventTarget {
 
         this.waveHandler = new WaveHandler({game: this})
         this.doorManager = new DoorManager({game: this})
+        this.gunShopManager = new GunShopManager({game: this})
 
         Logger.game('game initialized : ' + this.gameId)
     }
@@ -138,6 +140,9 @@ export default class Game extends EventTarget {
                             break;
                         case 'Door':
                             this.doorManager.addDoor(mesh)
+                            break;
+                        case 'GunShop':
+                            this.gunShopManager.addGunShop(mesh)
                             break;
                         default:
                             console.warn('[MAP] Unrecognized node')

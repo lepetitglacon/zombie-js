@@ -20,9 +20,6 @@ export default class WeaponManager extends EventTarget {
 
         this.weapons = []
         this.weapon = null
-        this.addWeapon(new Pistol({engine: this.engine, raycaster: this.raycaster, weaponManager: this}))
-        this.addWeapon(new Smg({engine: this.engine, raycaster: this.raycaster, weaponManager: this}))
-        this.knife = new Knife({engine: this.engine, raycaster: this.raycaster, weaponManager: this})
 
         this.bind()
     }
@@ -38,6 +35,26 @@ export default class WeaponManager extends EventTarget {
         if (this.engine.inputManager.isClicking && this.weapon.isAutomatic) {
             this.#shoot()
         }
+
+        this.engine.three.renderer.render(this.scene, this.camera);
+    }
+
+    async init() {
+        this.scene = new THREE.Scene();
+        this.scene.background = new THREE.Color(0, 0, 0);
+
+        this.camera = new THREE.PerspectiveCamera(
+            60,
+            150 / 150,
+            0.1,
+            2
+        );
+
+        this.engine.three.renderer.render(this.scene, this.camera);
+
+        this.addWeapon(new Pistol({engine: this.engine, raycaster: this.raycaster, weaponManager: this}))
+        this.addWeapon(new Smg({engine: this.engine, raycaster: this.raycaster, weaponManager: this}))
+        this.knife = new Knife({engine: this.engine, raycaster: this.raycaster, weaponManager: this})
     }
 
     /**
