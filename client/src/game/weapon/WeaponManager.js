@@ -1,19 +1,18 @@
 import * as THREE from "three";
-import Weapon from "./Weapon.js";
 import Knife from "./knife/Knife.js";
 import Pistol from "./pistol/Pistol.js";
 import Smg from "./smg/Smg.js";
 import Utils from "../Utils";
+import WeaponFactory from "./WeaponFactory";
 
 export default class WeaponManager extends EventTarget {
 
     constructor({engine}) {
         super()
-        this.listeners = []
-
-        this.weaponHoldLimit = 2
-
         this.engine = engine
+
+        this.weaponFactory = new WeaponFactory({engine: engine, weaponManager: this})
+        this.weaponHoldLimit = 2
 
         this.raycaster = new THREE.Raycaster();
         this.pointer = new THREE.Vector2();
@@ -54,8 +53,9 @@ export default class WeaponManager extends EventTarget {
 
         this.engine.three.renderer.render(this.scene, this.camera);
 
-        this.addWeapon(new Pistol({engine: this.engine, raycaster: this.raycaster, weaponManager: this}))
-        this.addWeapon(new Smg({engine: this.engine, raycaster: this.raycaster, weaponManager: this}))
+        this.addWeapon(this.weaponFactory.createWeaponFromName('M1911'))
+        // this.addWeapon(new Pistol({engine: this.engine, raycaster: this.raycaster, weaponManager: this}))
+        // this.addWeapon(new Smg({engine: this.engine, raycaster: this.raycaster, weaponManager: this}))
         this.knife = new Knife({engine: this.engine, raycaster: this.raycaster, weaponManager: this})
     }
 
@@ -68,13 +68,14 @@ export default class WeaponManager extends EventTarget {
         // TODO gérer les armes déjà présentes
         // TODO ou changer l'arme courante
         if (this.weapons.length >= this.weaponHoldLimit) {
-
+            this.weapons.splice(this.weapons.indexOf(this.weapon),1)
+            this.weapons.push(weapon)
         } else {
             this.weapons.push(weapon)
-
         }
 
         this.weapon = weapon
+        Utils.dispatchEventTo('after-switch', {}, this)
     }
 
     #shoot() {
@@ -138,6 +139,9 @@ export default class WeaponManager extends EventTarget {
         this.addEventListener('game:weapon:bought', (e) => {
             // TODO ajouter l'arme
             console.log('weapon has been bought from server', e)
+
+            this.addWeapon(this.weaponFactory.createWeaponFromName(e.e.weaponName))
+
         })
     }
 }

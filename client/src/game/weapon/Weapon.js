@@ -6,10 +6,10 @@ export default class Weapon {
     // assets
     // https://www.videvo.net/search/?q=pistol&mode=sound-effects&sort=
 
-    constructor({engine, weaponManager, raycaster}) {
+    constructor({engine, weaponManager}) {
         this.engine = engine
         this.weaponManager = weaponManager
-        this.raycaster = raycaster
+        this.raycaster = this.weaponManager.raycaster
 
         this.isAutomatic = false
         this.switchTime = 500 // ms
@@ -209,5 +209,11 @@ export default class Weapon {
         return hits
     }
 
+    setData(data) {
+        Object.assign(this, data)
+        this.bulletsInMagazine = this.magazineSize
+        this.bulletStorage = this.maxBulletStorage
+        console.log(this)
+    }
 
 }
