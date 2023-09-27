@@ -36,6 +36,7 @@ export default class Weapon {
         this.alreadyHit = new Map()
 
         this.fireSoundName = 'weapon_pistol_shot'
+        this.reloadSoundName = 'weapon_pistol_shot'
 
         this.model = this.engine.modelManager.getModel('weapon/m1911')
         this.model.position.set()
@@ -86,13 +87,14 @@ export default class Weapon {
             if (this.#hasBulletLeftInStorage()) {
                 this.realoadStart = Date.now()
                 this.isReloading = true
+                this.engine.soundManager.play(this.reloadSoundName)
+
             } else {
                 // this.engine.soundManager.play('weapon_pistol_reload_fail')
             }
 
         } else {
             if (this.canReloadByTime() && this.#hasBulletLeftInStorage()) {
-                this.engine.soundManager.play('weapon_pistol_reload')
                 this.transferBulletsFromStorageToMagazine();
                 this.isReloading = false
                 this.weaponManager.dispatchEvent(new Event('after-reload'))

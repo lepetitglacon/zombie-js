@@ -29,48 +29,52 @@ export default class WeaponFactory {
             type: 'Pistol',
             isAutomatic: false,
             switchTime: 500,
-            damages: 20,
+            damages: 24,
             fireRate: 200,
             realoadRate: 2000,
             magazineSize: 15,
             maxBulletStorage: 75,
-            fireSoundName: 'weapon_pistol_shot',
+            fireSoundName: 'weapon-pistol-fire',
+            reloadSoundName: 'weapon-pistol-reload'
         })
         this.availableWeapons.set('MP40', {
             name: "MP40",
             type: 'Smg',
             isAutomatic: true,
             switchTime: 1500,
-            damages: 30,
+            damages: 75,
             fireRate: 138,
             realoadRate: 2200,
             magazineSize: 30,
             maxBulletStorage: 100,
-            fireSoundName: 'weapon_pistol_shot',
+            fireSoundName: 'weapon-pistol-fire',
+            reloadSoundName: 'weapon-pistol-reload'
         })
         this.availableWeapons.set('M1A1', {
             name: "M4A1",
             type: 'Rifle',
             isAutomatic: false,
             switchTime: 1500,
-            damages: 25,
+            damages: 50,
             fireRate: 166,
             realoadRate: 2200,
             magazineSize: 10,
             maxBulletStorage: 100,
-            fireSoundName: 'weapon_pistol_shot',
+            fireSoundName: 'weapon-pistol-fire',
+            reloadSoundName: 'weapon-pistol-reload'
         })
         this.availableWeapons.set('Olympia', {
             name: "Olympia",
             type: 'Shotgun',
             isAutomatic: false,
             switchTime: 1500,
-            damages: 35,
+            damages: 75,
             fireRate: 500,
             realoadRate: 3000,
             magazineSize: 2,
             maxBulletStorage: 50,
-            fireSoundName: 'weapon_pistol_shot',
+            fireSoundName: 'weapon-shotgun-fire',
+            reloadSoundName: 'weapon-shotgun-reload'
         })
     }
 }

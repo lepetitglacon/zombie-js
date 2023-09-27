@@ -147,20 +147,28 @@ export default class SocketRequestHandler {
                 ],
                 sounds: [
                     {
-                        name: 'weapon_pistol_shot',
-                        path: 'sound/gunshot.wav',
+                        name: 'weapon_knife_slash',
+                        path: 'sound/knife.wav',
                     },
                     {
-                        name: 'weapon_pistol_reload',
-                        path: 'sound/gunreload.mp3',
+                        name: 'weapon-pistol-fire',
+                        path: 'sound/weapons/M1911/fire.mp3',
+                    },
+                    {
+                        name: 'weapon-pistol-reload',
+                        path: 'sound/weapons/M1911/reload.mp3',
+                    },
+                    {
+                        name: 'weapon-shotgun-fire',
+                        path: 'sound/weapons/Olympia/fire.mp3',
+                    },
+                    {
+                        name: 'weapon-shotgun-reload',
+                        path: 'sound/weapons/Olympia/reload.mp3',
                     },
                     {
                         name: 'weapon_pistol_reload_fail',
                         path: 'sound/weapons/reload_fail.mp3',
-                    },
-                    {
-                        name: 'weapon_knife_slash',
-                        path: 'sound/knife.wav',
                     }
                 ]
             })

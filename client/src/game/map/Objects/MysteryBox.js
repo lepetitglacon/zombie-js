@@ -23,7 +23,7 @@ export default class MysteryBox {
 
         this.actionAABB = new Box3()
         this.actionAABB.set(this.aabb.min, this.aabb.max)
-        this.actionAABB.expandByScalar(1.2)
+        this.actionAABB.expandByScalar(0.5)
 
         this.aabbHelper = new THREE.Box3Helper( this.aabb, 0xff0000 );
         this.three.scene.add( this.aabbHelper );

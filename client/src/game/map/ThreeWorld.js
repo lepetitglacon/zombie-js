@@ -24,8 +24,9 @@ export default class ThreeWorld extends EventTarget{
         this.scene.background = new THREE.Color( 0xEEEEEE );
         this.scene.fog = new THREE.FogExp2( 0xefd1b5, 0.0025 );
 
+        this.fov = 60
         this.camera = new THREE.PerspectiveCamera(
-            90,
+            this.fov,
             window.innerWidth / window.innerHeight,
             0.1,
             1000
@@ -115,15 +116,9 @@ export default class ThreeWorld extends EventTarget{
             const obj = this.gltf.children[i]
             const type = obj.userData.type ?? ''
 
-            let aabb
-            let aabbHelper
-            let normalHelper
-
             switch (type) {
-
                 case 'Spawner':
                     break;
-
                 case 'Building':
                     // obj.geometry.computeBoundingBox()
                     //
