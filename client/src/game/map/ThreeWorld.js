@@ -6,6 +6,7 @@ import {VertexNormalsHelper} from "three/addons/helpers/VertexNormalsHelper.js";
 import Door from "./Objects/Door.js";
 import Utils from "../Utils";
 import GunShop from "./Objects/GunShop";
+import MysteryBox from "./Objects/MysteryBox";
 
 export default class ThreeWorld extends EventTarget{
 
@@ -17,6 +18,7 @@ export default class ThreeWorld extends EventTarget{
 
         /** @type {Map<Number, Door>} */ this.DOORS = new Map()
         /** @type {Map<Number, GunShop>} */ this.GUNSHOPS = new Map()
+        /** @type {Map<Number, MysteryBox>} */ this.MYSTERYBOXES = new Map()
 
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color( 0xEEEEEE );
@@ -79,6 +81,19 @@ export default class ThreeWorld extends EventTarget{
                 actionNeedToBeSet = true
             }
         }
+        // GunShop hitbox
+        for (const [name, door] of this.MYSTERYBOXES) {
+            if (this.engine.controllablePlayer.aabb.intersectsBox(door.actionAABB)) {
+                const doorMessage = `Press F to buy a weapon from MysteryBox : ${door.price}`
+                Utils.dispatchEventTo('set_action', {
+                    message: doorMessage,
+                    action: () => {
+                        door.buy()
+                    }
+                }, this.engine.actionManager)
+                actionNeedToBeSet = true
+            }
+        }
         if (!actionNeedToBeSet) { // remove action if no action registered
             this.engine.actionManager.dispatchEvent(new Event('unset_action'))
         }
@@ -129,6 +144,10 @@ export default class ThreeWorld extends EventTarget{
                 case 'GunShop':
                     const gunShop = new GunShop({engine: this.engine, obj})
                     this.GUNSHOPS.set(gunShop.id, gunShop)
+                    break;
+                case 'MysteryBox':
+                    const mb = new MysteryBox({engine: this.engine, obj})
+                    this.MYSTERYBOXES.set(mb.id, mb)
                     break;
                 case 'Floor':
                     break;

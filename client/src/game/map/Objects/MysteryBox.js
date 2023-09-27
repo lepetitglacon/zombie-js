@@ -1,7 +1,7 @@
 import {Box3} from "three";
 import * as THREE from "three";
 
-export default class GunShop {
+export default class MysteryBox {
 
     static idCounter = 0
 
@@ -10,9 +10,11 @@ export default class GunShop {
         this.three = this.engine.three
 
         this.id = obj.name
-        this.weaponName = obj.userData.weaponName
-        this.price = obj.userData.Price
         this.obj = obj
+
+        this.roomId = this.obj.userData.RoomId
+        this.price = this.obj.userData.Price
+        this.isOpen = false
 
         this.obj.geometry.computeBoundingBox()
 
@@ -32,11 +34,10 @@ export default class GunShop {
 
     buy() {
             // send to server
-            this.engine.socketHandler.socket.emit('game:gun:buy', {
-                gunShopId: this.id,
-                weaponName: this.weaponName,
+            this.engine.socketHandler.socket.emit('game:mysterybox:buy', {
+                mysteryBoxId: this.id,
             })
-            console.log(`send buy weapon ${this.weaponName} to server`)
+            console.log('send open mysterybox to server')
             this.engine.game.points -= this.price
     }
 
@@ -49,8 +50,12 @@ export default class GunShop {
      * @private
      */
     remove_() {
+
         this.three.scene.remove(this.aabbHelper)
         this.three.scene.remove(this.actionAABBHelper)
+
+        this.three.WALLS.delete(this.obj.name)
+        this.three.DOORS.delete(this.id)
 
         // this.three.scene.remove(this.obj)
         this.obj.removeFromParent()

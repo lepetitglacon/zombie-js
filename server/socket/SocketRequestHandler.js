@@ -206,6 +206,11 @@ export default class SocketRequestHandler {
             e.userId = this.user._id.toString()
             Utils.dispatchEventTo('player_trying_to_buy_weapon', e, this.game.gunShopManager)
         })
+        this.socket.on('game:mysterybox:buy', (e) => {
+            e.userId = this.user._id.toString()
+            Utils.dispatchEventTo('player_trying_to_open_mysterybox', e, this.game.mysteryBoxManager)
+        })
+
     }
 
     async getMessages_() {

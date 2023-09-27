@@ -1,5 +1,3 @@
-import g from "three/addons/libs/lil-gui.module.min.js";
-
 export default class DoorManager extends EventTarget{
 
     constructor({game}) {
