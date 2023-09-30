@@ -1,18 +1,49 @@
 {
-  "name": "webpack-starter",
+  "name": "z3d",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "type": "module",
   "scripts": {
-    "watch": "webpack --watch",
-    "build": "webpack",
-    "serve": "nodemon src/app-server.js",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "serve": "nodemon server/index.js",
     "serve:inspect": "nodemon --inspect src/app-server.js",
-    "run": "node src/app-server.js",
-    "deploy": "git pull && npm i && webpack && node src/app-server.js"
+    "run": "node server/index.js",
+    "deploy": "git pull && npm i && npm run build && npm run run"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   },
   "dependencies": {
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "axios": "^1.4.0",
+    "bootstrap": "^5.3.1",
+    "js-cookie": "^3.0.5",
+    "moment": "^2.29.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.14.2",
+    "react-scripts": "5.0.1",
+    "socket.io-client": "^4.7.2",
+    "three": "^0.155.0",
+    "web-vitals": "^2.1.4",
     "@injectit/threejs-nodejs-exporters": "^0.0.2",
     "bcrypt": "^5.1.0",
     "body-parser": "^1.20.2",
@@ -42,7 +73,6 @@
     "socket.io": "^4.6.1",
     "stats.js": "^0.17.0",
     "style-loader": "^3.3.1",
-    "three": "^0.151.3",
     "webpack": "^5.75.0",
     "webpack-cli": "^5.0.1",
     "yuka": "^0.7.8"

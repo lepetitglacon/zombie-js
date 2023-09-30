@@ -7,9 +7,4 @@ services:
     ports: 
       - "27017:27017"
     volumes:
-      - ./docker/data/db:/data/db
-    #command: start --cluster-name=cockroach-cluster --insecure --join=crdb-1,crdb-2,crdb-3
-    #networks:
-    #  prometheus:
-    #    aliases:
-    #      - node-1    
+      - ../../docker/data/z3d-db:/data/db
