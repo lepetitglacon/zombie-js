@@ -44,18 +44,16 @@
     "socket.io-client": "^4.7.2",
     "three": "^0.155.0",
     "web-vitals": "^2.1.4",
-    "cannon-es": "^0.20.0",
-    "cannon-es-debugger": "^1.0.0",
-    "css-loader": "^6.7.3",
-    "dat.gui": "^0.7.9",
-
-    "chalk": "^5.3.0",
-
     "@injectit/threejs-nodejs-exporters": "^0.0.2",
     "bcrypt": "^5.1.0",
     "body-parser": "^1.20.2",
+    "cannon-es": "^0.20.0",
+    "cannon-es-debugger": "^1.0.0",
+    "chalk": "^5.3.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
+    "css-loader": "^6.7.3",
+    "dat.gui": "^0.7.9",
     "dotenv": "^16.1.4",
     "ejs": "^3.1.9",
     "express": "^4.18.2",
@@ -74,15 +72,15 @@
     "raw-loader": "^4.0.2",
     "socket.io": "^4.6.1",
     "stats.js": "^0.17.0",
-    "style-loader": "^3.3.1"
-
-  },
-  "devDependencies": {
-    "url-loader": "^4.1.1",
-    "webpack-node-externals": "^3.0.0",
+    "style-loader": "^3.3.1",
     "webpack": "^5.75.0",
-    "webpack-cli": "^5.0.1"
+    "webpack-cli": "^5.0.1",
+    "yuka": "^0.7.8"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "url-loader": "^4.1.1",
+    "webpack-node-externals": "^3.0.0"
+  }
 }

@@ -10,6 +10,7 @@ import {GAMESTATE} from "../Game.js";
 import AuthContext from "../../../context/AuthContext.js";
 import GameContext from "../../../context/GameContext.js";
 import {useVolume} from "../../../context/AudioContext.js";
+import SERVER_HOST from "../../../ENV.js";
 
 function Lobby({socket}) {
 
@@ -306,7 +307,7 @@ function Lobby({socket}) {
                                 {currentMap &&
                                     <div>
                                         <p id="current-map-name">{currentMap.name}</p>
-                                        <img src={ENV.SERVER_HOST + 'assets/img/map-preview/' + currentMap.preview}
+                                        <img src={SERVER_HOST + 'assets/img/map-preview/' + currentMap.preview}
                                              className="d-block img-preview" alt="..."/>
                                     </div>
                                 }

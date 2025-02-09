@@ -20,7 +20,7 @@ export default class RoutesHandler {
         dotenv.config()
 
         this.server.app.use(cors({
-            origin: 'http://localhost:3002',
+            origin: Server.FRONTEND_URL.substring(0, Server.FRONTEND_URL.length - 1),
             credentials: true
         }));
 

@@ -1,8 +1,8 @@
 @font-face {
     font-family: "z3d";
     src: url("HelpMe.ttf"),
+    url("https://z3d.api.petitglacon/fonts/HelpMe.ttf"),
     url("http://localhost:3000/fonts/HelpMe.ttf"),
-    url("http://82.64.177.251/fonts/HelpMe.ttf"),
     url("HelpMe.ttf");
 }
 

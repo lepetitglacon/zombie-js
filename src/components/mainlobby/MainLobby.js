@@ -7,6 +7,7 @@ import Cookies from "js-cookie";
 import LoadingSpinner from "../utils/LoadingSpinner.js";
 import ENV from "../../ENV.js";
 import {useVolume} from "../../context/AudioContext.js";
+import SERVER_HOST from "../../ENV.js";
 
 
 function MainLobby() {
@@ -45,7 +46,7 @@ function MainLobby() {
     async function getGamesFromServer(controller) {
         setLoading(true)
         try {
-            const res = await fetch('http://localhost:39000/lp/refresh', {signal: controller.signal})
+            const res = await fetch(`${SERVER_HOST}lp/refresh`, {signal: controller.signal})
             const data = await res.json()
             setGames(data)
         } catch (e) {
@@ -56,7 +57,7 @@ function MainLobby() {
     }
 
     const handleCreateGame = async () => {
-        const res = await fetch(ENV.SERVER_HOST + 'api/game/create', {
+        const res = await fetch(SERVER_HOST + 'api/game/create', {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json"

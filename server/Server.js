@@ -20,6 +20,9 @@ export default class Server {
     static __port = 39000
     static __assetsPath = `http://localhost:${Server.__port}/`;
 
+    static FRONTEND_URL = 'https://z3d.petitglacon.com/'
+    static BACKEND_URL = 'https://z3d.api.petitglacon.com/'
+
     static VIEWS = {
         BACKEND: '/views/',
         FRONTEND: '../../dist/'
@@ -36,10 +39,7 @@ export default class Server {
         this.server = http.createServer(this.app)
         this.io = new SocketServer(this.server, {
             cors: {
-                origin: [
-                    "http://localhost:3000",
-                    "http://localhost:3002"
-                ],
+                origin: Server.FRONTEND_URL.substring(0, Server.FRONTEND_URL.length - 1),
                 credentials: true
             }
         });
@@ -63,6 +63,7 @@ export default class Server {
             console.log(`Z3D Server`)
             console.log("----------------------------")
             console.log(`Join a game here http://localhost:${Server.__port}`)
+            console.log(`Join a game here ${Server.FRONTEND_URL}`)
             console.log(`Join a game here http://${this.ipAddresses.values().next().value}:${Server.__port}`)
             console.log("----------------------------")
             console.log()

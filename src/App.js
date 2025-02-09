@@ -17,6 +17,7 @@ import Signin from "./components/auth/signin/Signin.js";
 import ProtectedRoute from "./components/auth/ProtectedRoute.js";
 import Settings from "./components/settings/Settings.js";
 import Map from "./components/admin/Map.js";
+import SERVER_HOST from "./ENV.js";
 
 function App() {
 
@@ -31,7 +32,7 @@ function App() {
         async function getUser() {
             if (!user) {
                 try {
-                    const res = await fetch('http://localhost:39000/api/user/session', {
+                    const res = await fetch(`${SERVER_HOST}api/user/session`, {
                         credentials: 'include',
                         withCredentials: true
                     })

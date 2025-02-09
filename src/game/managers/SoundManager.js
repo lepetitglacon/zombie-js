@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import ENV from "../../ENV.js";
+import SERVER_HOST from "../../ENV.js";
 
 // assets
 // import "../../client/assets/sound/gunshot.wav"
@@ -45,7 +46,7 @@ export default class SoundManager {
 
     loadSound(name, path) {
         const sound = new THREE.Audio( this.listener );
-        this.loader.load( ENV.SERVER_HOST + path, ( buffer ) => {
+        this.loader.load( SERVER_HOST + path, ( buffer ) => {
             sound.setBuffer( buffer );
             sound.setLoop( false );
             sound.setVolume( .5 );

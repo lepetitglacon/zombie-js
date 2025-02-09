@@ -6,6 +6,7 @@ import AuthContext from "../../context/AuthContext.js";
 import LogoutButton from "../auth/logout/LogoutButton.js";
 import ENV from "../../ENV.js";
 import {useVolume} from "../../context/AudioContext.js";
+import SERVER_HOST from "../../ENV.js";
 
 function MainMenu() {
 
@@ -68,7 +69,7 @@ function MainMenu() {
                         className="d-flex justify-content-center align-items-center"
                          onClick={() => toggleMute()}
                     >
-                        <img id="audio-mute-button" src={ENV.SERVER_HOST + 'assets/img/icons/mute.png'} width="24"/>
+                        <img id="audio-mute-button" src={SERVER_HOST + 'assets/img/icons/mute.png'} width="24"/>
                     </div>
 
                     {user && <LogoutButton/>}

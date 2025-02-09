@@ -16,9 +16,8 @@ export default class AuthRoutes {
     constructor(props) {
         dotenv.config()
         this.server = props.server
-        
-        this.BACKEND_URL = `http://localhost:${Server.__port}`
-        this.FRONTEND_URL = `http://localhost:3002`
+
+        this.FRONTEND_URL = Server.FRONTEND_URL
 
         this.server.app.use(express.json());
 
@@ -57,7 +56,7 @@ export default class AuthRoutes {
         this.server.passport.use(new OAuth2Strategy({
                 clientID: process.env.GOOGLE_CLIENT_ID,
                 clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-                callbackURL: `${this.BACKEND_URL}/auth/google/callback`
+                callbackURL: `${Server.BACKEND_URL}auth/google/callback`
             },
             async (accessToken, refreshToken, profile, done) => {
                 try {

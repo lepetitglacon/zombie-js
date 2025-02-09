@@ -3,6 +3,7 @@ import ENV from "../../ENV.js";
 import axios from "axios";
 import {useContext, useEffect, useRef, useState} from "react";
 import AuthContext from "../../context/AuthContext.js";
+import SERVER_HOST from "../../ENV.js";
 
 function Map() {
     const navigate = useNavigate()
@@ -12,7 +13,7 @@ function Map() {
     const [error, setError] = useState([])
 
     useEffect(async () => {
-        const res = await axios.get(ENV.SERVER_HOST + 'admin/maps', {
+        const res = await axios.get(SERVER_HOST + 'admin/maps', {
             credentials: 'include',
             withCredentials: true
         })
@@ -25,7 +26,7 @@ function Map() {
         console.log(e)
 
         const formData = new FormData(e.target)
-        const res = await axios.post(ENV.SERVER_HOST + 'admin/maps/register', formData,
+        const res = await axios.post(SERVER_HOST + 'admin/maps/register', formData,
             {
                 credentials: 'include',
                 withCredentials: true

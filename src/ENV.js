@@ -1,5 +1,3 @@
-export default class ENV {
 
-    static SERVER_HOST = 'http://localhost:39000/'
-
-}
+const SERVER_HOST = 'https://z3d.api.petitglacon.com/'
+export default SERVER_HOST

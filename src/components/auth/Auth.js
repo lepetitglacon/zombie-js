@@ -3,6 +3,7 @@ import ENV from "../../ENV.js";
 import axios from "axios";
 import {useContext, useEffect, useRef} from "react";
 import AuthContext from "../../context/AuthContext.js";
+import SERVER_HOST from "../../ENV.js";
 
 function Auth() {
 
@@ -11,7 +12,7 @@ function Auth() {
     const navigate = useNavigate()
 
     const handleGoogleLogin = async () => {
-        const res = await axios.get('http://localhost:39000/auth/google')
+        const res = await axios.get(`${SERVER_HOST}auth/google`)
         console.log(res)
         window.location.assign('/')
     }
@@ -20,7 +21,7 @@ function Auth() {
         e.preventDefault()
         const fetchLocalAuth = async (e) => {
             console.log(e)
-            const res = await axios.post(ENV.SERVER_HOST + 'login', {
+            const res = await axios.post(SERVER_HOST + 'login', {
                 username: e.target.elements.username.value,
                 password: e.target.elements.password.value,
             },

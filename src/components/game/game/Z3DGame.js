@@ -12,6 +12,7 @@ import GameEngineContext from "../../../context/GameEngineContext.js";
 import Wave from "./wave/Wave.js";
 import Points from "./points/Points.js";
 import Action from "./action/Action.js";
+import SERVER_HOST from "../../../ENV.js";
 
 export const GameStates = {
     LOADING: 'LOADING',
@@ -84,7 +85,7 @@ function Z3DGame({socket}) {
                         <div id="game-ui" ref={setGameUiRef} >
 
                             <div id="crosshair-ui" className="ui-component-container">
-                                <img src={ENV.SERVER_HOST + 'assets/img/crosshair.png'} width="100px" height="100px" alt=""/>
+                                <img src={SERVER_HOST + 'assets/img/crosshair.png'} width="100px" height="100px" alt=""/>
                             </div>
 
                             <WeaponManager />

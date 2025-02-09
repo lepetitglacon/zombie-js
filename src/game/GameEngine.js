@@ -13,6 +13,7 @@ import PlayerManager from "./managers/PlayerManager.js";
 import WeaponManager from "./weapon/WeaponManager.js";
 import ActionManager from "./managers/ActionManager.js";
 import Game from "./Game.js";
+import SERVER_HOST from "../ENV.js";
 
 export default class GameEngine extends EventTarget {
 
@@ -102,12 +103,12 @@ export default class GameEngine extends EventTarget {
 
             // map
             for (const mapToLoad of e.map) {
-                this.modelManager.registerModel('map', ENV.SERVER_HOST + 'assets/' + mapToLoad)
+                this.modelManager.registerModel('map', SERVER_HOST + 'assets/' + mapToLoad)
             }
 
             // models
             for (const modelToLoad of e.models) {
-                this.modelManager.registerModel(modelToLoad.name, ENV.SERVER_HOST + 'assets/' + modelToLoad.path)
+                this.modelManager.registerModel(modelToLoad.name, SERVER_HOST + 'assets/' + modelToLoad.path)
             }
 
             // TODO sounds

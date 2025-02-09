@@ -2,6 +2,7 @@ import {createContext, useContext, useEffect, useState} from "react";
 import Cookies from "js-cookie";
 
 import ENV from "../ENV.js";
+import SERVER_HOST from "../ENV.js";
 
 const VolumeContext = createContext();
 
@@ -18,7 +19,7 @@ export const VolumeProvider = ({ children }) => {
         // 'assets/sound/lobby/mainlobby4.mp3',
     ]
 
-    const [audioFile, setAudioFile] = useState(new Audio(ENV.SERVER_HOST + sounds[Math.floor(Math.random() * sounds.length)]))
+    const [audioFile, setAudioFile] = useState(new Audio(SERVER_HOST + sounds[Math.floor(Math.random() * sounds.length)]))
     const [volume, setVolume] = useState(0.5); // Default volume
     const [isMuted, setIsMuted] = useState(false);
 

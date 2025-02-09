@@ -3,6 +3,7 @@ import ENV from "../../../ENV.js";
 import { Link } from "react-router-dom";
 import {useContext} from "react";
 import AuthContext from "../../../context/AuthContext.js";
+import SERVER_HOST from "../../../ENV.js";
 
 
 function LogoutButton() {
@@ -15,7 +16,7 @@ function LogoutButton() {
                 {user.gamename}
             </div>
             <div>
-                <Link to={ENV.SERVER_HOST + 'api/user/logout'}>Logout</Link>
+                <Link to={SERVER_HOST + 'api/user/logout'}>Logout</Link>
             </div>
         </div>
     )
