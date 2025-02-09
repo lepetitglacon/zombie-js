@@ -19,6 +19,7 @@ function Game() {
 
     const {user} = useContext(AuthContext)
     const {clientState, setClientState} = useGameState()
+    const {connected, setConnected} = useState()
 
     const gameId = useParams()['id']
     let socket = Socket(gameId, user._id.toString())
@@ -34,6 +35,7 @@ function Game() {
 
     useEffect(() => {
         socket.on('connect', () => console.log('[SOCKET] connected'))
+        socket.on('disconnect', () => console.log('[SOCKET] disconnected'))
         socket.on('custom-disconnect', (reason) => console.log(`[SOCKET] disconnected for reason "${reason}"`))
         socket.on('disconnect', (reason) => console.log(`[SOCKET] disconnected`))
         return () => {
@@ -60,7 +62,7 @@ function Game() {
 
     return (
         <>
-
+            <pre>{JSON.stringify(socket.connected, null, 4)}</pre>
             {clientState === GAMESTATE.LOBBY || clientState === GAMESTATE.NOGAME
                 ? <Lobby socket={socket}/>
                 : <Z3DGame socket={socket} gameEngine={gameEngine} setGameEngine={setGameEngine} />

@@ -36,7 +36,10 @@ export default class Server {
         this.server = http.createServer(this.app)
         this.io = new SocketServer(this.server, {
             cors: {
-                origin: "http://localhost:3000",
+                origin: [
+                    "http://localhost:3000",
+                    "http://localhost:3002"
+                ],
                 credentials: true
             }
         });

@@ -52,7 +52,7 @@ export default class AdminMapRoutes {
 
             // create map and save into DB
             let newMap = new GameMap({
-                name: req.body.mapName,
+                name: req.body['map-name'],
                 filename: req.files['map-file'][0].originalname,
                 uploadFilename: req.files['map-file'][0].filename,
                 preview: req.files['map-preview'][0].originalname,

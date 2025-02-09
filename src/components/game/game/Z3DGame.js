@@ -52,7 +52,7 @@ function Z3DGame({socket}) {
     }, [gameEngine])
 
     useEffect(() => {
-        console.clear()
+        // console.clear()
         const setEngine = async () => {
             await setGameEngine(new GameEngine({
                 socket,

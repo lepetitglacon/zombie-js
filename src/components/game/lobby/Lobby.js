@@ -19,6 +19,7 @@ function Lobby({socket}) {
 
     const navigate = useNavigate()
 
+    const [connected, setConnected] = useState(false)
     const [maps, setMaps] = useState([])
     const [currentMap, setCurrentMap] = useState(undefined)
     const [isOwner, setIsOwner] = useState(false)
@@ -34,6 +35,8 @@ function Lobby({socket}) {
     const mapCarouselRef = useRef()
 
     useEffect(() => {
+        socket.on('connect', () => setConnected(true))
+        socket.on('disconnect', () => console.log('[SOCKET] disconnected'))
         socket.emit('lobby:init')
         socket.on('lobby:init:messages', onMessages)
         socket.on('message', onMessage)
@@ -72,6 +75,10 @@ function Lobby({socket}) {
             chatContainerRef.current.scroll({ top: chatContainerRef.current.scrollHeight, behavior: 'smooth' });
         }
     }, [messages])
+
+    useEffect(() => {
+        console.log(socket.connected)
+    }, [socket.connected])
 
     /**
      * make the countdown count
@@ -198,8 +205,8 @@ function Lobby({socket}) {
 
     return (
         <div>
-
-        {socket.connected
+            <pre>{JSON.stringify(socket.connected, null, 4)}</pre>
+            {connected
                 ? <div className="container-fluid h-100">
                     <div className="row h-100">
 
@@ -208,7 +215,7 @@ function Lobby({socket}) {
                             {isOwner &&
                                 <div>
                                     <h3>Maps</h3>
-                                    <div ref={mapCarouselRef}  className="d-flex maps-container">
+                                    <div ref={mapCarouselRef} className="d-flex maps-container">
                                         <ul className="w-100">
                                             {maps && maps.map((map, i) => {
                                                 return (
@@ -232,7 +239,8 @@ function Lobby({socket}) {
 
 
                             <div>
-                                <label className={!ready ? "btn btn-primary ready" : "btn btn-primary"} htmlFor="btn-check">Ready</label>
+                                <label className={!ready ? "btn btn-primary ready" : "btn btn-primary"}
+                                       htmlFor="btn-check">Ready</label>
                                 <input ref={readyButton}
                                        onClick={handleReady}
                                        type="checkbox"
@@ -252,7 +260,8 @@ function Lobby({socket}) {
                                     <ul>
                                         {
                                             users.map((user) => {
-                                                return <li key={user._id.toString()} data-id={user._id}>{user.gamename}</li>
+                                                return <li key={user._id.toString()}
+                                                           data-id={user._id}>{user.gamename}</li>
                                             })
                                         }
                                     </ul>
@@ -261,7 +270,7 @@ function Lobby({socket}) {
                                 <div className="col">
                                     <h3>Chat</h3>
                                     <div ref={chatContainerRef} className="chat-container">
-                                        <ul  id="chat">
+                                        <ul id="chat">
                                             {messages.map(message => {
                                                 return <li key={message._id}>
                                             <span className="chat-date">
@@ -274,7 +283,8 @@ function Lobby({socket}) {
                                         </ul>
                                     </div>
                                     <div className="mb-3">
-                                        <label htmlFor="chat-textarea" className="form-label sr-only">Example textarea</label>
+                                        <label htmlFor="chat-textarea" className="form-label sr-only">Example
+                                            textarea</label>
                                         <textarea ref={chatTextareaRef}
                                                   id="chat-textarea"
                                                   className="form-control"
@@ -307,7 +317,7 @@ function Lobby({socket}) {
 
                 </div>
                 : <div>Connecting</div>
-        }
+            }
         </div>
 
 
