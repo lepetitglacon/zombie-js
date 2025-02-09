@@ -11,7 +11,9 @@ function Auth() {
     const navigate = useNavigate()
 
     const handleGoogleLogin = async () => {
-        window.location.assign('http://localhost:39000/auth/google')
+        const res = await axios.get('http://localhost:39000/auth/google')
+        console.log(res)
+        window.location.assign('/')
     }
 
     const handleLoginAttempt = (e) => {

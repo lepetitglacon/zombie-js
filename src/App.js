@@ -16,6 +16,7 @@ import Login from "./components/auth/login/Login.js";
 import Signin from "./components/auth/signin/Signin.js";
 import ProtectedRoute from "./components/auth/ProtectedRoute.js";
 import Settings from "./components/settings/Settings.js";
+import Map from "./components/admin/Map.js";
 
 function App() {
 
@@ -27,28 +28,25 @@ function App() {
     let [searchParams, setSearchParams] = useSearchParams();
 
     useEffect(() => {
-        if (searchParams.has('login')) {
-            if (searchParams.get('login') === 'google') {
-                const getUserFromSession = async () => {
-                    if (!user) {
-                        try {
-                            const res = await fetch('http://localhost:39000/api/user/session', {
-                                credentials: 'include',
-                                withCredentials: true
-                            })
-                            const data = await res.json()
-                            setUser(data.user)
-                            navigate('/')
-                        } catch (e) {
-                            console.log('fetch err', e)
-                            setUser(null)
-                        }
-                    }
+        async function getUser() {
+            if (!user) {
+                try {
+                    const res = await fetch('http://localhost:39000/api/user/session', {
+                        credentials: 'include',
+                        withCredentials: true
+                    })
+                    const data = await res.json()
+                    setUser(data.user)
+                    navigate('/')
+                } catch (e) {
+                    console.log('fetch err', e)
+                    setUser(null)
+                    navigate('/auth')
                 }
-                getUserFromSession()
             }
         }
-    }, [location])
+        getUser()
+    }, [])
 
     useEffect(() => {
         if (user) {
@@ -58,6 +56,8 @@ function App() {
 
     return (
         <div className="App">
+
+            {location.href}
 
             {
                 user &&
@@ -114,6 +114,16 @@ function App() {
                             <div>hello</div>
                         }/>
                     </Route>
+
+                    {/*<Route path="/admin" element={*/}
+                    {/*    <Auth/>*/}
+                    {/*}>*/}
+                        <Route path="/admin/maps" element={
+                            <ProtectedRoute user={user} >
+                            <Map/>
+                            </ProtectedRoute>
+                        }/>
+                    {/*</Route>*/}
                 </Routes>
         </div>
     );

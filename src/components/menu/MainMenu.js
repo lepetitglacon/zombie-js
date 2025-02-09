@@ -51,6 +51,14 @@ function MainMenu() {
                             </li>
                         })}
 
+                        {user.isAdmin &&
+                            <Link
+                                to="/admin/maps"
+                                className={'nav-link'}>
+                                Admin
+                            </Link>
+                        }
+
                     </ul>
                 </div>
 

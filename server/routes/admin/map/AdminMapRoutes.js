@@ -19,31 +19,36 @@ export default class AdminMapRoutes {
     bind() {
 
         ZombieServer.app.get('/admin/maps/', async (req, res) => {
-            if (req.isAuthenticated() && req.session.passport.user.isAdmin) {
-                res.render('admin/maps', {
-                    error: '',
-                    user: req.session.passport.user,
-                    maps: await GameMap.find({})
-                });
+            console.log(req.isAuthenticated(), req?.user?.isAdmin)
+            if (req.isAuthenticated() && req?.user?.isAdmin) {
+                res.json(await GameMap.find({}))
             } else {
-                res.redirect('/')
+                res.json([])
             }
         })
 
         ZombieServer.app.post('/admin/maps/register', this.upload.fields([{name: 'map-file'}, {name: 'map-preview'}]), async (req, res) => {
-            if (!req.isAuthenticated() || !req.session.passport.user.isAdmin)
-                return res.redirect('/')
+
+            if (!req.isAuthenticated()) {
+                return res.json({
+                    message: 'not connected'
+                })
+            }
+            if (!req.user.isAdmin) {
+                return res.json({
+                    message: 'not admin'
+                })
+            }
 
             let isValid = this.isMapValid(req)
 
             console.log('isvalid', isValid)
 
             if (!isValid.valid)
-                return res.render('admin/maps', {
-                    user: req.session.passport.user,
-                    error: `Map is not valid : ${isValid.error}`,
-                    maps: await GameMap.find({})
-                });
+                return res.json({
+                    message: 'not admin',
+                    error: `Map is not valid : ${isValid.error}`
+                })
 
             // create map and save into DB
             let newMap = new GameMap({
@@ -136,7 +141,14 @@ export default class AdminMapRoutes {
         let error = ''
         let valid = true
 
-        if (req.body.mapName.length <= 0) {
+        console.log(req.body)
+        console.log(req.files)
+        // return {
+        //     valid: false,
+        //     error: 'error'
+        // }
+
+        if (req.body['map-name'].length <= 0) {
             error += ' Missing map name '
             valid = false
         }

@@ -6,8 +6,6 @@
 
         font-weight: bold;
         font-size: 48px;
-
-
     }
     #main-menu a{
         text-decoration: none;
@@ -26,8 +24,10 @@
     <ul>
         <li><a href="/">My profile</a></li>
         <li><a href="/">Leaderboard</a></li>
+        <li><a href="/">zz</a></li>
     </ul>
 
+    <%= user.isAdmin %>
     <% if(user.isAdmin) { %>
         <p>Admin</p>
         <ul>

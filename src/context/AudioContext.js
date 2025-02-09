@@ -22,8 +22,13 @@ export const VolumeProvider = ({ children }) => {
     const [volume, setVolume] = useState(0.5); // Default volume
     const [isMuted, setIsMuted] = useState(false);
 
-    const play = () => {
-        audioFile.play()
+    const play = async () => {
+        try {
+            const res = await audioFile.play()
+            console.log(res)
+        } catch (e) {
+            console.error(e)
+        }
     }
 
     const pause = () => {
@@ -44,7 +49,11 @@ export const VolumeProvider = ({ children }) => {
         }
 
         audioFile.onended = () => {
-            audioFile.play()
+            try {
+                audioFile.play()
+            } catch (e) {
+                console.error(e)
+            }
         }
     }, [])
 
